@@ -1,0 +1,28 @@
+{
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "blst_checkin_management",
+    "logging": false,
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "timezone": "+07:00"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "blst_api",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "timezone": "+07:00",
+    "logging": false
+  },
+  "production": {
+    "username": "blstremoteadmin",
+    "password": "blstipb@123",
+    "database": "blst_checkin_management",
+    "host": "localhost",
+    "dialect": "mysql",
+    "timezone": "+07:00"
+  }
+}
