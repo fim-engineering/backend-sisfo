@@ -19,10 +19,11 @@
 ```
 {	
 	email: STRING,
-	password: STRING,
 	socialId: STRING,
 	loginSource: STRING,
 	profilPicture: STRING,
+	firstName:STRING,
+	lastName:STRING,
 	expireIn: INT,
 	expireAt: INT,
 }
@@ -32,7 +33,10 @@
 
 ```
 {  
-    "token": token,
+    "token": token, (jwtcode: 'thetokenstokens')
+	"code": 200,
+    "expiresIn": expireAt,
+    "status": NUMBER STATUS
 }
 ```
 

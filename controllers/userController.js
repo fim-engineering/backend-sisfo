@@ -44,6 +44,7 @@ exports.signUp = (req, res, next) => {
 exports.SocialLogin = (req, res, next) => {
     let email = req.body.email;
     let socialId = req.body.socialId;
+    let name = req.body.firstName + ' ' + req.body.lastName
     let loginSource = req.body.loginSource;
     let profilPicture = req.body.profilPicture;
     let expireIn = req.body.expireIn;
@@ -53,25 +54,59 @@ exports.SocialLogin = (req, res, next) => {
         where: {
             email: email
         },
-        defaults:{            
-            profilPicture:profilPicture,
-            socialId:socialId,
-            loginSource:loginSource
+        defaults: {
+            profilPicture: profilPicture,
+            socialId: socialId,
+            loginSource: loginSource
         }
-    }).then(async ([user, created]) => {       
-        console.log(created)
+    }).then(async ([user, created]) => {
         const userData = await user.get();
-        const token = jwt.sign({
-                email: userData.email,                
-            }, 'thetokenstokens', { expiresIn: expireIn });
+        let status = 0;
+        // check KTP di tabel identity jika null bikin, jika ada update
+        await model.Identity.findOne({ where: { email: userData.email } }).then(user => {
 
-            return res.status(200).json({
-                "code": 200,
-                "token": token,
-                "expiresIn": expireAt
-            });
-      
-    }).catch(err=>{
+            console.log(user === null)
+
+            if (user === null) {
+                model.Identity.create({
+                    email: userData.email,
+                    userId: userData.id,
+                    name: name
+                })
+            }
+            // update
+            else {
+                user.update({
+                    email: userData.email,
+                    userId: userData.id,
+                    name: name
+                })
+
+                status = 1; //ada ktp/tidak ada ktp + tidak ada url_ktp
+                if (user.ktpNumber !== null && ktpUrl !== null) {
+                    status = 2; //ada ktp/tidak ada ktp + ada url_ktp
+                }
+            }
+
+            return status
+        }).catch(err => {
+            console.log(err)
+        });
+
+
+        const token = jwt.sign({
+            email: userData.email,
+        }, 'thetokenstokens', { expiresIn: expireIn });
+
+        return res.status(200).json({
+            "code": 200,
+            "token": token,
+            "expireAt": expireAt,
+            "status": status
+        });
+
+    }).catch(err => {
+        console.log(err)
         return res.json({
             code: 401,
             message: err
