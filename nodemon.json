@@ -1,6 +1,6 @@
 {
     "env": {
-        "DATABASE_NAME" : "blst_api",
+        "DATABASE_NAME" : "fim_api",
         "DATABASE_USER" : "root",
         "DATABASE_PASS" :    "" ,
         "HOST" : "localhost",

@@ -18,6 +18,7 @@
     "logging": false
   },
   "production": {
+    "use_env_variable": "DATABASE_URL",
     "username": "root",
     "password": "",
     "database": "fim_portal_backend",
