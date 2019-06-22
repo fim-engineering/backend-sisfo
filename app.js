@@ -6,9 +6,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 // Route Require
-const homeRoutes = require('./routes/homeRoute');
 const userRoute = require('./routes/userRoute');
-const dashboardRoutes = require('./routes/dashboardRoute');
 
 console.log(process.env.NODE_ENV)
 // init express js
@@ -25,17 +23,9 @@ app.use((req,res,next)=> {
     next();
 });
 
-app.use('/',homeRoutes);
 // Auth Route
 app.use('/auth', userRoute);
-// Product Route
 
-//dashboard Route
-app.use('/dashboard', dashboardRoutes);
-// CategoryGeneral.sync({
-
-
-// });
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 

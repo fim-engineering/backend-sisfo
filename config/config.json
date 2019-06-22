@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "blst_checkin_management",
+    "database": "fim_portal_backend",
     "logging": false,
     "host": "127.0.0.1",
     "dialect": "mysql",
@@ -11,16 +11,16 @@
   "test": {
     "username": "root",
     "password": null,
-    "database": "blst_api",
+    "database": "fim_portal_backend",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "timezone": "+07:00",
     "logging": false
   },
   "production": {
-    "username": "blstremoteadmin",
-    "password": "blstipb@123",
-    "database": "blst_checkin_management",
+    "username": "root",
+    "password": "",
+    "database": "fim_portal_backend",
     "host": "localhost",
     "dialect": "mysql",
     "timezone": "+07:00"
