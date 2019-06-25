@@ -2,48 +2,12 @@ const model = require('../models/index');
 const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-var redis = require("redis");
-var url = require('url');
-var bluebird = require('bluebird');
-
-bluebird.promisifyAll(redis.RedisClient.prototype);
-
-const LoginDataRedis = {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    user: process.env.REDIS_USER,
-    password: process.env.REDIS_PASSWORD,
-    no_ready_check: 'true',
-}
-
-console.log("===========")
-console.log("===========")
-console.log("===========")
-console.log("LoginDataRedis: ", LoginDataRedis)
-// console.log("process.env.REDIS_HOST: ", process.env.REDIS_HOST)
-
-let client = redis.createClient(LoginDataRedis);
-
-client.on('error', err => {
-    console.log("err: ", err);
-});
-
-client.on('ready', () => {
-    console.log("ready:");
-});
-
-// console.log("process.env.REDIS_URL: ", process.env.REDIS_URL)
-
-// var rtg   = require("url").parse(process.env.REDIS_URL);
-// console.log("rtg: ", rtg)
-// var redis = require("redis").createClient(rtg.hostname, Number(rtg.port));
-
-// redis.auth(rtg.auth.split(":")[1]);
+const redisClient = require('../util/redis')
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
 
-    client.get('login_portal:' + token, function (err, response) {
+    redisClient.get('login_portal:' + token, function (err, response) {
         if (err) {
             res.status(500).json({
                 message: "Somethin Went Wrong " + err,
@@ -173,7 +137,7 @@ exports.SocialLogin = (req, res, next) => {
         // ms('-1h')     // -3600000
         // ms('-200')    // -200
 
-        client.setex('login_portal:' + token, 60000, JSON.stringify(data_identity))
+        redisClient.setex('login_portal:' + token, 60000, JSON.stringify(data_identity))
 
         return res.status(200).json({
             "code": 200,
