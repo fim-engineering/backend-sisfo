@@ -1,4 +1,4 @@
-import redis from 'redis';
+var redis = require('redis')
 
 const LoginDataRedis = {
   host: process.env.REDIS_HOST,
