@@ -22,4 +22,4 @@ RedisClient.on('end', () => {
   console.log('REDIS is now disconnected');
 });
 
-export default RedisClient;
+exports.RedisClient;
