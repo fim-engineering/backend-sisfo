@@ -3,8 +3,9 @@ const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-var redis = require("redis"),
-    client = redis.createClient();
+var redis = require("redis");
+const redis_url = process.env.REDIS_URL || null;
+const client = redis.createClient();
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
@@ -12,9 +13,9 @@ exports.checkSession = (req, res, next) => {
     client.get('login_portal:' + token, function (err, response) {
         if (err) {
             res.status(500).json({
-                message: "Somethin Went Wrong " +err,
-                data:null,
-                status:false
+                message: "Somethin Went Wrong " + err,
+                data: null,
+                status: false
             })
         }
 
@@ -23,14 +24,14 @@ exports.checkSession = (req, res, next) => {
                 message: `Token Not Found`,
                 data: null,
                 status: false
-              })
-          } else {
-            res.status(200).json({
-              message: `Token Found`,
-              data: JSON.parse(response),
-              status: true
             })
-          }
+        } else {
+            res.status(200).json({
+                message: `Token Found`,
+                data: JSON.parse(response),
+                status: true
+            })
+        }
     })
 }
 
