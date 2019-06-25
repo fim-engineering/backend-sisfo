@@ -19,7 +19,7 @@ console.log("===========")
 console.log("LoginDataRedis: ", LoginDataRedis)
 console.log("process.env.REDIS_HOST: ", process.env.REDIS_HOST)
 
-const client = redis.createClient(process.env.REDIS_HOST);
+let client = redis.createClient(process.env.REDIS_URL);
 // client.auth(redisURL.auth.split(":")[1]);
 
 exports.checkSession = (req, res, next) => {
