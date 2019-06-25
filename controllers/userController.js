@@ -11,7 +11,12 @@ const LoginDataRedis = {
     user: process.env.REDIS_USER,
     password: process.env.password,
     no_ready_check: 'true',
-},
+}
+
+console.log("===========")
+console.log("===========")
+console.log("===========")
+console.log("LoginDataRedis: ", LoginDataRedis)
 
 const client = process.env.REDIS_URL ? redis.createClient(LoginDataRedis) : redis.createClient();
 // client.auth(redisURL.auth.split(":")[1]);
