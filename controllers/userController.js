@@ -2,6 +2,7 @@ const model = require('../models/index');
 const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+var url = require('url');
 
 var redis = require("redis");
 const client = redis.createClient(url.parse(process.env.REDIS_URL) ? url.parse(process.env.REDIS_URL) : null);
