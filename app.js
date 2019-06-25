@@ -10,7 +10,6 @@ const { Client } = require('pg');
 const userRoute = require('./routes/userRoute');
 const homeRoute = require('./routes/homeRoute');
 
-console.log(process.env.NODE_ENV)
 // init express js
 const app = express();
 

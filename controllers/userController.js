@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 var redis = require("redis");
 const redis_url = process.env.REDIS_URL || null;
+console.log(redis_url)
 const client = redis.createClient(redis_url);
 
 exports.checkSession = (req, res, next) => {
@@ -125,7 +126,7 @@ exports.SocialLogin = (req, res, next) => {
             userId: userData.id
         }
 
-        const token = jwt.sign(data_identity, 'thetokenstokens', { expiresIn: 60000 }); // 
+        const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); // 
 
         // ms('2 days')  // 172800000
         // ms('1d')      // 86400000
