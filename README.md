@@ -24,8 +24,6 @@
 	profilPicture: STRING,
 	firstName:STRING,
 	lastName:STRING,
-	expireIn: INT,
-	expireAt: INT,
 }
 ```
 
@@ -35,8 +33,32 @@
 {  
     "token": token, (jwtcode: 'thetokenstokens')
 	"code": 200,
-    "expiresIn": expireAt,
     "status": NUMBER STATUS
+}
+```
+
+#### Check Session
+
+```
+/auth/checksession | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json)
+- Body :
+
+```
+{	
+	token: STRING,
+}
+```
+
+- Return :
+
+```
+{  
+    message: `Token Not Found`,
+    data: {} / null,
+    status: false / true
 }
 ```
 

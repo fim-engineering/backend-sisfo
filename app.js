@@ -8,6 +8,7 @@ const { Client } = require('pg');
 
 // Route Require
 const userRoute = require('./routes/userRoute');
+const homeRoute = require('./routes/homeRoute');
 
 console.log(process.env.NODE_ENV)
 // init express js
@@ -33,6 +34,7 @@ app.use((req,res,next)=> {
 
 // Auth Route
 app.use('/auth', userRoute);
+app.use('/', homeRoute)
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 

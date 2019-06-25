@@ -3,6 +3,36 @@ const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+var redis = require("redis"),
+    client = redis.createClient();
+
+exports.checkSession = (req, res, next) => {
+    const token = req.body.token;
+
+    client.get('login_portal:' + token, function (err, response) {
+        if (err) {
+            res.status(500).json({
+                message: "Somethin Went Wrong " +err,
+                data:null,
+                status:false
+            })
+        }
+
+        if (response == null) {
+            res.status(200).json({
+                message: `Token Not Found`,
+                data: null,
+                status: false
+              })
+          } else {
+            res.status(200).json({
+              message: `Token Found`,
+              data: JSON.parse(response),
+              status: true
+            })
+          }
+    })
+}
 
 exports.signUp = (req, res, next) => {
 
@@ -47,8 +77,6 @@ exports.SocialLogin = (req, res, next) => {
     let name = req.body.firstName + ' ' + req.body.lastName
     let loginSource = req.body.loginSource;
     let profilPicture = req.body.profilPicture;
-    let expireIn = req.body.expireIn;
-    let expireAt = req.body.expireAt;
 
     model.User.findOrCreate({
         where: {
@@ -64,8 +92,6 @@ exports.SocialLogin = (req, res, next) => {
         let status = 0;
         // check KTP di tabel identity jika null bikin, jika ada update
         await model.Identity.findOne({ where: { email: userData.email } }).then(user => {
-
-            console.log(user === null)
 
             if (user === null) {
                 model.Identity.create({
@@ -93,15 +119,31 @@ exports.SocialLogin = (req, res, next) => {
             console.log(err)
         });
 
-
-        const token = jwt.sign({
+        const data_identity = {
             email: userData.email,
-        }, 'thetokenstokens', { expiresIn: expireIn });
+            userId: userData.id
+        }
+
+        const token = jwt.sign(data_identity, 'thetokenstokens', { expiresIn: 60000 }); // 
+
+        // ms('2 days')  // 172800000
+        // ms('1d')      // 86400000
+        // ms('10h')     // 36000000
+        // ms('2.5 hrs') // 9000000
+        // ms('2h')      // 7200000
+        // ms('1m')      // 60000
+        // ms('5s')      // 5000
+        // ms('1y')      // 31557600000
+        // ms('100')     // 100
+        // ms('-3 days') // -259200000
+        // ms('-1h')     // -3600000
+        // ms('-200')    // -200
+
+        client.setex('login_portal:' + token, 60000, JSON.stringify(data_identity))
 
         return res.status(200).json({
             "code": 200,
             "token": token,
-            "expireAt": expireAt,
             "status": status
         });
 
