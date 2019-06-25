@@ -26,7 +26,7 @@ console.log("process.env.REDIS_URL: ", process.env.REDIS_URL)
 
 var rtg   = require("url").parse(process.env.REDIS_URL);
 console.log("rtg: ", rtg)
-var redis = require("redis").createClient(rtg.hostname, rtg.port);
+var redis = require("redis").createClient(rtg.hostname, Number(rtg.port));
 
 redis.auth(rtg.auth.split(":")[1]);
 
