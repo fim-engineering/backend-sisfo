@@ -4,6 +4,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var redis = require("redis");
 var url = require('url');
+var bluebird = require('bluebird');
+
+bluebird.promisifyAll(redis.RedisClient.prototype);
 
 const LoginDataRedis = {
     host: process.env.REDIS_HOST,
@@ -13,22 +16,29 @@ const LoginDataRedis = {
     no_ready_check: 'true',
 }
 
-// console.log("LoginDataRedis: ", LoginDataRedis)
+console.log("===========")
+console.log("===========")
+console.log("===========")
+console.log("LoginDataRedis: ", LoginDataRedis)
 // console.log("process.env.REDIS_HOST: ", process.env.REDIS_HOST)
 
-// let client = redis.createClient(process.env.REDIS_URL);
-// client.auth(redisURL.auth.split(":")[1]);
+let client = redis.createClient(LoginDataRedis);
 
-console.log("===========")
-console.log("===========")
-console.log("===========")
-console.log("process.env.REDIS_URL: ", process.env.REDIS_URL)
+client.on('error', err => {
+    console.log("err: ", err);
+});
 
-var rtg   = require("url").parse(process.env.REDIS_URL);
-console.log("rtg: ", rtg)
-var redis = require("redis").createClient(rtg.hostname, Number(rtg.port));
+client.on('ready', () => {
+    console.log("ready:");
+});
 
-redis.auth(rtg.auth.split(":")[1]);
+// console.log("process.env.REDIS_URL: ", process.env.REDIS_URL)
+
+// var rtg   = require("url").parse(process.env.REDIS_URL);
+// console.log("rtg: ", rtg)
+// var redis = require("redis").createClient(rtg.hostname, Number(rtg.port));
+
+// redis.auth(rtg.auth.split(":")[1]);
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
