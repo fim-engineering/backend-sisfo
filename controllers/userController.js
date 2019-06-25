@@ -29,7 +29,7 @@ console.log("rtg: ", rtg)
 // var redis = require("redis").createClient(rtg.port, rtg.hostname);
 var redis = require("redis").createClient({
     host: rtg.hostname,
-    port: rtg.port
+    port: Number(rtg.port)
 });
 
 redis.auth(rtg.auth.split(":")[1]);
