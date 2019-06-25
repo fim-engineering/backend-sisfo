@@ -1,19 +1,13 @@
 var redis = require('redis')
-const { REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PASSWORD } = process.env
+const { REDISCLOUD_URL } = process.env
 
-const LoginDataRedis = {
-  host: REDIS_HOST,
-  port: REDIS_PORT,
-  user: REDIS_USER,
-  password: REDIS_PASSWORD,
-  no_ready_check: 'true',
-}
+const LoginDataRedis = { no_ready_check: 'true' }
 
 //TODO: Check if production env
-const RedisClient = REDIS_PASSWORD ? redis.createClient(LoginDataRedis) : redis.createClient();
+const RedisClient = REDISCLOUD_URL ? redis.createClient(REDISCLOUD_URL, LoginDataRedis) : redis.createClient();
 
 RedisClient.on('error', err => {
-  console.log(err);
+  console.log("error: ", err);
 });
 
 RedisClient.on('ready', () => {
