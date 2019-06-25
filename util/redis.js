@@ -24,4 +24,4 @@ RedisClient.on('end', () => {
   console.log('REDIS is now disconnected');
 });
 
-exports.RedisClient;
+module.exports = RedisClient;
