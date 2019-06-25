@@ -5,7 +5,25 @@ const jwt = require('jsonwebtoken');
 var url = require('url');
 
 var redis = require("redis");
-const client = redis.createClient(url.parse(process.env.REDIS_URL) ? url.parse(process.env.REDIS_URL) : null);
+// const redis_url = url.parse(process.env.REDIS_URL);
+
+const settingan_redis = {
+    protocol: 'redis:',
+    slashes: true,
+    auth:
+     'h:p308a34d1a26bf77430ff2df1697dec8effe69540da5d2f4e2628d5976ddd03aa',
+    host: 'ec2-3-212-78-16.compute-1.amazonaws.com',
+    port: 17529,
+    hostname: 'ec2-3-212-78-16.compute-1.amazonaws.com',
+    hash: null,
+    search: null,
+    query: null,
+    pathname: null,
+    path: null,
+    href:
+     'redis://h:p308a34d1a26bf77430ff2df1697dec8effe69540da5d2f4e2628d5976ddd03aa@ec2-3-212-78-16.compute-1.amazonaws.com' }
+
+const client = redis.createClient(process.env.REDIS_URL ? settingan_redis : null);
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
