@@ -13,14 +13,22 @@ const LoginDataRedis = {
     no_ready_check: 'true',
 }
 
-console.log("===========")
-console.log("===========")
-console.log("===========")
-console.log("LoginDataRedis: ", LoginDataRedis)
-console.log("process.env.REDIS_HOST: ", process.env.REDIS_HOST)
+// console.log("LoginDataRedis: ", LoginDataRedis)
+// console.log("process.env.REDIS_HOST: ", process.env.REDIS_HOST)
 
-let client = redis.createClient(process.env.REDIS_URL);
+// let client = redis.createClient(process.env.REDIS_URL);
 // client.auth(redisURL.auth.split(":")[1]);
+
+console.log("===========")
+console.log("===========")
+console.log("===========")
+console.log("process.env.REDIS_URL: ", process.env.REDIS_URL)
+
+var rtg   = require("url").parse(process.env.REDIS_URL);
+console.log("rtg: ", rtg)
+var redis = require("redis").createClient(rtg.port, rtg.hostname);
+
+redis.auth(rtg.auth.split(":")[1]);
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
