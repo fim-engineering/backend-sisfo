@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //POSTGREE
 const client = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: true,
+    // ssl: true,
   });
   client.connect();  
 

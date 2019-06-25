@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 var redis = require("redis");
-const redis_url = process.env.REDIS_URL || null;
+const redis_url = process.env.REDIS_URL ? process.env.REDIS_URL : null;
 console.log(redis_url)
 const client = redis.createClient(redis_url);
 
@@ -27,7 +27,7 @@ exports.checkSession = (req, res, next) => {
                 status: false
             })
         } else {
-            res.status(200).json({
+            res.status(200).json({ 
                 message: `Token Found`,
                 data: JSON.parse(response),
                 status: true
