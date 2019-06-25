@@ -3,9 +3,6 @@ const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-var redis = require("redis"),
-    client = redis.createClient();
-
 exports.homeRoute = async (req, res, next) => {
     // BELAJAR REDIS
     // const data = {

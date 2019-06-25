@@ -2,33 +2,12 @@ const model = require('../models/index');
 const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-var url = require('url');
-
-var redis = require("redis");
-// const redis_url = url.parse(process.env.REDIS_URL);
-
-const settingan_redis = {
-    protocol: 'redis:',
-    slashes: true,
-    auth:
-     'h:p308a34d1a26bf77430ff2df1697dec8effe69540da5d2f4e2628d5976ddd03aa',
-    host: 'ec2-3-212-78-16.compute-1.amazonaws.com',
-    port: 17529,
-    hostname: 'ec2-3-212-78-16.compute-1.amazonaws.com',
-    hash: null,
-    search: null,
-    query: null,
-    pathname: null,
-    path: null,
-    href:
-     'redis://h:p308a34d1a26bf77430ff2df1697dec8effe69540da5d2f4e2628d5976ddd03aa@ec2-3-212-78-16.compute-1.amazonaws.com' }
-
-const client = redis.createClient(process.env.REDIS_URL ? settingan_redis : null);
+const redisClient = require('../util/redis')
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
 
-    client.get('login_portal:' + token, function (err, response) {
+    redisClient.get('login_portal:' + token, function (err, response) {
         if (err) {
             res.status(500).json({
                 message: "Somethin Went Wrong " + err,
@@ -44,7 +23,7 @@ exports.checkSession = (req, res, next) => {
                 status: false
             })
         } else {
-            res.status(200).json({ 
+            res.status(200).json({
                 message: `Token Found`,
                 data: JSON.parse(response),
                 status: true
@@ -158,7 +137,7 @@ exports.SocialLogin = (req, res, next) => {
         // ms('-1h')     // -3600000
         // ms('-200')    // -200
 
-        client.setex('login_portal:' + token, 60000, JSON.stringify(data_identity))
+        redisClient.setex('login_portal:' + token, 60000, JSON.stringify(data_identity))
 
         return res.status(200).json({
             "code": 200,
