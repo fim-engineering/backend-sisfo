@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 var redis = require("redis");
 const redis_url = process.env.REDIS_URL || null;
-const client = redis.createClient();
+const client = redis.createClient(redis_url);
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
