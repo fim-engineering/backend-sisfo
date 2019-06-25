@@ -4,9 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 var redis = require("redis");
-const redis_url = process.env.REDIS_URL ? process.env.REDIS_URL : null;
-console.log(redis_url)
-const client = redis.createClient(redis_url);
+const client = redis.createClient(process.env.REDIS_URL ? process.env.REDIS_URL : null);
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
