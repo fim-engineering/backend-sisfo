@@ -154,4 +154,77 @@ exports.SocialLogin = (req, res, next) => {
     })
 }
 
+exports.saveKtp = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+
+    redisClient.get('login_portal:' + token, function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+        const noKtp = req.body.noKtp;
+        const urlKtp = req.body.urlKtp;
+
+        // cari nomor ktp
+        model.Identity.findOne({
+            where: { ktpNumber: noKtp },
+            include: [{ model: model.User }]
+        }).then(result => {
+
+            // jika ada update, namu check user Id apakah null atau sudah ada
+            if (result) {
+                const userId_identity = result.userId;
+                // jika ada user Id maka, respon bahwa itu sudah dipake
+                if (userId_identity !== null) {
+                    return res.status(200).json({
+                        "status": false,
+                        "message": "Nomor KTP tersebut sudah digunakan oleh email " + result.email
+                    })
+                }
+
+                // jika ada ktp namun idUser null maka update
+                if (userId_identity == null && result !== null) {
+
+                    result.update({
+                        userId: userId
+                    })
+
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "KTP sudah terinput sebelumnya, User berhasil update"
+                    })
+                }
+            }
+
+            // jika result null artinya ga ada data sebelumnya sehingga update 2 kolom (nomor ktp dan url_ktp)
+            if (result == null) {
+                model.Identity.findOne({ where: { 'email': userIdentity.email } }).then(result => {
+                    result.update({
+                        ktpNumber: noKtp,
+                        ktpUrl: urlKtp,
+                        userId:userId
+                    })
+
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "KTP & Foto KTP berhasil terupload"
+                    })
+                }).catch(err => {
+                    return res.status(400).json({
+                        "status": false,
+                        "message": err
+                    })
+                })
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+
+
+
+
+    })
+
+
+}
+
 

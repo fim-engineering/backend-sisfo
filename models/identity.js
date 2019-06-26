@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     email:DataTypes.STRING
   }, {});
   Identity.associate = function(models) {
-    models.Identity.hasOne(models.User , { foreignKey: 'userId' })
+    models.Identity.belongsTo(models.User , { foreignKey: 'userId' })
   };
   return Identity;
 };

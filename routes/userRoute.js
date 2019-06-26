@@ -9,6 +9,7 @@ const isAuth = require('../middleware/is-auth-middleware');
 
 router.post('/login', userController.SocialLogin);
 router.post('/checksession', userController.checkSession);
+router.post('/savektp', userController.saveKtp);
 
 
 module.exports = router;
