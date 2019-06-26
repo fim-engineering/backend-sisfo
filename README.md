@@ -87,7 +87,7 @@
 }
 ```
 
-#### Update Profile
+#### Get Profile
 
 ```
 /auth/get-profile | POST
