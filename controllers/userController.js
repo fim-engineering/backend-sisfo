@@ -110,6 +110,8 @@ exports.SocialLogin = (req, res, next) => {
                 if (user.ktpNumber !== null && ktpUrl !== null) {
                     status = 2; //ada ktp/tidak ada ktp + ada url_ktp
                 }
+
+                uf
             }
 
             return status
@@ -119,8 +121,15 @@ exports.SocialLogin = (req, res, next) => {
 
         const data_identity = {
             email: userData.email,
-            userId: userData.id
+            userId: userData.id,
+            step: status
         }
+
+        model.findOne({ where: { email: userData.email } }).then(result => {
+            result.update({
+                status: status
+            })
+        })
 
         const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); // 
 
@@ -175,6 +184,14 @@ exports.saveKtp = async (req, res, next) => {
                 const userId_identity = result.userId;
                 // jika ada user Id maka, respon bahwa itu sudah dipake
                 if (userId_identity !== null) {
+
+                    // update step di model User
+                    model.User.findOne({ where: { email: result.email } }).then(result => {
+                        result.update({
+                            status: 0
+                        })
+                    })
+
                     return res.status(200).json({
                         "status": false,
                         "message": "Nomor KTP tersebut sudah digunakan oleh email " + result.email
@@ -183,25 +200,39 @@ exports.saveKtp = async (req, res, next) => {
 
                 // jika ada ktp namun idUser null maka update
                 if (userId_identity == null && result !== null) {
+                    // update step di model User
+                    model.User.findOne({ where: { email: result.email } }).then(result => {
+                        result.update({
+                            status: 1
+                        })
+                    })
 
                     result.update({
                         userId: userId
                     })
-
                     return res.status(200).json({
                         "status": true,
                         "message": "KTP sudah terinput sebelumnya, User berhasil update"
                     })
+
+
                 }
             }
 
             // jika result null artinya ga ada data sebelumnya sehingga update 2 kolom (nomor ktp dan url_ktp)
             if (result == null) {
                 model.Identity.findOne({ where: { 'email': userIdentity.email } }).then(result => {
+                    // update step di model User
+                    model.User.findOne({ where: { email: result.email } }).then(result => {                      
+                        result.update({
+                            status: 2
+                        })
+                    })
+
                     result.update({
                         ktpNumber: noKtp,
                         ktpUrl: urlKtp,
-                        userId:userId
+                        userId: userId
                     })
 
                     return res.status(200).json({
@@ -218,13 +249,72 @@ exports.saveKtp = async (req, res, next) => {
         }).catch(err => {
             console.log(err)
         })
-
-
-
-
     })
-
-
 }
 
+exports.saveProfile = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    const name = req.body.name;
+    const address = req.body.address;
+    const phoneNumber = req.body.phone;
+    const universityId = req.body.universityId;
+
+
+    redisClient.get('login_portal:' + token, function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        model.Identity.findOne({ where: { userId: userId } }).then(result => {
+            
+            return result.update({
+                name: name,
+                addrees: address,
+                phone: phoneNumber,
+                universityId: universityId
+            }).then(result => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Sukses Update",
+                    "data": result
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }).catch(err => {
+            return res.status(400).json({
+                "status": false,
+                "message": "Something Error " + err,
+                "data": null
+            })
+        })
+    })
+}
+
+exports.getProfile = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    redisClient.get('login_portal:' + token, function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        model.User.findOne({ where: { id: userId }, include: [{ model: model.Identity }] }).then(result => {
+            return res.status(200).json({
+                "status": true,
+                "message": "Data Fetched",
+                "data": result
+            })
+        }).catch(err => {
+            return res.status(400).json({
+                "status": false,
+                "message": "Something Error " + err,
+                "data": null
+            })
+        })
+    })
+}
 
