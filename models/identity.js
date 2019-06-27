@@ -6,10 +6,12 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     address: DataTypes.TEXT,
     ktpUrl: DataTypes.STRING,
-    email:DataTypes.STRING
+    email:DataTypes.STRING,
+    phone: DataTypes.STRING,
+    universityId: DataTypes.INTEGER
   }, {});
   Identity.associate = function(models) {
-    models.Identity.hasOne(models.User , { foreignKey: 'userId' })
+    models.Identity.belongsTo(models.User , { foreignKey: 'userId' })
   };
   return Identity;
 };

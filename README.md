@@ -62,4 +62,82 @@
 }
 ```
 
+#### Save KTP
+
+```
+/auth/savektp | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	noKtp : INT,
+	urlKtp : STRING
+}
+```
+
+- Return :
+
+```
+{  
+    "status": false/true,
+    "message": "Nomor KTP tersebut sudah digunakan oleh email <email>" / "KTP sudah terinput sebelumnya, User berhasil update" / "KTP & Foto KTP berhasil terupload"
+}
+```
+
+#### Get Profile
+
+```
+/auth/get-profile | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true/false,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+#### Update Profile
+
+```
+/auth/save-profile | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	"name": "Bagus Bin Paijo",
+	"address": "Jl Lurus yang Engkau Ridhoi " ,
+	"phone": "0821122222222" ,
+	"universityId": "23" 
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true/false,
+    "message": "Sukses Update",
+	"data":{}
+}
+```
+
 
