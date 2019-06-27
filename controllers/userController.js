@@ -107,11 +107,11 @@ exports.SocialLogin = (req, res, next) => {
                 })
 
                 status = 1; //ada ktp/tidak ada ktp + tidak ada url_ktp
-                if (user.ktpNumber !== null && ktpUrl !== null) {
+                if (user.ktpNumber !== null && user.ktpUrl !== null) {
                     status = 2; //ada ktp/tidak ada ktp + ada url_ktp
                 }
 
-                uf
+                
             }
 
             return status
@@ -125,7 +125,7 @@ exports.SocialLogin = (req, res, next) => {
             step: status
         }
 
-        model.findOne({ where: { email: userData.email } }).then(result => {
+        model.User.findOne({ where: { email: userData.email } }).then(result => {
             result.update({
                 status: status
             })
