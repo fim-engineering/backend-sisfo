@@ -10,6 +10,7 @@ const { Client } = require('pg');
 const userRoute = require('./routes/userRoute');
 const homeRoute = require('./routes/homeRoute');
 const dataRoute = require('./routes/dataRoute');
+const tunnelRoute = require('./routes/tunnelRoute');
 // init express js
 const app = express();
 
@@ -35,6 +36,7 @@ app.use((req,res,next)=> {
 app.use('/auth', userRoute);
 app.use('/', homeRoute)
 app.use('/data', dataRoute);
+app.use('/tunnel', tunnelRoute);
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 
