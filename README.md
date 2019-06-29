@@ -285,3 +285,136 @@
 	"data":{}
 }
 ```
+
+
+
+# CRUD untuk Question (Pertanyaan)
+
+#### Question List
+
+```
+/question/list | GET
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+#### Question Create
+
+```
+/question/create | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	question: "STRING",
+	tunnelId : "INT",
+	batchFim : "STRING"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Created",
+	"data":{}
+}
+```
+
+#### Question Read
+
+```
+/question/read | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idQuestion: "1"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+
+#### Question Update
+
+```
+/question/update | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idQuestion: idQuestion,
+    question:  question,
+    tunnelId: tunnelId,
+    batchFim: batchFim,
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Updated",
+	"data":{}
+}
+```
+
+#### Question Delete
+
+```
+/question/delete | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idQuestion: "1"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Deleted",
+	"data":{}
+}
+```

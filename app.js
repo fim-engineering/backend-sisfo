@@ -37,6 +37,8 @@ app.use('/auth', userRoute);
 app.use('/', homeRoute)
 app.use('/data', dataRoute);
 app.use('/tunnel', tunnelRoute);
+app.use('/question', questionRoute);
+
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 
