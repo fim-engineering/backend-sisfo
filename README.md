@@ -140,4 +140,27 @@
 }
 ```
 
+#### Get University Data
+
+```
+/data/get-university | GET
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
 
