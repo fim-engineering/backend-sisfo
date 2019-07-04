@@ -69,7 +69,7 @@
 
 ```
 {	
-	noKtp : INT,
+	noKtp : STRING,
 	urlKtp : STRING
 }
 ```
@@ -122,7 +122,8 @@
 	"name": "Bagus Bin Paijo",
 	"address": "Jl Lurus yang Engkau Ridhoi " ,
 	"phone": "0821122222222" ,
-	"universityId": "23" 
+	"universityId": "23" ,
+	"urlPhoto":"https://www.cloudinary.com"
 }
 ```
 
@@ -171,7 +172,9 @@
 - Body :
 
 ```
-{}
+{
+	tunnelId: "INTEGER" // id Jalur Masuk
+}
 ```
 
 - Return :
@@ -300,7 +303,9 @@
 - Body :
 
 ```
-{}
+{
+	idTunnel: "INTEGER" // ID Jalur Masuk
+}
 ```
 
 - Return :

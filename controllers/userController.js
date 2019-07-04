@@ -111,7 +111,7 @@ exports.SocialLogin = (req, res, next) => {
                     status = 2; //ada ktp/tidak ada ktp + ada url_ktp
                 }
 
-                
+
             }
 
             return status
@@ -182,15 +182,23 @@ exports.saveKtp = async (req, res, next) => {
             // jika ada update, namu check user Id apakah null atau sudah ada
             if (result) {
                 const userId_identity = result.userId;
-                // jika ada user Id maka, respon bahwa itu sudah dipake
-                if (userId_identity !== null) {
+                // jika ada user Id dan tidak sama dengan email login maka, respon bahwa itu sudah dipake
+                if (userId_identity !== null && userIdentity.email !== result.email) {
 
                     // update step di model User
                     model.User.findOne({ where: { email: result.email } }).then(result => {
                         result.update({
                             status: 0
                         })
+                    }).catch(err => {
+                        return res.status(400).json({
+                            "status": false,
+                            "message": err
+                        })
                     })
+
+                    // update step in Redis
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, status: 0 }))
 
                     return res.status(200).json({
                         "status": false,
@@ -198,8 +206,9 @@ exports.saveKtp = async (req, res, next) => {
                     })
                 }
 
-                // jika ada ktp namun idUser null maka update
-                if (userId_identity == null && result !== null) {
+
+                // jika ada ktp namun idUser null maka update artinya belum terhubung ke table User. ini detektor FIM 21 
+                else if (userId_identity == null) {
                     // update step di model User
                     model.User.findOne({ where: { email: result.email } }).then(result => {
                         result.update({
@@ -207,15 +216,46 @@ exports.saveKtp = async (req, res, next) => {
                         })
                     })
 
+                    // update di Identity
                     result.update({
                         userId: userId
                     })
+
+                    // update step in Redis
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, status: 1 }))
+
                     return res.status(200).json({
                         "status": true,
                         "message": "KTP sudah terinput sebelumnya, User berhasil update"
                     })
+                }
+
+                else {
+                    model.User.findOne({ where: { email: result.email } }).then(result => {
+                        result.update({
+                            status: 2
+                        })
+                    }).catch(err => {
+                        return res.status(400).json({
+                            "status": false,
+                            "message": err
+                        })
+                    })
+
+                    // update step in Redis
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, status: 2 }))
+
+                    result.update({
+                        ktpNumber: noKtp,
+                        ktpUrl: urlKtp,
+                        userId: userId
+                    })
 
 
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "KTP " + result.email + " Berhasil diupdate"
+                    })
                 }
             }
 
@@ -223,11 +263,14 @@ exports.saveKtp = async (req, res, next) => {
             if (result == null) {
                 model.Identity.findOne({ where: { 'email': userIdentity.email } }).then(result => {
                     // update step di model User
-                    model.User.findOne({ where: { email: result.email } }).then(result => {                      
+                    model.User.findOne({ where: { email: result.email } }).then(result => {
                         result.update({
                             status: 2
                         })
                     })
+
+                    // update step in Redis
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, status: 2 }))
 
                     result.update({
                         ktpNumber: noKtp,
@@ -259,6 +302,7 @@ exports.saveProfile = async (req, res, next) => {
     const address = req.body.address;
     const phoneNumber = req.body.phone;
     const universityId = req.body.universityId;
+    const url_photo = req.body.urlPhoto;
 
 
     redisClient.get('login_portal:' + token, function (err, response) {
@@ -266,10 +310,10 @@ exports.saveProfile = async (req, res, next) => {
         const userId = userIdentity.userId;
 
         model.Identity.findOne({ where: { userId: userId } }).then(result => {
-            
+
             return result.update({
                 name: name,
-                addrees: address,
+                address: address,
                 phone: phoneNumber,
                 universityId: universityId
             }).then(result => {

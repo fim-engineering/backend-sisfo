@@ -3,11 +3,13 @@ const redisClient = require('../util/redis');
 
 
 exports.lists = async (req, res, next) => {
+
     const data = {
-        idTunnel:req.body.tunnelId
+        idTunnel:req.body.tunnelId,
+        ktpNumber:req.body.ktpNumber
     }
 
-    model.Question.findAll({where:{tunnelId:data.tunnelId}}).then(result => {
+    model.Answer.findAll({where:data}).then(result => {
         res.status(200).json({
             status: true,
             message: "data fetched",
@@ -25,8 +27,11 @@ exports.create = async (req, res, next) => {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
 
+        const ktpNumber = req.body.ktpNumber;
+        const theanswer = req.body.answers; // Array
+        // jawaban datang dalam bentu Array
         const data = {
-            question: req.body.question,
+            Answer: req.body.Answer,
             tunnelId:req.body.tunnelId,
             batchFim:req.body.batchFim,
             createdBy: userId
@@ -40,7 +45,7 @@ exports.create = async (req, res, next) => {
             });
         }
 
-        model.Question.create(data).then(result => {
+        model.Answer.create(data).then(result => {
             res.status(200).json({
                 status: true,
                 message: "Data Created",
@@ -58,8 +63,8 @@ exports.create = async (req, res, next) => {
 }
 
 exports.read = async (req, res, next) => {
-    const idQuestion = req.body.idQuestion;
-    model.Question.findByPk(idQuestion).then(result => {
+    const idAnswer = req.body.idAnswer;
+    model.Answer.findByPk(idAnswer).then(result => {
         res.status(200).json({
             status: true,
             message: "Data Fetched",
@@ -85,14 +90,14 @@ exports.update = async (req, res, next) => {
         }
 
         const data = {
-            idQuestion:req.body.idQuestion,
-            question: req.body.question,
+            idAnswer:req.body.idAnswer,
+            Answer: req.body.Answer,
             tunnelId:req.body.tunnelId,
             batchFim:req.body.batchFim,
             createdBy: userId
         }
 
-        model.Question.update(data, { where: { id: data.idQuestion } }
+        model.Answer.update(data, { where: { id: data.idAnswer } }
         ).then((status,result) => {
             res.status(200).json({
                 status: true,
@@ -111,7 +116,7 @@ exports.update = async (req, res, next) => {
 }
 
 exports.delete = async (req, res, next) => {
-    model.Question.destroy({ where: { id: req.body.idQuestion} }).then(result=>{
+    model.Answer.destroy({ where: { id: req.body.idAnswer} }).then(result=>{
         res.status(200).json({
             status: true,
             message: "Data Deleted",
