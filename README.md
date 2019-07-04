@@ -119,11 +119,23 @@
 
 ```
 {	
-	"name": "Bagus Bin Paijo",
-	"address": "Jl Lurus yang Engkau Ridhoi " ,
-	"phone": "0821122222222" ,
-	"universityId": "23" ,
-	"urlPhoto":"https://www.cloudinary.com"
+		"name" : req.body.name,
+        "address": req.body.address,
+        "phone": req.body.phone,
+        "universityId": req.body.universityId,
+        "photoUrl": req.body.urlPhoto,
+        "headline" : req.body.headline,
+        "photoUrl" : req.body.photoUrl,
+        "religion" : req.body.religion,
+        "bornPlace" : req.body.bornPlace,
+        "bornDate" : req.body.bornDate,
+        "cityAddress" : req.body.cityAddress,
+        "provinceAddress" : req.body.provinceAddress,
+        "emergencyPhone" : req.body.emergencyPhone,
+        "gender" : req.body.gender,
+        "bloodGroup" : req.body.bloodGroup,
+        "hoby" : req.body.hoby,
+        "expertise" : req.body.expertise
 }
 ```
 

@@ -298,12 +298,25 @@ exports.saveKtp = async (req, res, next) => {
 exports.saveProfile = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
-    const name = req.body.name;
-    const address = req.body.address;
-    const phoneNumber = req.body.phone;
-    const universityId = req.body.universityId;
-    const url_photo = req.body.urlPhoto;
-
+    const data = {
+        name : req.body.name,
+        address: req.body.address,
+        phone: req.body.phone,
+        universityId: req.body.universityId,
+        photoUrl: req.body.urlPhoto,
+        headline : req.body.headline,
+        photoUrl : req.body.photoUrl,
+        religion : req.body.religion,
+        bornPlace : req.body.bornPlace,
+        bornDate : req.body.bornDate,
+        cityAddress : req.body.cityAddress,
+        provinceAddress : req.body.provinceAddress,
+        emergencyPhone : req.body.emergencyPhone,
+        gender : req.body.gender,
+        bloodGroup : req.body.bloodGroup,
+        hoby : req.body.hoby,
+        expertise : req.body.expertise
+    }
 
     redisClient.get('login_portal:' + token, function (err, response) {
         const userIdentity = JSON.parse(response);
@@ -311,12 +324,7 @@ exports.saveProfile = async (req, res, next) => {
 
         model.Identity.findOne({ where: { userId: userId } }).then(result => {
 
-            return result.update({
-                name: name,
-                address: address,
-                phone: phoneNumber,
-                universityId: universityId
-            }).then(result => {
+            return result.update(data).then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Sukses Update",

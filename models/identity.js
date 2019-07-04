@@ -6,12 +6,25 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     address: DataTypes.TEXT,
     ktpUrl: DataTypes.STRING,
-    email:DataTypes.STRING,
+    photoUrl:DataTypes.STRING,
+    email: DataTypes.STRING,
     phone: DataTypes.STRING,
-    universityId: DataTypes.INTEGER
-  }, {});
-  Identity.associate = function(models) {
-    models.Identity.belongsTo(models.User , { foreignKey: 'userId' })
-  };
-  return Identity;
+    universityId: DataTypes.INTEGER,
+    headline: DataTypes.STRING,
+    photoUrl: DataTypes.STRING,
+    religion: DataTypes.STRING,
+    bornPlace: DataTypes.STRING,
+    bornDate: DataTypes.DATE,
+    cityAddress: DataTypes.STRING,
+    provinceAddress: DataTypes.STRING,
+    emergencyPhone: DataTypes.STRING,
+    gender: DataTypes.STRING,
+    bloodGroup: DataTypes.STRING,
+    hoby: DataTypes.TEXT,
+    expertise: DataTypes.STRING,
+}, {});
+Identity.associate = function (models) {
+  models.Identity.belongsTo(models.User, { foreignKey: 'userId' })
+};
+return Identity;
 };
