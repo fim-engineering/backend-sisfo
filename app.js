@@ -11,6 +11,9 @@ const userRoute = require('./routes/userRoute');
 const homeRoute = require('./routes/homeRoute');
 const dataRoute = require('./routes/dataRoute');
 const tunnelRoute = require('./routes/tunnelRoute');
+const questionRoute = require('./routes/questionRoute');
+const answerRoute = require('./routes/answerRoute');
+
 // init express js
 const app = express();
 
@@ -30,6 +33,8 @@ app.use('/auth', userRoute);
 app.use('/', homeRoute)
 app.use('/data', dataRoute);
 app.use('/tunnel', tunnelRoute);
+app.use('/question', questionRoute);
+app.use('/answer',answerRoute);
 
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
