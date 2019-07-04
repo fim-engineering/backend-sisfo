@@ -1,11 +1,11 @@
 {
   "development": {
-    "username": "root",
-    "password": null,
+    "username": "postgres",
+    "password": "changeme",
     "database": "fim_portal_backend",
     "logging": false,
     "host": "127.0.0.1",
-    "dialect": "mysql",
+    "dialect": "postgres",
     "timezone": "+07:00"
   },
   "test": {
