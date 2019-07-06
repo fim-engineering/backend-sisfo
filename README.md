@@ -3,6 +3,12 @@
 # Documentation RESTful API FIM 2019
 <!-- <img width="300" src="https://yt3.ggpht.com/a/AGF-l79eetQ4HNIL6hyZdbO82yr3GeshtGC737s8EQ=s900-mo-c-c0xffffffff-rj-k-no"> -->
 
+#### Development
+1. `npm install`
+2. `npm run docker:up` for running postgres docker
+3. `npm run migrate` for migrated db in PG
+4. `npm run docker:down` for stop postgress docker (*PLEASE DO THIS AFTER YOUR WORK!*)
+
 #### Login
 
 ```

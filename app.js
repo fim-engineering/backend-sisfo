@@ -21,13 +21,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-//POSTGREE
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    // ssl: true,
-  });
-  client.connect();  
-
 // CORS
 app.use((req,res,next)=> {
     res.setHeader('Access-Control-Allow-Origin', '*' );
