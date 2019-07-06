@@ -10,18 +10,15 @@ const { Client } = require('pg');
 const userRoute = require('./routes/userRoute');
 const homeRoute = require('./routes/homeRoute');
 const dataRoute = require('./routes/dataRoute');
+const tunnelRoute = require('./routes/tunnelRoute');
+const questionRoute = require('./routes/questionRoute');
+const answerRoute = require('./routes/answerRoute');
+
 // init express js
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-//POSTGREE
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    // ssl: true,
-  });
-  client.connect();  
 
 // CORS
 app.use((req,res,next)=> {
@@ -35,6 +32,10 @@ app.use((req,res,next)=> {
 app.use('/auth', userRoute);
 app.use('/', homeRoute)
 app.use('/data', dataRoute);
+app.use('/tunnel', tunnelRoute);
+app.use('/question', questionRoute);
+app.use('/answer',answerRoute);
+
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 

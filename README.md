@@ -3,9 +3,11 @@
 # Documentation RESTful API FIM 2019
 <!-- <img width="300" src="https://yt3.ggpht.com/a/AGF-l79eetQ4HNIL6hyZdbO82yr3GeshtGC737s8EQ=s900-mo-c-c0xffffffff-rj-k-no"> -->
 
-
-
-
+#### Development
+1. `npm install`
+2. `npm run docker:up` for running postgres docker
+3. `npm run migrate` for migrated db in PG
+4. `npm run docker:down` for stop postgress docker (*PLEASE DO THIS AFTER YOUR WORK!*)
 
 #### Login
 
@@ -73,7 +75,7 @@
 
 ```
 {	
-	noKtp : INT,
+	noKtp : STRING,
 	urlKtp : STRING
 }
 ```
@@ -123,10 +125,23 @@
 
 ```
 {	
-	"name": "Bagus Bin Paijo",
-	"address": "Jl Lurus yang Engkau Ridhoi " ,
-	"phone": "0821122222222" ,
-	"universityId": "23" 
+		"name" : req.body.name,
+        "address": req.body.address,
+        "phone": req.body.phone,
+        "universityId": req.body.universityId,
+        "photoUrl": req.body.urlPhoto,
+        "headline" : req.body.headline,
+        "photoUrl" : req.body.photoUrl,
+        "religion" : req.body.religion,
+        "bornPlace" : req.body.bornPlace,
+        "bornDate" : req.body.bornDate,
+        "cityAddress" : req.body.cityAddress,
+        "provinceAddress" : req.body.provinceAddress,
+        "emergencyPhone" : req.body.emergencyPhone,
+        "gender" : req.body.gender,
+        "bloodGroup" : req.body.bloodGroup,
+        "hoby" : req.body.hoby,
+        "expertise" : req.body.expertise
 }
 ```
 
@@ -163,4 +178,266 @@
 }
 ```
 
+# CRUD untuk Tunnel (Jalur)
 
+#### Tunnel List
+
+```
+/tunnel/list | GET
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	tunnelId: "INTEGER" // id Jalur Masuk
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+#### Tunnel Create
+
+```
+/tunnel/create | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	name: "Next Gen"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Created",
+	"data":{}
+}
+```
+
+#### Tunnel Read
+
+```
+/tunnel/read | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idTunnel: "1"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+
+#### Tunnel Update
+
+```
+/tunnel/update | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idTunnel: "1"
+	name: "Next Gen"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Updated",
+	"data":{}
+}
+```
+
+#### Tunnel Delete
+
+```
+/tunnel/delete | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idTunnel: "1"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Deleted",
+	"data":{}
+}
+```
+
+
+
+# CRUD untuk Question (Pertanyaan)
+
+#### Question List
+
+```
+/question/list | GET
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	idTunnel: "INTEGER" // ID Jalur Masuk
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+#### Question Create
+
+```
+/question/create | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	question: "STRING",
+	tunnelId : "INT",
+	batchFim : "STRING"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Created",
+	"data":{}
+}
+```
+
+#### Question Read
+
+```
+/question/read | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idQuestion: "1"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+
+#### Question Update
+
+```
+/question/update | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idQuestion: idQuestion,
+    question:  question,
+    tunnelId: tunnelId,
+    batchFim: batchFim,
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Updated",
+	"data":{}
+}
+```
+
+#### Question Delete
+
+```
+/question/delete | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	idQuestion: "1"
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Deleted",
+	"data":{}
+}
+```
