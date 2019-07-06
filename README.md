@@ -348,6 +348,13 @@
 ```
 {
 	question: "STRING",
+	isMany: "INTEGER BOOL" 1 /0,
+	header: OBJECT
+		{
+			'header_name':header_html_type, for <input type="header_html_type">
+			'no':'number'
+		}
+	
 	tunnelId : "INT",
 	batchFim : "STRING"
 }
@@ -402,6 +409,12 @@
 {	
 	idQuestion: idQuestion,
     question:  question,
+	isMany: "INTEGER BOOL" 1 /0,
+	header: OBJECT
+		{
+			'header_name':header_html_type, for <input type="header_html_type">
+			'no':'number'
+		}
     tunnelId: tunnelId,
     batchFim: batchFim,
 }
@@ -439,5 +452,149 @@
     "status": true,
     "message": "Data Deleted",
 	"data":{}
+}
+```
+
+# CRUD untuk Answer (Jawaban)
+
+#### Answer List
+
+```
+/answer/lists | GET
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	idTunnel: req.body.tunnelId,
+    ktpNumber: req.body.ktpNumber
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+#### Answer Save
+
+```
+/answer/lists | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	 Answer: req.body.answers, // Array
+            // [
+            //     {
+            //         questionId:1,
+            //         answer: JSON with serialize header
+            //     }
+            // ]
+
+    ktpNumber: req.body.ktpNumber,
+    tunnelId: req.body.tunnelId,
+    createdBy: userId
+}
+```
+
+- Return :
+
+```
+{  
+    "status": "true",
+    "message": "Answer Saved",
+    "data": "userIdentity"
+}
+```
+
+
+# CRUD untuk Summary (Mapping dan Scoring)
+
+#### Participant List Based Tunne;
+
+```
+/summary/lists | GET
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+#### Final Update
+
+```
+/summary/update-final-submit | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	 ktpNumber: req.body.ktpNumber,
+     tunnelId: req.body.tunneId
+}
+```
+
+- Return :
+
+```
+{  
+    "status": "true",
+    "message": "Data Updated",
+    "data": data
+}
+```
+
+#### recruiter Evaluator Update
+
+```
+/summary/update-evaluator | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	    ktpNumber: req.body.ktpNumber,
+    	tunnelId: req.body.tunneId,
+        recruiterId: req.body.recruiterId
+}
+```
+
+- Return :
+
+```
+{  
+    "status": "true",
+    "message": "Data Updated",
+    "data": data
 }
 ```

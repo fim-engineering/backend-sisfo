@@ -4,7 +4,8 @@ module.exports = (sequelize, DataTypes) => {
     answer: DataTypes.TEXT,
     ktpNumber: DataTypes.STRING,
     tunnelId: DataTypes.INTEGER,
-    createdBy: DataTypes.INTEGER
+    createdBy: DataTypes.INTEGER,
+    questionId:DataTypes.INTEGER
   }, {});
   Answer.associate = function(models) {
     // associations can be defined here

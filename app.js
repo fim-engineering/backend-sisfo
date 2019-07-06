@@ -13,6 +13,7 @@ const dataRoute = require('./routes/dataRoute');
 const tunnelRoute = require('./routes/tunnelRoute');
 const questionRoute = require('./routes/questionRoute');
 const answerRoute = require('./routes/answerRoute');
+const summaryRoute = require('./routes/summaryRoute');
 
 // init express js
 const app = express();
@@ -35,6 +36,8 @@ app.use('/data', dataRoute);
 app.use('/tunnel', tunnelRoute);
 app.use('/question', questionRoute);
 app.use('/answer',answerRoute);
+app.use('/summary',summaryRoute);
+
 
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})

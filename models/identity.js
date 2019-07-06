@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
 }, {});
 Identity.associate = function (models) {
   models.Identity.belongsTo(models.User, { foreignKey: 'userId' })
+  models.Identity.belongsToMany(models.Tunnel, {through: models.Summary, foreignKey: 'ktpNumber'});
 };
 return Identity;
 };
