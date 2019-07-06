@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     createdBy: DataTypes.INTEGER
   }, {});
   Tunnel.associate = function(models) {
-    // associations can be defined here
+    models.Tunnel.belongsToMany(models.Identity, {through: models.Summary, foreignKey: 'tunnelId'});
   };
   return Tunnel;
 };

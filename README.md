@@ -511,3 +511,84 @@
     "data": "userIdentity"
 }
 ```
+
+
+# CRUD untuk Summary (Mapping dan Scoring)
+
+#### Participant List Based Tunne;
+
+```
+/summary/lists | GET
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+#### Final Update
+
+```
+/summary/update-final-submit | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	 ktpNumber: req.body.ktpNumber,
+     tunnelId: req.body.tunneId
+}
+```
+
+- Return :
+
+```
+{  
+    "status": "true",
+    "message": "Data Updated",
+    "data": data
+}
+```
+
+#### recruiter Evaluator Update
+
+```
+/summary/update-evaluator | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	    ktpNumber: req.body.ktpNumber,
+    	tunnelId: req.body.tunneId,
+        recruiterId: req.body.recruiterId
+}
+```
+
+- Return :
+
+```
+{  
+    "status": "true",
+    "message": "Data Updated",
+    "data": data
+}
+```

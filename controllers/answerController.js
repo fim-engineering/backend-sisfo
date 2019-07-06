@@ -69,7 +69,21 @@ exports.saveAnswer = async (req, res, next) => {
                         ktpNumber: data.ktpNumber,
                         tunnelId: data.tunnelId
                     })
-                }else{
+
+                    // create di summary model mendeteksi dia ikut jalur apa 
+                    // berdasarkan pertanyaan yang dia jawab
+                    model.Summary.findOrCreate({
+                        where: {
+                            tunnelId: data.tunnelId,
+                            ktpNumber: data.ktpNumber
+                        },
+                        defaults: {
+                            isFinal:0                            
+                        }
+                    })
+
+
+                } else {
                     result.update({
                         answer: JSON.stringify(value.answer),
                         questionId: value.questionId,
