@@ -27,6 +27,8 @@ exports.create = async (req, res, next) => {
 
         const data = {
             question: req.body.question,
+            isMany:req.body.isMany,
+            header: JSON.stringify(req.body.header),
             tunnelId:req.body.tunnelId,
             batchFim:req.body.batchFim,
             createdBy: userId
@@ -87,6 +89,8 @@ exports.update = async (req, res, next) => {
         const data = {
             idQuestion:req.body.idQuestion,
             question: req.body.question,
+            isMany:req.body.isMany,
+            header: JSON.stringify(req.body.header),
             tunnelId:req.body.tunnelId,
             batchFim:req.body.batchFim,
             createdBy: userId

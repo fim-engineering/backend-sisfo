@@ -342,6 +342,13 @@
 ```
 {
 	question: "STRING",
+	isMany: "INTEGER BOOL" 1 /0,
+	header: OBJECT
+		{
+			'header_name':header_html_type, for <input type="header_html_type">
+			'no':'number'
+		}
+	
 	tunnelId : "INT",
 	batchFim : "STRING"
 }
@@ -396,6 +403,12 @@
 {	
 	idQuestion: idQuestion,
     question:  question,
+	isMany: "INTEGER BOOL" 1 /0,
+	header: OBJECT
+		{
+			'header_name':header_html_type, for <input type="header_html_type">
+			'no':'number'
+		}
     tunnelId: tunnelId,
     batchFim: batchFim,
 }

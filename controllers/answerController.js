@@ -21,6 +21,7 @@ exports.lists = async (req, res, next) => {
 }
 
 
+
 exports.create = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
     redisClient.get('login_portal:' + token, function (err, response) {
