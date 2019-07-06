@@ -448,3 +448,66 @@
 	"data":{}
 }
 ```
+
+# CRUD untuk Answer (Jawaban)
+
+#### Answer List
+
+```
+/answer/lists | GET
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	idTunnel: req.body.tunnelId,
+    ktpNumber: req.body.ktpNumber
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Data Fetched",
+	"data":{}
+}
+```
+
+#### Answer Save
+
+```
+/answer/lists | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{
+	 Answer: req.body.answers, // Array
+            // [
+            //     {
+            //         questionId:1,
+            //         answer: JSON with serialize header
+            //     }
+            // ]
+
+    ktpNumber: req.body.ktpNumber,
+    tunnelId: req.body.tunnelId,
+    createdBy: userId
+}
+```
+
+- Return :
+
+```
+{  
+    "status": "true",
+    "message": "Answer Saved",
+    "data": "userIdentity"
+}
+```
