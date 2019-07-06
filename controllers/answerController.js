@@ -64,14 +64,14 @@ exports.saveAnswer = async (req, res, next) => {
                 // jika belum ada idPertanyaan dengan nomor ktp tersebut
                 if (result == null) {
                     model.Answer.create({
-                        answer: value.answer,
+                        answer: JSON.stringify(value.answer), // bentuk object
                         questionId: value.questionId,
                         ktpNumber: data.ktpNumber,
                         tunnelId: data.tunnelId
                     })
                 }else{
                     result.update({
-                        answer: value.answer,
+                        answer: JSON.stringify(value.answer),
                         questionId: value.questionId,
                         ktpNumber: data.ktpNumber,
                         tunnelId: data.tunnelId
