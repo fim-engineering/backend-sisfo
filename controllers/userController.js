@@ -91,7 +91,7 @@ exports.SocialLogin = (req, res, next) => {
         // check KTP di tabel identity jika null bikin, jika ada update
         await model.Identity.findOne({ where: { email: userData.email } }).then(user => {
 
-            if (user === null) {
+            if (user == null) {
                 model.Identity.create({
                     email: userData.email,
                     userId: userData.id,
