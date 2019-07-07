@@ -1,9 +1,10 @@
+const path = require('path'); 
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+require('./newrelic');
 const express = require('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const compression = require('compression');
-const path = require('path'); 
-require('dotenv').config({ path: path.join(__dirname, '.env') });
 const { Client } = require('pg');
 
 // Route Require
