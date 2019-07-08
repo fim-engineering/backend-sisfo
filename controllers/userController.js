@@ -88,6 +88,7 @@ exports.SocialLogin = (req, res, next) => {
     }).then(async ([user, created]) => {
         const userData = await user.get();
         let status = 0;
+        
         // check KTP di tabel identity jika null bikin, jika ada update
         await model.Identity.findOne({ where: { email: userData.email } }).then(user => {
 
@@ -96,6 +97,14 @@ exports.SocialLogin = (req, res, next) => {
                     email: userData.email,
                     userId: userData.id,
                     name: name
+                })
+
+                model.User.findOne({ where: { email: userData.email } }).then(result => {
+                    if(result.status <=2){
+                        result.update({
+                            status: 0
+                        })
+                    }
                 })
             }
             // update
@@ -106,12 +115,25 @@ exports.SocialLogin = (req, res, next) => {
                     name: name
                 })
 
-                status = 1; //ada ktp/tidak ada ktp + tidak ada url_ktp
-                if (user.ktpNumber !== null && user.ktpUrl !== null) {
-                    status = 2; //ada ktp/tidak ada ktp + ada url_ktp
-                }
+                status = 1; //ada ktp/tidak ada ktp + tidak ada url_ktp    
+                model.User.findOne({ where: { email: userData.email } }).then(result => {
+                    if(result.status <=2){
+                        result.update({
+                            status: 1
+                        })
+                    }
+                })        
+            }
 
-
+            if (user.ktpNumber !== null && user.ktpUrl !== null) {
+                status = 2; //ada ktp/tidak ada ktp + ada url_ktp
+                model.User.findOne({ where: { email: userData.email } }).then(result => {
+                    if(result.status <=2){
+                        result.update({
+                            status: 2
+                        })
+                    }
+                })
             }
 
             return status
@@ -119,17 +141,18 @@ exports.SocialLogin = (req, res, next) => {
             console.log(err)
         });
 
+        const statusnya = await model.User.findOne({ where: { email: userData.email } }).then(result => {
+            return result.status;
+        })
+
         const data_identity = {
             email: userData.email,
             userId: userData.id,
-            step: status
+            step: statusnya
         }
 
-        model.User.findOne({ where: { email: userData.email } }).then(result => {
-            result.update({
-                status: status
-            })
-        })
+
+
 
         const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); // 
 
@@ -151,7 +174,7 @@ exports.SocialLogin = (req, res, next) => {
         return res.status(200).json({
             "code": 200,
             "token": token,
-            "status": status
+            "status": statusnya
         });
 
     }).catch(err => {
@@ -328,6 +351,7 @@ exports.saveProfile = async (req, res, next) => {
 
                 // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
                 model.User.findOne({ where: { email: userIdentity.email } }).then(datauser => {
+                    
                     datauser.update({
                         status: 3
                     })
