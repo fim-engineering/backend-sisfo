@@ -198,7 +198,7 @@ exports.saveKtp = async (req, res, next) => {
                     })
 
                     // update step in Redis
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, status: 0 }))
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 0 }))
 
                     return res.status(200).json({
                         "status": false,
@@ -222,7 +222,7 @@ exports.saveKtp = async (req, res, next) => {
                     })
 
                     // update step in Redis
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, status: 1 }))
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 1 }))
 
                     return res.status(200).json({
                         "status": true,
@@ -243,7 +243,7 @@ exports.saveKtp = async (req, res, next) => {
                     })
 
                     // update step in Redis
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, status: 2 }))
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
 
                     result.update({
                         ktpNumber: noKtp,
@@ -267,10 +267,10 @@ exports.saveKtp = async (req, res, next) => {
                         result.update({
                             status: 2
                         })
-                    })
+                    })                    
 
                     // update step in Redis
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, status: 2 }))
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
 
                     result.update({
                         ktpNumber: noKtp,
