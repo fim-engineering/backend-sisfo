@@ -290,7 +290,7 @@ exports.saveKtp = async (req, res, next) => {
                         result.update({
                             status: 2
                         })
-                    })
+                    })                    
 
                     // update step in Redis
                     redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
@@ -350,6 +350,7 @@ exports.saveProfile = async (req, res, next) => {
             return result.update(data).then(result => {
 
                 // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
+
                 model.User.findOne({ where: { email: userIdentity.email } }).then(datauser => {
                     
                     datauser.update({
@@ -362,8 +363,7 @@ exports.saveProfile = async (req, res, next) => {
                         "status": true,
                         "message": "Sukses Update",
                         "data": result
-                    })
-
+                    })              
                 })
 
             }).catch(err => {
