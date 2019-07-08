@@ -101,6 +101,13 @@ exports.saveAnswer = async (req, res, next) => {
             })
         })
 
+         // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
+         model.User.findOne({ where: { email: userIdentity.email } }).then(result => {
+            result.update({
+                status: 4
+            })
+        })
+
         redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
 
         res.status(200).json({
