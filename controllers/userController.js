@@ -88,6 +88,7 @@ exports.SocialLogin = (req, res, next) => {
     }).then(async ([user, created]) => {
         const userData = await user.get();
         let status = 0;
+        
         // check KTP di tabel identity jika null bikin, jika ada update
         await model.Identity.findOne({ where: { email: userData.email } }).then(user => {
 
@@ -96,6 +97,14 @@ exports.SocialLogin = (req, res, next) => {
                     email: userData.email,
                     userId: userData.id,
                     name: name
+                })
+
+                model.User.findOne({ where: { email: userData.email } }).then(result => {
+                    if(result.status <=2){
+                        result.update({
+                            status: 0
+                        })
+                    }
                 })
             }
             // update
@@ -106,12 +115,25 @@ exports.SocialLogin = (req, res, next) => {
                     name: name
                 })
 
-                status = 1; //ada ktp/tidak ada ktp + tidak ada url_ktp
-                if (user.ktpNumber !== null && user.ktpUrl !== null) {
-                    status = 2; //ada ktp/tidak ada ktp + ada url_ktp
-                }
+                status = 1; //ada ktp/tidak ada ktp + tidak ada url_ktp    
+                model.User.findOne({ where: { email: userData.email } }).then(result => {
+                    if(result.status <=2){
+                        result.update({
+                            status: 1
+                        })
+                    }
+                })        
+            }
 
-
+            if (user.ktpNumber !== null && user.ktpUrl !== null) {
+                status = 2; //ada ktp/tidak ada ktp + ada url_ktp
+                model.User.findOne({ where: { email: userData.email } }).then(result => {
+                    if(result.status <=2){
+                        result.update({
+                            status: 2
+                        })
+                    }
+                })
             }
 
             return status
@@ -119,17 +141,18 @@ exports.SocialLogin = (req, res, next) => {
             console.log(err)
         });
 
+        const statusnya = await model.User.findOne({ where: { email: userData.email } }).then(result => {
+            return result.status;
+        })
+
         const data_identity = {
             email: userData.email,
             userId: userData.id,
-            step: status
+            step: statusnya
         }
 
-        model.User.findOne({ where: { email: userData.email } }).then(result => {
-            result.update({
-                status: status
-            })
-        })
+
+
 
         const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); // 
 
@@ -151,7 +174,7 @@ exports.SocialLogin = (req, res, next) => {
         return res.status(200).json({
             "code": 200,
             "token": token,
-            "status": status
+            "status": statusnya
         });
 
     }).catch(err => {
@@ -299,23 +322,23 @@ exports.saveProfile = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     const data = {
-        name : req.body.name,
+        name: req.body.name,
         address: req.body.address,
         phone: req.body.phone,
         universityId: req.body.universityId,
         photoUrl: req.body.urlPhoto,
-        headline : req.body.headline,
-        photoUrl : req.body.photoUrl,
-        religion : req.body.religion,
-        bornPlace : req.body.bornPlace,
-        bornDate : req.body.bornDate,
-        cityAddress : req.body.cityAddress,
-        provinceAddress : req.body.provinceAddress,
-        emergencyPhone : req.body.emergencyPhone,
-        gender : req.body.gender,
-        bloodGroup : req.body.bloodGroup,
-        hoby : req.body.hoby,
-        expertise : req.body.expertise
+        headline: req.body.headline,
+        photoUrl: req.body.photoUrl,
+        religion: req.body.religion,
+        bornPlace: req.body.bornPlace,
+        bornDate: req.body.bornDate,
+        cityAddress: req.body.cityAddress,
+        provinceAddress: req.body.provinceAddress,
+        emergencyPhone: req.body.emergencyPhone,
+        gender: req.body.gender,
+        bloodGroup: req.body.bloodGroup,
+        hoby: req.body.hoby,
+        expertise: req.body.expertise
     }
 
     redisClient.get('login_portal:' + token, function (err, response) {
@@ -327,18 +350,22 @@ exports.saveProfile = async (req, res, next) => {
             return result.update(data).then(result => {
 
                 // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
-                model.User.findOne({ where: { email: result.email } }).then(result => {
-                    result.update({
+
+                model.User.findOne({ where: { email: userIdentity.email } }).then(datauser => {
+                    
+                    datauser.update({
                         status: 3
                     })
+
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
+
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "Sukses Update",
+                        "data": result
+                    })              
                 })
-                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
-                
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Sukses Update",
-                    "data": result
-                })
+
             }).catch(err => {
                 return res.status(400).json({
                     "status": false,
