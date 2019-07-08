@@ -299,23 +299,23 @@ exports.saveProfile = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     const data = {
-        name : req.body.name,
+        name: req.body.name,
         address: req.body.address,
         phone: req.body.phone,
         universityId: req.body.universityId,
         photoUrl: req.body.urlPhoto,
-        headline : req.body.headline,
-        photoUrl : req.body.photoUrl,
-        religion : req.body.religion,
-        bornPlace : req.body.bornPlace,
-        bornDate : req.body.bornDate,
-        cityAddress : req.body.cityAddress,
-        provinceAddress : req.body.provinceAddress,
-        emergencyPhone : req.body.emergencyPhone,
-        gender : req.body.gender,
-        bloodGroup : req.body.bloodGroup,
-        hoby : req.body.hoby,
-        expertise : req.body.expertise
+        headline: req.body.headline,
+        photoUrl: req.body.photoUrl,
+        religion: req.body.religion,
+        bornPlace: req.body.bornPlace,
+        bornDate: req.body.bornDate,
+        cityAddress: req.body.cityAddress,
+        provinceAddress: req.body.provinceAddress,
+        emergencyPhone: req.body.emergencyPhone,
+        gender: req.body.gender,
+        bloodGroup: req.body.bloodGroup,
+        hoby: req.body.hoby,
+        expertise: req.body.expertise
     }
 
     redisClient.get('login_portal:' + token, function (err, response) {
@@ -327,18 +327,21 @@ exports.saveProfile = async (req, res, next) => {
             return result.update(data).then(result => {
 
                 // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
-                model.User.findOne({ where: { email: result.email } }).then(result => {
-                    result.update({
+
+                model.User.findOne({ where: { email: userIdentity.email } }).then(datauser => {
+                    datauser.update({
                         status: 3
                     })
+
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
+
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "Sukses Update",
+                        "data": result
+                    })              
                 })
-                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
-                
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Sukses Update",
-                    "data": result
-                })
+
             }).catch(err => {
                 return res.status(400).json({
                     "status": false,
