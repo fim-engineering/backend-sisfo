@@ -325,6 +325,7 @@ exports.saveProfile = async (req, res, next) => {
         model.Identity.findOne({ where: { userId: userId } }).then(result => {
 
             return result.update(data).then(result => {
+                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
                 return res.status(200).json({
                     "status": true,
                     "message": "Sukses Update",

@@ -101,6 +101,8 @@ exports.saveAnswer = async (req, res, next) => {
             })
         })
 
+        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
+
         res.status(200).json({
             status: true,
             message: "Answer Saved",
