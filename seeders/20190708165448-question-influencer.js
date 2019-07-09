@@ -39,7 +39,7 @@ module.exports = {
         headline: "Surat Rekomendasi",
         note: "Format Terlampir",
         question: "Pada Jalur ini, rekomendasi ini dapat diberikan oleh siapapun, baik itu teman baik, dosen, tokoh masyarakat, pemuka adat, petinggi organisasi, petinggi partai politik, atau alumni FIM, siapa saja asalkan mengenal kamu dengan baik",
-        tunnelId: 4,
+        tunnelId: 8,
         createdBy: 1,
         batchFIM: "20",
         isMany: 0,

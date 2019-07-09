@@ -3,14 +3,20 @@ const redisClient = require('../util/redis');
 
 
 exports.lists = async (req, res, next) => {
-    model.Tunnel.findAll().then(result => {
-        res.status(200).json({
-            status: true,
-            message: "data fetched",
-            data: result
+    redisClient.get('login_portal:' + token, function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        model.Tunnel.findAll().then(result => {
+            res.status(200).json({
+                status: true,
+                message: "data fetched",
+                data: result
+            });
+        }).catch(err => {
+            console.log(err)
         });
-    }).catch(err => {
-        console.log(err)
+
     });
 }
 
@@ -22,7 +28,7 @@ exports.create = async (req, res, next) => {
         const userId = userIdentity.userId;
 
         const data = {
-            name:req.body.name
+            name: req.body.name
         }
 
         if (err) {
@@ -67,7 +73,7 @@ exports.read = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
-    
+
     redisClient.get('login_portal:' + token, function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
@@ -81,15 +87,15 @@ exports.update = async (req, res, next) => {
         }
 
         const data = {
-            idTunnel:req.body.idTunnel,
-            name:req.body.name
+            idTunnel: req.body.idTunnel,
+            name: req.body.name
         }
 
         model.Tunnel.update({
             name: data.name,
             createdBy: userId
         }, { where: { id: data.idTunnel } }
-        ).then((status,result) => {
+        ).then((status, result) => {
             res.status(200).json({
                 status: true,
                 message: "Data Updated",
@@ -107,13 +113,13 @@ exports.update = async (req, res, next) => {
 }
 
 exports.delete = async (req, res, next) => {
-    model.Tunnel.destroy({ where: { id: req.body.idTunnel} }).then(result=>{
+    model.Tunnel.destroy({ where: { id: req.body.idTunnel } }).then(result => {
         res.status(200).json({
             status: true,
             message: "Data Deleted",
             data: null
         });
-    }).catch(err=>{
+    }).catch(err => {
         console.log(err)
         res.status(400).json({
             status: false,
