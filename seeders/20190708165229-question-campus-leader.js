@@ -7,7 +7,7 @@ module.exports = {
       {
         headline: "Aktivitas dan Pencapaian",
         note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
-        question: "Sebutkan dan jelaskan 5 aktivitas dan/atau pencapaian terbaik  dalam konteks kepemimpinan yang telah Anda raih. Aktivitas dan pencapaian di sini diartikan dalam arti yang luas, bisa jadi berupa pengalaman organisasi, pengalaman kepanitiaan, pengalaman mendirikan organisasi,menjuarai kompetisi, partisipasi dalam suatu konferensi, penulisan ilmiah, dll.",
+        question: "Sebutkan dan jelaskan 5 aktivitas dan/atau pencapaian terbaik dalam konteks kepemimpinan yang telah Anda raih. Aktivitas dan pencapaian di sini diartikan dalam arti yang luas, bisa jadi berupa pengalaman organisasi, pengalaman kepanitiaan, pengalaman mendirikan organisasi,menjuarai kompetisi, partisipasi dalam suatu konferensi, penulisan ilmiah, dll.",
         tunnelId: 2,
         createdBy: 1,
         batchFIM: "20",
@@ -15,6 +15,7 @@ module.exports = {
         header: JSON.stringify({
           "No": "number",
           "Nama Aktivitas/ Pencapaian": "text",
+          "Penyelenggara":"text",
           "Waktu Mulai":"date",
           "Waktu Selesai":"date",
           "Durasi": "number",
