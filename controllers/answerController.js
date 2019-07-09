@@ -3,20 +3,24 @@ const redisClient = require('../util/redis');
 
 
 exports.lists = async (req, res, next) => {
+    redisClient.get('login_portal:' + token, function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
 
-    const data = {
-        idTunnel: req.body.tunnelId,
-        ktpNumber: req.body.ktpNumber
-    }
+        const data = {
+            idTunnel: req.body.tunnelId,
+            ktpNumber: req.body.ktpNumber
+        }
 
-    model.Answer.findAll({ where: data }).then(result => {
-        res.status(200).json({
-            status: true,
-            message: "data fetched",
-            data: result
+        model.Answer.findAll({ where: data }).then(result => {
+            res.status(200).json({
+                status: true,
+                message: "data fetched",
+                data: result
+            });
+        }).catch(err => {
+            console.log(err)
         });
-    }).catch(err => {
-        console.log(err)
     });
 }
 
@@ -78,7 +82,7 @@ exports.saveAnswer = async (req, res, next) => {
                             ktpNumber: data.ktpNumber
                         },
                         defaults: {
-                            isFinal:0                            
+                            isFinal: 0
                         }
                     })
 
@@ -101,8 +105,8 @@ exports.saveAnswer = async (req, res, next) => {
             })
         })
 
-         // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
-         model.User.findOne({ where: { email: userIdentity.email } }).then(result => {
+        // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
+        model.User.findOne({ where: { email: userIdentity.email } }).then(result => {
             result.update({
                 status: 4
             })
