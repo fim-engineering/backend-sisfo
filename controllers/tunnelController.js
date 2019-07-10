@@ -30,7 +30,8 @@ exports.create = async (req, res, next) => {
         const userId = userIdentity.userId;
 
         const data = {
-            name: req.body.name
+            name: req.body.name,
+            description:req.body.description
         }
 
         if (err) {
@@ -90,7 +91,8 @@ exports.update = async (req, res, next) => {
 
         const data = {
             idTunnel: req.body.idTunnel,
-            name: req.body.name
+            name: req.body.name,
+            description:req.body.description
         }
 
         model.Tunnel.update({

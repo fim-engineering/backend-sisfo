@@ -190,9 +190,7 @@
 - Body :
 
 ```
-{
-	tunnelId: "INTEGER" // id Jalur Masuk
-}
+{}
 ```
 
 - Return :
@@ -216,7 +214,8 @@
 
 ```
 {
-	name: "Next Gen"
+	name: "Next Gen",
+    description:"TEXT"
 }
 ```
 
@@ -267,8 +266,9 @@
 
 ```
 {	
-	idTunnel: "1"
-	name: "Next Gen"
+	idTunnel: req.body.idTunnel,
+	name: "Next Gen",
+    description:"TEXT"
 }
 ```
 
@@ -278,6 +278,31 @@
 {  
     "status": true,
     "message": "Data Updated",
+	"data":{}
+}
+```
+
+#### Tunnel User Save
+
+```
+/auth/save-tunnel | POST
+```
+
+- Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
+- Body :
+
+```
+{	
+	tunnelId: "INTEGER	
+}
+```
+
+- Return :
+
+```
+{  
+    "status": true,
+    "message": "Tunnel Updated",
 	"data":{}
 }
 ```
