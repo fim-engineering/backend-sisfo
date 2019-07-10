@@ -88,7 +88,7 @@ exports.SocialLogin = (req, res, next) => {
     }).then(async ([user, created]) => {
         const userData = await user.get();
         let status = 0;
-        
+
         // check KTP di tabel identity jika null bikin, jika ada update
         await model.Identity.findOne({ where: { email: userData.email } }).then(user => {
 
@@ -100,7 +100,7 @@ exports.SocialLogin = (req, res, next) => {
                 })
 
                 model.User.findOne({ where: { email: userData.email } }).then(result => {
-                    if(result.status <=2){
+                    if (result.status <= 2) {
                         result.update({
                             status: 0
                         })
@@ -117,18 +117,18 @@ exports.SocialLogin = (req, res, next) => {
 
                 status = 1; //ada ktp/tidak ada ktp + tidak ada url_ktp    
                 model.User.findOne({ where: { email: userData.email } }).then(result => {
-                    if(result.status <=2){
+                    if (result.status <= 2) {
                         result.update({
                             status: 1
                         })
                     }
-                })        
+                })
             }
 
             if (user.ktpNumber !== null && user.ktpUrl !== null) {
                 status = 2; //ada ktp/tidak ada ktp + ada url_ktp
                 model.User.findOne({ where: { email: userData.email } }).then(result => {
-                    if(result.status <=2){
+                    if (result.status <= 2) {
                         result.update({
                             status: 2
                         })
@@ -290,7 +290,7 @@ exports.saveKtp = async (req, res, next) => {
                         result.update({
                             status: 2
                         })
-                    })                    
+                    })
 
                     // update step in Redis
                     redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
@@ -352,7 +352,7 @@ exports.saveProfile = async (req, res, next) => {
                 // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
 
                 model.User.findOne({ where: { email: userIdentity.email } }).then(datauser => {
-                    
+
                     datauser.update({
                         status: 3
                     })
@@ -363,7 +363,7 @@ exports.saveProfile = async (req, res, next) => {
                         "status": true,
                         "message": "Sukses Update",
                         "data": result
-                    })              
+                    })
                 })
 
             }).catch(err => {
@@ -404,5 +404,37 @@ exports.getProfile = async (req, res, next) => {
             })
         })
     })
+}
+
+exports.saveTunnel = (req, res, nex) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    const data = {
+        tunnelId: req.body.tunnelId
+    }
+
+    redisClient.get('login_portal:' + token, function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        model.User.findOne({ where: { id: userId } }).then(result => {
+            result.update({
+                tunnelId: data.tunnelId
+            }).then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Tunnel Updated",
+                    "data": dataresult
+                })
+            })
+        }).catch(err => {
+            console.log(err)
+            return res.status(400).json({
+                "status": false,
+                "message": "Something Error " + err,
+                "data": null
+            })
+        });
+    });
 }
 

@@ -13,7 +13,7 @@ router.post('/savektp', isAuth, userController.saveKtp);
 router.post('/save-profile', isAuth, userController.saveProfile);
 
 router.post('/get-profile', isAuth, userController.getProfile);
-
+router.post('/save-tunnel', isAuth, userController.saveTunnel);
 
 
 module.exports = router;
