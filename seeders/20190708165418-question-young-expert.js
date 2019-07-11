@@ -9,7 +9,7 @@ module.exports = {
         question: "Sebutkan dan jelaskan tentang portofolio riset/bisnis yang  Anda geluti ",
         tunnelId: 5,
         createdBy: 1,
-        batchFIM: "20",
+        batchFim: "20",
         isMany: 0,
         header: JSON.stringify({
           "Nama Lembaga": "text",          
@@ -27,7 +27,7 @@ module.exports = {
         question: "Tuliskan 3 aktivitas dan/atau pencapaian terbaik dalam konteks aktivitas saat ini yang telah Anda raih. Aktivitas dan pencapaian di sini diartikan dalam arti yang luas, bisa jadi berupa pengalaman organisasi, pengalaman kepanitiaan, pengalaman mendirikan organisasi,menjuarai kompetisi, partisipasi dalam suatu konferensi, penulisan ilmiah, dll.",
         tunnelId: 5,
         createdBy: 1,
-        batchFIM: "20",
+        batchFim: "20",
         isMany: 1,
         header: JSON.stringify({
           "No": "number",
@@ -50,7 +50,7 @@ module.exports = {
         question: "Sertakan portofolio tulisan/artikel/jurnal yang telah Anda buat. Silahkan tuliskan link nya di bawah ini.",
         tunnelId: 5,
         createdBy: 1,
-        batchFIM: "20",
+        batchFim: "20",
         isMany: 1,
         header: JSON.stringify({
           "url": "text",         
@@ -64,7 +64,7 @@ module.exports = {
         question: "Sertakan karya yang berisikan profil singkat diri Anda beserta alasan mengapa ingin bergabung dalam keluarga besar FIM. Karya dapat berupa video, tulisan blog, rekaman podcast, unggahan instagram atau lainnya sesuai dengan platform yang Anda gunakan. Bagi pendaftar jalur selain Influencer, tugas ini bersifat optional (sebagai nilai tambah). Silahkan tuliskan link nya di bawah ini. ",
         tunnelId: 5,
         createdBy: 1,
-        batchFIM: "20",
+        batchFim: "20",
         isMany: 0,
         header: JSON.stringify({ "Link Video": "text" }),
         createdAt: new Date(),
@@ -76,7 +76,7 @@ module.exports = {
         question: "Pada Jalur ini, rekomendasi ini dapat diberikan oleh siapapun, baik itu teman baik, dosen, tokoh masyarakat, pemuka adat, petinggi organisasi, petinggi partai politik, atau alumni FIM, siapa saja asalkan mengenal kamu dengan baik",
         tunnelId: 4,
         createdBy: 1,
-        batchFIM: "20",
+        batchFim: "20",
         isMany: 0,
         header: JSON.stringify({ "Attachment": "file" }),
         createdAt: new Date(),
@@ -88,7 +88,7 @@ module.exports = {
         question: "Format Terlampir",
         tunnelId: 5,
         createdBy: 1,
-        batchFIM: "20",
+        batchFim: "20",
         isMany: 0,
         header: JSON.stringify({
           "Attachment": "file"
@@ -102,7 +102,7 @@ module.exports = {
         question: "Jika pernah, mohon sebutkan berapa kali Anda telah  mendaftar FIM?",
         tunnelId: 5,
         createdBy: 1,
-        batchFIM: "20",
+        batchFim: "20",
         isMany: 1,
         header: JSON.stringify({
           "No": "text",
@@ -117,7 +117,7 @@ module.exports = {
         question: "Berikut ini adalah daftar kelas untuk sesi paralel saat pelatihan FIM. Mohon berikan peringkat  1 (paling berminat) – 8 (paling tidak berminat), pada daftar kelas berikut;",
         tunnelId: 5,
         createdBy: 1,
-        batchFIM: "20",
+        batchFim: "20",
         isMany: 0,
         header: JSON.stringify({
           "Literasi dan pendidikan": "number",
