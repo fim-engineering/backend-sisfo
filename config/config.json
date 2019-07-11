@@ -3,7 +3,7 @@
     "username": "postgres",
     "password": "changeme",
     "database": "fim_portal_backend",
-    "logging": false,
+    "logging": true,
     "host": "127.0.0.1",
     "dialect": "postgres",
     "timezone": "+07:00"
