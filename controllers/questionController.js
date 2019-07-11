@@ -7,7 +7,7 @@ exports.lists = async (req, res, next) => {
         idTunnel:req.body.tunnelId
     }
 
-    model.Question.findAll({where:{tunnelId:data.tunnelId}}).then(result => {
+    model.Question.findAll({where:{tunnelId:data.idTunnel}}).then(result => {
         res.status(200).json({
             status: true,
             message: "data fetched",
