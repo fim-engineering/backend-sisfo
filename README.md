@@ -511,7 +511,7 @@
 #### Answer Save
 
 ```
-/answer/lists | POST
+/answer/save | POST
 ```
 
 - Header : Content-Type (application/json), Accept (application/json), Authorization (Bearer <Token>)
