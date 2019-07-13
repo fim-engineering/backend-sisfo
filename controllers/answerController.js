@@ -3,6 +3,9 @@ const redisClient = require('../util/redis');
 
 
 exports.lists = async (req, res, next) => {
+
+    let token = req.get('Authorization').split(' ')[1];
+
     redisClient.get('login_portal:' + token, function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
