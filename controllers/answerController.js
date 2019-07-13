@@ -11,7 +11,7 @@ exports.lists = async (req, res, next) => {
         const userId = userIdentity.userId;
 
         const data = {
-            idTunnel: req.body.tunnelId,
+            tunnelId: req.body.tunnelId,
             ktpNumber: req.body.ktpNumber
         }
 
