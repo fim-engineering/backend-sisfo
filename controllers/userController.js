@@ -206,41 +206,75 @@ exports.saveProfile = async (req, res, next) => {
         gender: req.body.gender,
         bloodGroup: req.body.bloodGroup,
         hoby: req.body.hoby,
-        expertise: req.body.expertise
+        expertise: req.body.expertise,
+        institution: req.body.institution
     }
 
-    redisClient.get('login_portal:' + token, function (err, response) {
+    redisClient.get('login_portal:' + token, async function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
 
-        model.Identity.findOne({ where: { userId: userId } }).then(result => {
+        if (err) {
+            res.status(500).json({
+                message: "Somethin Went Wrong " + err,
+                data: null,
+                status: false
+            })
+        }
 
-            return result.update(data).then(result => {
 
-                // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
-
-                model.User.findOne({ where: { email: userIdentity.email } }).then(datauser => {
-
-                    datauser.update({
-                        status: 3
-                    })
-
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
-
-                    return res.status(200).json({
-                        "status": true,
-                        "message": "Sukses Update",
-                        "data": result
-                    })
-                })
-
-            }).catch(err => {
+        const findIdentity = await model.Identity.findOne({ where: { userId: userId } })
+            .then(result => { return result })
+            .catch(err => {
                 return res.status(400).json({
                     "status": false,
                     "message": "Something Error " + err,
                     "data": null
                 })
             })
+
+        findIdentity.update(data).then(async data => {
+
+            const checkFilled = Object.entries(data.toJSON());
+            const notFilled = [];
+            // mengecek semua fill udah keisi
+            await checkFilled.map((value, index) => {
+                if (value[1] == null) { notFilled.push(value[0]) }
+            })
+
+            if (notFilled.length > 0) {
+                // Jika sudah terisi semua maka update step cuma sampai 2
+                model.User.findOne({ where: { email: userIdentity.email } })
+                    .then(user => {
+                        user.update({ status: 2 })
+                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
+                    })
+                    .catch(err => console.log(err))
+
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Updated",
+                    "nullData": notFilled,
+                    "data": data
+                })
+            } else {
+                // Jika sudah terisi semua maka update step 
+                model.User.findOne({ where: { email: userIdentity.email } })
+                    .then(user => {
+                        user.update({ status: 3 })
+                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
+                    })
+                    .catch(err => console.log(err))
+
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Updated",
+                    "nullData": notFilled,
+                    "data": data
+                })
+            }
+
+
         }).catch(err => {
             return res.status(400).json({
                 "status": false,
@@ -248,6 +282,7 @@ exports.saveProfile = async (req, res, next) => {
                 "data": null
             })
         })
+
     })
 }
 
@@ -287,8 +322,11 @@ exports.saveTunnel = (req, res, nex) => {
 
         model.User.findOne({ where: { id: userId } }).then(result => {
             result.update({
-                tunnelId: data.tunnelId
+                tunnelId: data.tunnelId,
+                status:4
             }).then(dataresult => {
+                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
+
                 return res.status(200).json({
                     "status": true,
                     "message": "Tunnel Updated",

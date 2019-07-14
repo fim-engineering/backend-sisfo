@@ -141,7 +141,8 @@
         "gender" : req.body.gender,
         "bloodGroup" : req.body.bloodGroup,
         "hoby" : req.body.hoby,
-        "expertise" : req.body.expertise
+        "expertise" : req.body.expertise,
+        "institution":req.body.institution,
 }
 ```
 
