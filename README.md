@@ -143,6 +143,7 @@
         "hoby" : req.body.hoby,
         "expertise" : req.body.expertise,
         "institution":req.body.institution,
+        "otherReligion": req.body.otherReligion
 }
 ```
 
