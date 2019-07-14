@@ -5,7 +5,7 @@ const redisClient = require('../util/redis');
 exports.lists = async (req, res, next) => {
     const token = req.get('Authorization').split(' ')[1];
 
-    redisClient.get('login_portal:' + token, function (err, response) {
+    redisClient.get('login_portal:' + token, async function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
 
@@ -16,7 +16,7 @@ exports.lists = async (req, res, next) => {
 
         listTunnel = [];
 
-        if (identity !== null && identity.batchFim == "20") {
+        if (findIdentity !== null && findIdentity.batchFim == "20") {
             listTunnel = await model.Tunnel.findAll({ where: { name: { $not: "Next Gen" } } }).then(result => {
                 return result
             }).catch(err => { console.log(err) });
