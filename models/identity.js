@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     address: DataTypes.TEXT,
     ktpUrl: DataTypes.STRING,
-    photoUrl:DataTypes.STRING,
     email: DataTypes.STRING,
     phone: DataTypes.STRING,
     universityId: DataTypes.INTEGER,
@@ -22,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     bloodGroup: DataTypes.STRING,
     hoby: DataTypes.TEXT,
     expertise: DataTypes.STRING,
+    institution:DataTypes.STRING
 }, {});
 Identity.associate = function (models) {
   models.Identity.belongsTo(models.User, { foreignKey: 'userId' })
