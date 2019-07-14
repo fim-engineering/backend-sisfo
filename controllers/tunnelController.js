@@ -10,7 +10,7 @@ exports.lists = async (req, res, next) => {
         const userId = userIdentity.userId;
 
         // search apakah dia fim 20 atau engga
-        const findIdentity = await model.Identitiy.findOne({ where: { id: userId } }).then(identity => {
+        const findIdentity = await model.Identity.findOne({ where: { id: userId } }).then(identity => {
             return identity;
         }).catch(err => console.log(err))
 
