@@ -87,94 +87,21 @@ exports.SocialLogin = (req, res, next) => {
         }
     }).then(async ([user, created]) => {
         const userData = await user.get();
-        let status = 0;
-
-        // check KTP di tabel identity jika null bikin, jika ada update
-        await model.Identity.findOne({ where: { email: userData.email } }).then(user => {
-
-            if (user == null) {
-                model.Identity.create({
-                    email: userData.email,
-                    userId: userData.id,
-                    name: name
-                })
-
-                model.User.findOne({ where: { email: userData.email } }).then(result => {
-                    if (result.status <= 2) {
-                        result.update({
-                            status: 0
-                        })
-                    }
-                })
-            }
-            // update
-            else {
-                user.update({
-                    email: userData.email,
-                    userId: userData.id,
-                    name: name
-                })
-
-                status = 1; //ada ktp/tidak ada ktp + tidak ada url_ktp    
-                model.User.findOne({ where: { email: userData.email } }).then(result => {
-                    if (result.status <= 2) {
-                        result.update({
-                            status: 1
-                        })
-                    }
-                })
-            }
-
-            if (user.ktpNumber !== null && user.ktpUrl !== null) {
-                status = 2; //ada ktp/tidak ada ktp + ada url_ktp
-                model.User.findOne({ where: { email: userData.email } }).then(result => {
-                    if (result.status <= 2) {
-                        result.update({
-                            status: 2
-                        })
-                    }
-                })
-            }
-
-            return status
-        }).catch(err => {
-            console.log(err)
-        });
-
-        const statusnya = await model.User.findOne({ where: { email: userData.email } }).then(result => {
-            return result.status;
-        })
+        let status = userData.status !== null ? userData.status : 0;
 
         const data_identity = {
             email: userData.email,
             userId: userData.id,
-            step: statusnya
+            step: status
         }
 
-
-
-
         const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); // 
-
-        // ms('2 days')  // 172800000
-        // ms('1d')      // 86400000
-        // ms('10h')     // 36000000
-        // ms('2.5 hrs') // 9000000
-        // ms('2h')      // 7200000
-        // ms('1m')      // 60000
-        // ms('5s')      // 5000
-        // ms('1y')      // 31557600000
-        // ms('100')     // 100
-        // ms('-3 days') // -259200000
-        // ms('-1h')     // -3600000
-        // ms('-200')    // -200
-
         redisClient.setex('login_portal:' + token, 60000, JSON.stringify(data_identity))
 
         return res.status(200).json({
             "code": 200,
             "token": token,
-            "status": statusnya
+            "status": status
         });
 
     }).catch(err => {
@@ -190,131 +117,72 @@ exports.saveKtp = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
 
-    redisClient.get('login_portal:' + token, function (err, response) {
+    redisClient.get('login_portal:' + token, async function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
+        const emailId = userIdentity.email;
         const noKtp = req.body.noKtp;
         const urlKtp = req.body.urlKtp;
 
         // cari nomor ktp
-        model.Identity.findOne({
-            where: { ktpNumber: noKtp },
-            include: [{ model: model.User }]
-        }).then(result => {
+        const findIdentity = await model.Identity
+            .findOne({ where: { ktpNumber: noKtp } })
+            .then(result => { return result })
+            .catch(err => { console.log(err) })
 
-            // jika ada update, namu check user Id apakah null atau sudah ada
-            if (result) {
-                const userId_identity = result.userId;
-                // jika ada user Id dan tidak sama dengan email login maka, respon bahwa itu sudah dipake
-                if (userId_identity !== null && userIdentity.email !== result.email) {
+        const findUser = await model.User
+            .findOne({ where: { email: emailId } })
+            .then(result => { return result })
+            .catch(err => console.log(err))
 
-                    // update step di model User
-                    model.User.findOne({ where: { email: result.email } }).then(result => {
-                        result.update({
-                            status: 0
-                        })
-                    }).catch(err => {
-                        return res.status(400).json({
-                            "status": false,
-                            "message": err
-                        })
-                    })
+        // check KTP di tabel identity jika null bikin, jika ada update
+        if (findIdentity == null) {
+            await model.Identity.create({
+                email: emailId,
+                userId: userId,
+                ktpUrl: urlKtp,
+                ktpNumber: noKtp
+            }).catch(err => console.log(err));
+        }
+        // update
+        else {
+            await findIdentity.update({
+                email: emailId,
+                userId: userId,
+                ktpUrl: urlKtp,
+                ktpNumber: noKtp
+            }).catch(err => console.log(err));
+        }
 
-                    // update step in Redis
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 0 }))
+        // check status dan update redis
+        const findStatus = await model.Identity
+            .findOne({ where: { ktpNumber: noKtp } })
+            .then(result => { return result })
+            .catch(err => { console.log(err) })
 
-                    return res.status(200).json({
-                        "status": false,
-                        "message": "Nomor KTP tersebut sudah digunakan oleh email " + result.email
-                    })
-                }
-
-
-                // jika ada ktp namun idUser null maka update artinya belum terhubung ke table User. ini detektor FIM 21 
-                else if (userId_identity == null) {
-                    // update step di model User
-                    model.User.findOne({ where: { email: result.email } }).then(result => {
-                        result.update({
-                            status: 1
-                        })
-                    })
-
-                    // update di Identity
-                    result.update({
-                        userId: userId
-                    })
-
-                    // update step in Redis
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 1 }))
-
-                    return res.status(200).json({
-                        "status": true,
-                        "message": "KTP sudah terinput sebelumnya, User berhasil update"
-                    })
-                }
-
-                else {
-                    model.User.findOne({ where: { email: result.email } }).then(result => {
-                        result.update({
-                            status: 2
-                        })
-                    }).catch(err => {
-                        return res.status(400).json({
-                            "status": false,
-                            "message": err
-                        })
-                    })
-
-                    // update step in Redis
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
-
-                    result.update({
-                        ktpNumber: noKtp,
-                        ktpUrl: urlKtp,
-                        userId: userId
-                    })
-
-
-                    return res.status(200).json({
-                        "status": true,
-                        "message": "KTP " + result.email + " Berhasil diupdate"
-                    })
-                }
+        let stepupdate = 0;
+        if (findStatus !== null && findStatus.ktpUrl == null) {
+            stepupdate = 1
+            if (findUser.status <= 2) {
+                findUser.update({ status: 1 }).catch(err => console.log(err));
+                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 1 }))
             }
 
-            // jika result null artinya ga ada data sebelumnya sehingga update 2 kolom (nomor ktp dan url_ktp)
-            if (result == null) {
-                model.Identity.findOne({ where: { 'email': userIdentity.email } }).then(result => {
-                    // update step di model User
-                    model.User.findOne({ where: { email: result.email } }).then(result => {
-                        result.update({
-                            status: 2
-                        })
-                    })
-
-                    // update step in Redis
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
-
-                    result.update({
-                        ktpNumber: noKtp,
-                        ktpUrl: urlKtp,
-                        userId: userId
-                    })
-
-                    return res.status(200).json({
-                        "status": true,
-                        "message": "KTP & Foto KTP berhasil terupload"
-                    })
-                }).catch(err => {
-                    return res.status(400).json({
-                        "status": false,
-                        "message": err
-                    })
-                })
+        } else {
+            stepupdate = 2
+            // menghindari setelah 2 
+            if (findUser.status <= 2) {
+                findUser.update({ status: 2 }).catch(err => console.log(err));
+                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
             }
-        }).catch(err => {
-            console.log(err)
+
+        }
+
+        return res.status(200).json({
+            "status": true,
+            "message": "KTP & Foto KTP berhasil terupload"
         })
+
     })
 }
 
