@@ -92,7 +92,7 @@ module.exports = {
         batchFim: "20",
         isMany: 1,
         header: JSON.stringify({
-          "No": "text",
+          "No": "number",
           "FIM Ke-": "text",
           "Tahun": "number",
         }),
