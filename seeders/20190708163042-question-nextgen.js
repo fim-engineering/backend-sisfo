@@ -52,29 +52,7 @@ module.exports = {
         }),
         createdAt: new Date(),
         updatedAt: new Date()
-      },
-      {
-        headline: "Kelas Paralel",
-        question: "Berikut ini adalah daftar kelas untuk sesi paralel saat pelatihan FIM. Mohon berikan peringkat  1 (paling berminat) – 8 (paling tidak berminat), pada daftar kelas berikut;",
-        tunnelId: 1,
-        createdBy: 1,
-        batchFim: "20",
-        isMany: 0,
-        header: JSON.stringify({
-          "Literasi dan pendidikan": "number",
-          "Budaya dan pariwisata": "number",
-          "Digital dan teknologi": "number",
-          "Agrokompleks": "number",
-          "Kesehatan": "number",
-          "Energi dan Lingkungan": "number",
-          "Commmunity Development": "number",
-          "Sociopreneur": "number",
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-
-
+      }      
     ], {});
   },
 
