@@ -205,7 +205,8 @@ exports.saveProfile = async (req, res, next) => {
         bloodGroup: req.body.bloodGroup,
         hoby: req.body.hoby,
         expertise: req.body.expertise,
-        institution: req.body.institution
+        institution: req.body.institution,
+        otherReligion:req.body.otherReligion
     }
 
     redisClient.get('login_portal:' + token, async function (err, response) {
