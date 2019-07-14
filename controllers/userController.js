@@ -193,8 +193,6 @@ exports.saveProfile = async (req, res, next) => {
         name: req.body.name,
         address: req.body.address,
         phone: req.body.phone,
-        universityId: req.body.universityId,
-        photoUrl: req.body.urlPhoto,
         headline: req.body.headline,
         photoUrl: req.body.photoUrl,
         religion: req.body.religion,
@@ -222,7 +220,6 @@ exports.saveProfile = async (req, res, next) => {
             })
         }
 
-
         const findIdentity = await model.Identity.findOne({ where: { userId: userId } })
             .then(result => { return result })
             .catch(err => {
@@ -239,15 +236,19 @@ exports.saveProfile = async (req, res, next) => {
             const notFilled = [];
             // mengecek semua fill udah keisi
             await checkFilled.map((value, index) => {
-                if (value[1] == null) { notFilled.push(value[0]) }
+                if (value[0] !== "institution" || value[0] !== "hoby" || value[0] !== "regional" || value[0] !== "expertise" || value[0] !== "emergencyPhone" || value[0] !== "headline") {
+                    if (value[1] == null) { notFilled.push(value[0]) }
+                }
             })
 
             if (notFilled.length > 0) {
                 // Jika sudah terisi semua maka update step cuma sampai 2
                 model.User.findOne({ where: { email: userIdentity.email } })
                     .then(user => {
-                        user.update({ status: 2 })
-                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
+                        if (user.status < 4) {
+                            user.update({ status: 2 })
+                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
+                        }
                     })
                     .catch(err => console.log(err))
 
@@ -261,8 +262,10 @@ exports.saveProfile = async (req, res, next) => {
                 // Jika sudah terisi semua maka update step 
                 model.User.findOne({ where: { email: userIdentity.email } })
                     .then(user => {
-                        user.update({ status: 3 })
-                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
+                        if (user.status < 4) {
+                            user.update({ status: 3 })
+                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
+                        }
                     })
                     .catch(err => console.log(err))
 
@@ -323,7 +326,7 @@ exports.saveTunnel = (req, res, nex) => {
         model.User.findOne({ where: { id: userId } }).then(result => {
             result.update({
                 tunnelId: data.tunnelId,
-                status:4
+                status: 4
             }).then(dataresult => {
                 redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
 

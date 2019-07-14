@@ -9,14 +9,28 @@ exports.lists = async (req, res, next) => {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
 
-        model.Tunnel.findAll().then(result => {
-            res.status(200).json({
-                status: true,
-                message: "data fetched",
-                data: result
-            });
-        }).catch(err => {
-            console.log(err)
+        // search apakah dia fim 20 atau engga
+        const findIdentity = await model.Identitiy.findOne({ where: { id: userId } }).then(identity => {
+            return identity;
+        }).catch(err => console.log(err))
+
+        listTunnel = [];
+
+        if (identity !== null && identity.batchFim == "20") {
+            listTunnel = await model.Tunnel.findAll({ where: { name: { $not: "Next Gen" } } }).then(result => {
+                return result
+            }).catch(err => { console.log(err) });
+        } else {
+            listTunnel = await model.Tunnel.findAll().then(result => {
+                return result
+            }).catch(err => { console.log(err) });
+        }
+
+
+        res.status(200).json({
+            status: true,
+            message: "data fetched",
+            data: listTunnel
         });
 
     });
@@ -31,7 +45,7 @@ exports.create = async (req, res, next) => {
 
         const data = {
             name: req.body.name,
-            description:req.body.description
+            description: req.body.description
         }
 
         if (err) {
@@ -92,7 +106,7 @@ exports.update = async (req, res, next) => {
         const data = {
             idTunnel: req.body.idTunnel,
             name: req.body.name,
-            description:req.body.description
+            description: req.body.description
         }
 
         model.Tunnel.update({
