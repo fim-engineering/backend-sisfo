@@ -10,10 +10,97 @@ module.exports = {
         tunnelId: 3,
         createdBy: 1,
         batchFim: "20",
-        isMany: 1,
-        header: JSON.stringify({
-          "No": "number",
-          "Nama Aktivitas/ Pencapaian": "text",
+        isMany: 0,
+        header: JSON.stringify({          
+          "Nama Aktivitas 1/ Pencapaian 1": "text",
+          "Penyelenggara":"text",
+          "Waktu Mulai":"date",
+          "Waktu Selesai":"date",
+          "Durasi": "number",
+          "Scope/Wilayah": "text",
+          "Peran/ Prestasi": "text",
+          "No. Telpon Ketua/ Penanggung Jawab":"text",
+          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)":"text"
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        headline: null,
+        note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
+        question: "Sebutkan dan jelaskan aktivitas 2.",
+        tunnelId: 3,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({          
+          "Nama Aktivitas 2/ Pencapaian 2": "text",
+          "Penyelenggara":"text",
+          "Waktu Mulai":"date",
+          "Waktu Selesai":"date",
+          "Durasi": "number",
+          "Scope/Wilayah": "text",
+          "Peran/ Prestasi": "text",
+          "No. Telpon Ketua/ Penanggung Jawab":"text",
+          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)":"text"
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        headline: null,
+        note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
+        question: "Sebutkan dan jelaskan aktivitas 3.",
+        tunnelId: 3,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({          
+          "Nama Aktivitas 3/ Pencapaian 3": "text",
+          "Penyelenggara":"text",
+          "Waktu Mulai":"date",
+          "Waktu Selesai":"date",
+          "Durasi": "number",
+          "Scope/Wilayah": "text",
+          "Peran/ Prestasi": "text",
+          "No. Telpon Ketua/ Penanggung Jawab":"text",
+          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)":"text"
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        headline: null,
+        note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
+        question: "Sebutkan dan jelaskan aktivitas 4.",
+        tunnelId: 3,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({          
+          "Nama Aktivitas 4/ Pencapaian 4": "text",
+          "Penyelenggara":"text",
+          "Waktu Mulai":"date",
+          "Waktu Selesai":"date",
+          "Durasi": "number",
+          "Scope/Wilayah": "text",
+          "Peran/ Prestasi": "text",
+          "No. Telpon Ketua/ Penanggung Jawab":"text",
+          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)":"text"
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        headline: null,
+        note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
+        question: "Sebutkan dan jelaskan aktivitas 5.",
+        tunnelId: 3,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({          
+          "Nama Aktivitas 5/ Pencapaian 5": "text",
           "Penyelenggara":"text",
           "Waktu Mulai":"date",
           "Waktu Selesai":"date",
@@ -33,14 +120,15 @@ module.exports = {
         tunnelId: 3,
         createdBy: 1,
         batchFim: "20",
-        isMany: 1,
+        isMany: 0,
         header: JSON.stringify({
-          "Jenis Proyek": "[{'option':'Sosial'},{'option':'Pendidikan dan Budaya'},{'option':'Ekonomi dan Industri Kreatif'},{'option':'Sains dan Teknologi'},{'option':'Politik dan Kebijakan Publik'}]",
-          "Apa peran kamu dalam proyek ini ?": "text",
+          // "Pilih Jenis Proyek (Sosial, Pendidikan dan Budaya, Ekonomi dan Industri Kreatif, Sains dan Teknologi, Politik dan Kebijakan Publik)": "[{'option':'Sosial'},{'option':'Pendidikan dan Budaya'},{'option':'Ekonomi dan Industri Kreatif'},{'option':'Sains dan Teknologi'},{'option':'Politik dan Kebijakan Publik'}]",
+          "Pilih Jenis Proyek (Sosial, Pendidikan dan Budaya, Ekonomi dan Industri Kreatif, Sains dan Teknologi, Politik dan Kebijakan Publik)": "text",
+          "Apa peran kamu dalam proyek ini ?": "textarea",
           "Dimana proyek ini akan dilakukan ?":"text",
           "Apa yang dilakukan dalam proyek ini ?":"text",
-          "Apa saja sumberdaya yang dibutuhkan untuk mengeksekusi proyek ini ?": "text",
-          "Bagaimana FIM bisa meningkatkan nilai manfaat proyek ini ? (Min 100 kata)": "text",         
+          "Apa saja sumberdaya yang dibutuhkan untuk mengeksekusi proyek ini ?": "textarea",
+          "Bagaimana FIM bisa meningkatkan nilai manfaat proyek ini ? (Min 100 kata)": "textarea",         
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -53,7 +141,7 @@ module.exports = {
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({"Link Video": "text"}),
+        header: JSON.stringify({"URL Video": "text"}),
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -65,7 +153,7 @@ module.exports = {
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({"Attachment": "file"}),
+        header: JSON.stringify({"URL File": "text"}),
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -78,7 +166,7 @@ module.exports = {
         batchFim: "20",
         isMany: 0,
         header: JSON.stringify({
-          "Attachment": "file"
+          "URL File": "text"
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -86,43 +174,48 @@ module.exports = {
       {
         headline: null,
         note:null,
-        question: "Jika pernah, mohon sebutkan berapa kali Anda telah  mendaftar FIM?",
+        question: "Jika pernah, mohon sebutkan berapa kali Anda telah  mendaftar FIM ?",
         tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
-        isMany: 1,
-        header: JSON.stringify({
-          "No": "number",
+        isMany: 0,
+        header: JSON.stringify({          
           "FIM Ke-": "text",
           "Tahun": "number",
         }),
         createdAt: new Date(),
         updatedAt: new Date()
-      },
+      }, 
       {
-        headline: "Kelas Paralel",
-        question: "Berikut ini adalah daftar kelas untuk sesi paralel saat pelatihan FIM. Mohon berikan peringkat  1 (paling berminat) – 8 (paling tidak berminat), pada daftar kelas berikut;",
-        tunnelId: 3,
+        headline: null,
+        note:null,
+        question: "Pendaftaran FIM ke 2 ?",
+        tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({
-          "Literasi dan pendidikan": "number",
-          "Budaya dan pariwisata": "number",
-          "Digital dan teknologi": "number",
-          "Agrokompleks": "number",
-          "Kesehatan": "number",
-          "Energi dan Lingkungan": "number",
-          "Commmunity Development": "number",
-          "Sociopreneur": "number",
+        header: JSON.stringify({          
+          "FIM Ke-": "text",
+          "Tahun": "number",
         }),
         createdAt: new Date(),
         updatedAt: new Date()
-      },
-
-
-
-
+      }, 
+      {
+        headline: null,
+        note:null,
+        question: "Pendaftaran FIM ke 3 ?",
+        tunnelId: 2,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({          
+          "FIM Ke-": "text",
+          "Tahun": "number",
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
     ], {});
   },
 

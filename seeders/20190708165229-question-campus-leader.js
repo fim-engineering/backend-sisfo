@@ -12,9 +12,8 @@ module.exports = {
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({
-          "1.": "number",
-          "Nama Aktivitas/ Pencapaian": "text",
+        header: JSON.stringify({          
+          "Nama Aktivitas 1 / Pencapaian 1": "text",
           "Penyelenggara":"text",
           "Waktu Mulai":"date",
           "Waktu Selesai":"date",
@@ -30,14 +29,13 @@ module.exports = {
       {
         headline: null,
         note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
-        question: "Aktivitas 2",
+        question: "Sebutkan dan jelaskan aktivitas 2",
         tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({
-          "2.": "number",
-          "Nama Aktivitas/ Pencapaian": "text",
+        header: JSON.stringify({         
+          "Nama Aktivitas 2/ Pencapaian 2": "text",
           "Penyelenggara":"text",
           "Waktu Mulai":"date",
           "Waktu Selesai":"date",
@@ -53,14 +51,13 @@ module.exports = {
       {
         headline: null,
         note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
-        question: "Aktivitas 3",
+        question: "Sebutkan dan jelaskan aktivitas 3",
         tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({
-          "3.": "number",
-          "Nama Aktivitas/ Pencapaian": "text",
+        header: JSON.stringify({          
+          "Nama Aktivitas 3/ Pencapaian 3": "text",
           "Penyelenggara":"text",
           "Waktu Mulai":"date",
           "Waktu Selesai":"date",
@@ -76,14 +73,13 @@ module.exports = {
       {
         headline: null,
         note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
-        question: "Aktivitas 4",
+        question: "Sebutkan dan jelaskan aktivitas 4",
         tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({
-          "4.": "number",
-          "Nama Aktivitas/ Pencapaian": "text",
+        header: JSON.stringify({         
+          "Nama Aktivitas 4/ Pencapaian 4": "text",
           "Penyelenggara":"text",
           "Waktu Mulai":"date",
           "Waktu Selesai":"date",
@@ -99,14 +95,13 @@ module.exports = {
       {
         headline: null,
         note:"*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
-        question: "Aktivitas 5",
+        question: "Sebutkan dan jelaskan aktivitas 5",
         tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({
-          "5.": "number",
-          "Nama Aktivitas/ Pencapaian": "text",
+        header: JSON.stringify({         
+          "Nama Aktivitas 5/ Pencapaian 5": "text",
           "Penyelenggara":"text",
           "Waktu Mulai":"date",
           "Waktu Selesai":"date",
@@ -139,7 +134,7 @@ module.exports = {
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({"Link Video": "text"}),
+        header: JSON.stringify({"URL Link Video": "text"}),
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -151,7 +146,7 @@ module.exports = {
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({"Attachment": "file"}),
+        header: JSON.stringify({"URL File": "text"}),
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -163,48 +158,56 @@ module.exports = {
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({
-          "Attachment": "file"
-        }),
+        header: JSON.stringify({"URL File": "text"}),
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         headline: null,
         note:null,
-        question: "Jika pernah, mohon sebutkan berapa kali Anda telah  mendaftar FIM?",
+        question: "Jika pernah, mohon sebutkan berapa kali Anda telah  mendaftar FIM ?",
         tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
-        isMany: 1,
-        header: JSON.stringify({
-          "No": "text",
+        isMany: 0,
+        header: JSON.stringify({          
           "FIM Ke-": "text",
           "Tahun": "number",
         }),
         createdAt: new Date(),
         updatedAt: new Date()
-      },
+      }, 
       {
-        headline: "Kelas Paralel",
-        question: "Berikut ini adalah daftar kelas untuk sesi paralel saat pelatihan FIM. Mohon berikan peringkat  1 (paling berminat) – 8 (paling tidak berminat), pada daftar kelas berikut;",
+        headline: null,
+        note:null,
+        question: "Pendaftaran FIM ke 2 ?",
         tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({
-          "Literasi dan pendidikan": "number",
-          "Budaya dan pariwisata": "number",
-          "Digital dan teknologi": "number",
-          "Agrokompleks": "number",
-          "Kesehatan": "number",
-          "Energi dan Lingkungan": "number",
-          "Commmunity Development": "number",
-          "Sociopreneur": "number",
+        header: JSON.stringify({          
+          "FIM Ke-": "text",
+          "Tahun": "number",
         }),
         createdAt: new Date(),
         updatedAt: new Date()
-      },
+      }, 
+      {
+        headline: null,
+        note:null,
+        question: "Pendaftaran FIM ke 3 ?",
+        tunnelId: 2,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({          
+          "FIM Ke-": "text",
+          "Tahun": "number",
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }, 
+           
     ], {});
   },
 

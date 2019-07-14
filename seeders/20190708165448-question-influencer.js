@@ -6,19 +6,56 @@ module.exports = {
       {
         headline: "Aktivitas dan Pencapaian",
         note: null,
-        question: "Sebutkan dan jelaskan portofolio aktivitas,  project kolaborasi yang pernah dilakukan, atau pun penghargaan yang telah Anda raih.",
+        question: "Sebutkan dan jelaskan 3 portofolio aktivitas, project kolaborasi terbaik yang pernah dilakukan, atau pun penghargaan yang telah Anda raih.",
         tunnelId: 8,
         createdBy: 1,
         batchFim: "20",
-        isMany: 1,
+        isMany: 0,
         header: JSON.stringify({
-          "No": "number",
-          "Platform yang digunakan": "text",
+          "Platform yang digunakan 1": "text",
           "Nama akun": "text",
-          "Genre": "[{'option':'Film'},{'option':'Komedi'},{'option':'Musik'},{'option':'Travel'},{'option':'Beauty'},{'option':'Food'},{'option':'Fashion'},{'option':'Other'}]",
+          "Genre (Film, Komedi, Musik, Travel, Beauty, Food, Fashion, Lainnya )": "text",
           "Portofolio hasil karya terbaik (link)": "text",
-          "Alasan memilih genre tersebut (max. 350 kata)": "text",
-          "Penghargaan atas karya yang dibuat": "text"         
+          "Alasan memilih genre tersebut (max. 350 kata)": "textarea",
+          "Penghargaan atas karya yang dibuat": "text"
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        headline: null,
+        note: null,
+        question: "Sebutkan dan jelaskan portfolio ke 2",
+        tunnelId: 8,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({
+          "Platform yang digunakan 2": "text",
+          "Nama akun": "text",
+          "Genre (Film, Komedi, Musik, Travel, Beauty, Food, Fashion, Lainnya )": "text",
+          "Portofolio hasil karya terbaik (link)": "text",
+          "Alasan memilih genre tersebut (max. 350 kata)": "textarea",
+          "Penghargaan atas karya yang dibuat": "text"
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        headline: null,
+        note: null,
+        question: "Sebutkan dan jelaskan portfolio ke 3",
+        tunnelId: 8,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({
+          "Platform yang digunakan 3": "text",
+          "Nama akun": "text",
+          "Genre (Film, Komedi, Musik, Travel, Beauty, Food, Fashion, Lainnya )": "text",
+          "Portofolio hasil karya terbaik (link)": "text",
+          "Alasan memilih genre tersebut (max. 350 kata)": "textarea",
+          "Penghargaan atas karya yang dibuat": "text"
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -31,7 +68,7 @@ module.exports = {
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({ "Link Video": "text" }),
+        header: JSON.stringify({ "URL Video": "text" }),
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -43,7 +80,7 @@ module.exports = {
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
-        header: JSON.stringify({ "Attachment": "file" }),
+        header: JSON.stringify({ "URL File": "text" }),
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -56,21 +93,20 @@ module.exports = {
         batchFim: "20",
         isMany: 0,
         header: JSON.stringify({
-          "Attachment": "file"
+          "URL File": "text"
         }),
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         headline: null,
-        note:null,
-        question: "Jika pernah, mohon sebutkan berapa kali Anda telah  mendaftar FIM?",
-        tunnelId: 8,
+        note: null,
+        question: "Jika pernah, mohon sebutkan berapa kali Anda telah  mendaftar FIM ?",
+        tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
-        isMany: 1,
+        isMany: 0,
         header: JSON.stringify({
-          "No": "number",
           "FIM Ke-": "text",
           "Tahun": "number",
         }),
@@ -78,21 +114,31 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        headline: "Kelas Paralel",
-        question: "Berikut ini adalah daftar kelas untuk sesi paralel saat pelatihan FIM. Mohon berikan peringkat  1 (paling berminat) – 8 (paling tidak berminat), pada daftar kelas berikut;",
-        tunnelId: 8,
+        headline: null,
+        note: null,
+        question: "Pendaftaran FIM ke 2 ?",
+        tunnelId: 2,
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
         header: JSON.stringify({
-          "Literasi dan pendidikan": "number",
-          "Budaya dan pariwisata": "number",
-          "Digital dan teknologi": "number",
-          "Agrokompleks": "number",
-          "Kesehatan": "number",
-          "Energi dan Lingkungan": "number",
-          "Commmunity Development": "number",
-          "Sociopreneur": "number",
+          "FIM Ke-": "text",
+          "Tahun": "number",
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        headline: null,
+        note: null,
+        question: "Pendaftaran FIM ke 3 ?",
+        tunnelId: 2,
+        createdBy: 1,
+        batchFim: "20",
+        isMany: 0,
+        header: JSON.stringify({
+          "FIM Ke-": "text",
+          "Tahun": "number",
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -108,6 +154,6 @@ module.exports = {
       Example:
       return queryInterface.bulkDelete('People', null, {});
     */
-   return queryInterface.bulkDelete('Questions', null, {});
+    return queryInterface.bulkDelete('Questions', null, {});
   }
 };
