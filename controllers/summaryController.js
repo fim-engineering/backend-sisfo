@@ -80,7 +80,8 @@ exports.updateFinal = async (req, res, next) => {
         }
 
         model.Summary.update({
-            isFinal: !decision ? 1 : 0
+            // isFinal: !decision ? 1 : 0
+            isFinal: 1
         }, {
                 where: {
                     ktpNumber: req.body.ktpNumber,
