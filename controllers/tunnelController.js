@@ -12,18 +12,60 @@ exports.lists = async (req, res, next) => {
         const userId = userIdentity.userId;
 
         // search apakah dia fim 20 atau engga
-        const findIdentity = await model.Identity.findOne({ where: { id: userId } }).then(identity => {
+        const findIdentity = await model.Identity.findOne({ where: { userId: userId } }).then(identity => {
             return identity;
         }).catch(err => console.log(err))
 
-        listTunnel = [];
+        // search di summary apakah ada
+        const arrayDenied = [];
+        const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber } }).then(result => {
+            result.map((value) => {
+                arrayDenied.push(value.tunnelId);
+            })
+        }).catch(err => console.log(err));
 
-        if (findIdentity !== null && findIdentity.batchFim == null) {               
-            listTunnel = await model.Tunnel.findAll({ where: { name: { [Op.not]: "Next Gen" } } }).then(result => {                
+        // bukan anak FIM // kalau udah milih 1 di summary maka udah ga boleh milih yang lain lagi      
+        let whereNotFim = null;
+        if (arrayDenied.length > 0) {
+            whereNotFim = {
+                name: { [Op.not]: "Next Gen" },
+                id: { [Op.in]: arrayDenied }
+            };
+        } else {
+            whereNotFim = {
+                name: { [Op.not]: "Next Gen" },                
+            };
+        }
+
+        // conditional anak FIM
+        let whereFim = null;
+        if (arrayDenied.length > 0 && arrayDenied.length < 2) {
+            whereFim = {                
+                id: { [Op.notIn]: arrayDenied }
+            };
+        } else if(arrayDenied.length >= 2){
+            whereFim = {                
+                id: { [Op.in]: arrayDenied }
+            };
+        }        
+        else {
+            whereFim = {
+                createdAt: { [Op.not]: null },                
+            };
+        }
+
+        if (findIdentity !== null && findIdentity.batchFim == null) {
+            listTunnel = await model.Tunnel.findAll({
+                where: whereNotFim
+            }).then(result => {                          
                 return result
             }).catch(err => { console.log(err) });
-        } else {
-            listTunnel = await model.Tunnel.findAll().then(result => {
+        }
+        // anak FIM
+        else {
+            listTunnel = await model.Tunnel.findAll({
+                where: whereFim
+            }).then(result => {
                 return result
             }).catch(err => { console.log(err) });
         }

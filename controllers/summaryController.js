@@ -46,8 +46,7 @@ exports.updateFinal = async (req, res, next) => {
 
         const status = await model.Summary.findOne({
             where: data
-        }).then(result => {
-            console.log(result.toJSON())
+        }).then(result => {            
             if (result.isFinal == 1) {
                 return true
             } else {

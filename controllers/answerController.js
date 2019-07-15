@@ -67,7 +67,8 @@ exports.saveAnswer = async (req, res, next) => {
                     questionId: value.questionId,
                     ktpNumber: data.ktpNumber
                 }
-            }).then(result => {
+            }).then(async result => {
+
                 // jika belum ada idPertanyaan dengan nomor ktp tersebut
                 if (result == null) {
                     model.Answer.create({
@@ -77,18 +78,22 @@ exports.saveAnswer = async (req, res, next) => {
                         tunnelId: data.tunnelId
                     })
 
-                    // create di summary model mendeteksi dia ikut jalur apa 
-                    // berdasarkan pertanyaan yang dia jawab
-                    model.Summary.findOrCreate({
-                        where: {
-                            tunnelId: data.tunnelId,
-                            ktpNumber: data.ktpNumber
-                        },
-                        defaults: {
-                            isFinal: 0
-                        }
-                    })
-
+                    // // create di summary model mendeteksi dia ikut jalur apa 
+                    // // berdasarkan pertanyaan yang dia jawab
+                    // await model.Summary.findOne({
+                    //     where: {
+                    //         tunnelId: data.tunnelId,
+                    //         ktpNumber: data.ktpNumber
+                    //     }
+                    // }).then(async result => {
+                    //     if (result == null) {
+                    //        await model.Summary.create({
+                    //             tunnelId: data.tunnelId,
+                    //             ktpNumber: data.ktpNumber,
+                    //             isFinal: 0
+                    //         })
+                    //     }
+                    // })
 
                 } else {
                     result.update({
@@ -107,6 +112,18 @@ exports.saveAnswer = async (req, res, next) => {
                 });
             })
         })
+
+        model.Summary.findOrCreate({
+            where: {
+                tunnelId: data.tunnelId,
+                ktpNumber: data.ktpNumber
+            },
+            defaults: {
+                isFinal: 0
+            }
+        })
+
+
 
         // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
         model.User.findOne({ where: { email: userIdentity.email } }).then(result => {
