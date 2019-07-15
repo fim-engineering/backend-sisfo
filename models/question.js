@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     note:DataTypes.STRING,
   }, {});
   Question.associate = function(models) {
-    // associations can be defined here
+    models.Question.belongsToMany(models.Tunnel,{through:models.tunnelQuestion,foreignKey:'questionId'});
   };
   return Question;
 };

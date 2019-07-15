@@ -4,18 +4,34 @@ const redisClient = require('../util/redis');
 
 exports.lists = async (req, res, next) => {
     const data = {
-        idTunnel:req.body.tunnelId
+        idTunnel: req.body.tunnelId
     }
 
-    model.Question.findAll({where:{tunnelId:data.idTunnel}}).then(result => {
-        res.status(200).json({
-            status: true,
-            message: "data fetched",
-            data: result
-        });
-    }).catch(err => {
-        console.log(err)
+
+    const findTunnel = await model.Tunnel.findOne({
+        where: { id: data.idTunnel },
+        include:[{
+            model: model.Question,
+        }]
+    })
+        .then(result => { return result })
+        .catch(err => console.log(err));
+
+    res.status(200).json({
+        status: true,
+        message: "data fetched",
+        data: findTunnel.Questions
     });
+
+    // model.Question.findAll({where:{tunnelId:data.idTunnel}}).then(result => {
+    //     res.status(200).json({
+    //         status: true,
+    //         message: "data fetched",
+    //         data: result
+    //     });
+    // }).catch(err => {
+    //     console.log(err)
+    // });
 }
 
 
@@ -27,10 +43,10 @@ exports.create = async (req, res, next) => {
 
         const data = {
             question: req.body.question,
-            isMany:req.body.isMany,
+            isMany: req.body.isMany,
             header: JSON.stringify(req.body.header),
-            tunnelId:req.body.tunnelId,
-            batchFim:req.body.batchFim,
+            tunnelId: req.body.tunnelId,
+            batchFim: req.body.batchFim,
             createdBy: userId
         }
 
@@ -73,7 +89,7 @@ exports.read = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
-    
+
     redisClient.get('login_portal:' + token, function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
@@ -87,17 +103,17 @@ exports.update = async (req, res, next) => {
         }
 
         const data = {
-            idQuestion:req.body.idQuestion,
+            idQuestion: req.body.idQuestion,
             question: req.body.question,
-            isMany:req.body.isMany,
+            isMany: req.body.isMany,
             header: JSON.stringify(req.body.header),
-            tunnelId:req.body.tunnelId,
-            batchFim:req.body.batchFim,
+            tunnelId: req.body.tunnelId,
+            batchFim: req.body.batchFim,
             createdBy: userId
         }
 
         model.Question.update(data, { where: { id: data.idQuestion } }
-        ).then((status,result) => {
+        ).then((status, result) => {
             res.status(200).json({
                 status: true,
                 message: "Data Updated",
@@ -115,13 +131,13 @@ exports.update = async (req, res, next) => {
 }
 
 exports.delete = async (req, res, next) => {
-    model.Question.destroy({ where: { id: req.body.idQuestion} }).then(result=>{
+    model.Question.destroy({ where: { id: req.body.idQuestion } }).then(result => {
         res.status(200).json({
             status: true,
             message: "Data Deleted",
             data: null
         });
-    }).catch(err=>{
+    }).catch(err => {
         console.log(err)
         res.status(400).json({
             status: false,

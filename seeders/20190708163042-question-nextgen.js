@@ -4,6 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Questions', [
       {
+        id:1,
         headline: null,
         note:null,
         question: "Hal apa saja yang sudah saudara lakukan untuk FIM regional domisili saudara ?",
@@ -16,6 +17,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id:2,
         headline: null,
         note:null,
         question: "Berdasarkan pengalaman saudara selama 1 tahun di regional, apa saja yang perlu dilakukan/ ditingkatkan di regional dan bagaimana bentuk kontribusi saudara untuk mewujudkan hal tersebut ?",
@@ -28,6 +30,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id:3,
         headline: null,
         note:null,
         question: "Mengapa anda perlu untuk diterima di Pelatnas FIM 21 ?",
@@ -40,6 +43,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id:4,
         headline: null,
         note:null,
         question: "Pernyataan Komitmen",

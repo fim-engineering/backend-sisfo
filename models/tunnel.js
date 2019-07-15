@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Tunnel.associate = function(models) {
     models.Tunnel.belongsToMany(models.Identity, {through: models.Summary, foreignKey: 'tunnelId'});
+    models.Tunnel.belongsToMany(models.Question,{through:models.tunnelQuestion,foreignKey:'tunnelId'});
   };
   return Tunnel;
 };
