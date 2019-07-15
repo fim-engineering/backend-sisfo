@@ -56,31 +56,32 @@ exports.updateFinal = async (req, res, next) => {
             });
         })
 
-        let decision = false;
-        if (status.isFinal == 1) {
-            decision = true;
-        } else {
-            decision = false
-        }
+        // let decision = false;
+        // if (status.isFinal == 1) {
+        //     decision = true;
+        // } else {
+        //     decision = false
+        // }
 
-        if (decision) {
-            model.User.findOne({ where: { email: userIdentity.email } })
-                .then(user => {
-                    user.update({ status: 5 })
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 5 }))
-                })
-                .catch(err => console.log(err))
-        } else {
-            model.User.findOne({ where: { email: userIdentity.email } })
-                .then(user => {
-                    user.update({ status: 4 })
-                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
-                })
-                .catch(err => console.log(err))
-        }
+        // if (decision) {
+        //     model.User.findOne({ where: { email: userIdentity.email } })
+        //         .then(user => {
+        //             user.update({ status: 5 })
+        //             redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 5 }))
+        //         })
+        //         .catch(err => console.log(err))
+        // } else {
+        //     model.User.findOne({ where: { email: userIdentity.email } })
+        //         .then(user => {
+        //             user.update({ status: 4 })
+        //             redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
+        //         })
+        //         .catch(err => console.log(err))
+        // }
 
         model.Summary.update({
-            isFinal: !decision ? 1 : 0
+            // isFinal: !decision ? 1 : 0
+            isFinal: 1
         }, {
                 where: {
                     ktpNumber: req.body.ktpNumber,
@@ -88,6 +89,14 @@ exports.updateFinal = async (req, res, next) => {
                 }
             }
         ).then((status, result) => {
+
+            model.User.findOne({ where: { email: userIdentity.email } })
+            .then(user => {
+                user.update({ status: 5 })
+                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 5 }))
+            })
+            .catch(err => console.log(err))
+
             res.status(200).json({
                 status: true,
                 message: "Data Updated",
