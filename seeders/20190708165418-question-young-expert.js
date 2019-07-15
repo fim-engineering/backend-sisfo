@@ -4,6 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Questions', [
       {
+        id:22,
         headline: "Aktivitas dan Pencapaian",
         note: null,
         question: "Sebutkan dan jelaskan tentang portofolio riset/bisnis yang  Anda geluti ",
@@ -22,9 +23,10 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id:23,
         headline: null,
         note: "*nomor telpon ketua/ penanggung jawab akan dihubungi untuk proses validasi",
-        question: "Sebutkan 1 aktivitas dan/atau pencapaian terbaik  dalam konteks aktivitas saat ini yang telah Anda raih. Aktivitas dan pencapaian di sini diartikan dalam arti yang luas, bisa jadi berupa pengalaman mendirikan usaha, menjuarai kompetisi, partisipasi dalam suatu konferensi, penulisan ilmiah, dll.",
+        question: "Sebutkan 1 aktivitas dan/atau pencapaian terbaik dalam konteks aktivitas saat ini yang telah Anda raih. Aktivitas dan pencapaian di sini diartikan dalam arti yang luas, bisa jadi berupa pengalaman mendirikan usaha, menjuarai kompetisi, partisipasi dalam suatu konferensi, penulisan ilmiah, dll.",
         tunnelId: 5,
         createdBy: 1,
         batchFim: "20",
@@ -44,6 +46,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id:24,
         headline: "Portfolio",
         note: null,
         question: "Sertakan portofolio tulisan/artikel/jurnal yang telah Anda buat. Silahkan tuliskan link nya di bawah ini.",
@@ -53,89 +56,6 @@ module.exports = {
         isMany: 0,
         header: JSON.stringify({
           "URL Portfolio": "text",
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        headline: "Video Profil",
-        note: null,
-        question: "Sertakan karya yang berisikan profil singkat diri Anda beserta alasan mengapa ingin bergabung dalam keluarga besar FIM. Karya dapat berupa video, tulisan blog, rekaman podcast, unggahan instagram atau lainnya sesuai dengan platform yang Anda gunakan. Bagi pendaftar jalur selain Influencer, tugas ini bersifat optional (sebagai nilai tambah). Silahkan tuliskan link nya di bawah ini. ",
-        tunnelId: 5,
-        createdBy: 1,
-        batchFim: "20",
-        isMany: 0,
-        header: JSON.stringify({ "URL Video": "text" }),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        headline: "Surat Rekomendasi",
-        note: "Format Terlampir",
-        question: "Pada Jalur ini, rekomendasi ini dapat diberikan oleh siapapun, baik itu teman baik, dosen, tokoh masyarakat, pemuka adat, petinggi organisasi, petinggi partai politik, atau alumni FIM, siapa saja asalkan mengenal kamu dengan baik",
-        tunnelId: 4,
-        createdBy: 1,
-        batchFim: "20",
-        isMany: 0,
-        header: JSON.stringify({ "URL File": "text" }),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        headline: "Pernyataan Komitmen",
-        note: null,
-        question: "Format Terlampir",
-        tunnelId: 5,
-        createdBy: 1,
-        batchFim: "20",
-        isMany: 0,
-        header: JSON.stringify({
-          "URL File": "text"
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        headline: null,
-        note: null,
-        question: "Jika pernah, mohon sebutkan berapa kali Anda telah  mendaftar FIM ?",
-        tunnelId: 2,
-        createdBy: 1,
-        batchFim: "20",
-        isMany: 0,
-        header: JSON.stringify({
-          "FIM Ke-": "text",
-          "Tahun": "number",
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        headline: null,
-        note: null,
-        question: "Pendaftaran FIM ke 2 ?",
-        tunnelId: 2,
-        createdBy: 1,
-        batchFim: "20",
-        isMany: 0,
-        header: JSON.stringify({
-          "FIM Ke-": "text",
-          "Tahun": "number",
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        headline: null,
-        note: null,
-        question: "Pendaftaran FIM ke 3 ?",
-        tunnelId: 2,
-        createdBy: 1,
-        batchFim: "20",
-        isMany: 0,
-        header: JSON.stringify({
-          "FIM Ke-": "text",
-          "Tahun": "number",
         }),
         createdAt: new Date(),
         updatedAt: new Date()
