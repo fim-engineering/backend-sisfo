@@ -26,27 +26,28 @@ exports.lists = async (req, res, next) => {
 
 exports.updateFinal = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
-
+   
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
+        const userIdentity = JSON.parse(response);       
         const userId = userIdentity.userId;
 
         if (err) {
             return res.status(400).json({
                 status: false,
-                message: "Whoops Something Error",
+                message: "Whoops Something Error Coy",
                 data: err
             });
         }
 
         const data = {
             ktpNumber: req.body.ktpNumber,
-            tunnelId: req.body.tunneId
+            tunnelId: req.body.tunnelId
         }
 
-        const status = await model.Tunnel.findOne({
+        const status = await model.Summary.findOne({
             where: data
         }).then(result => {
+            console.log(result.toJSON())
             if (result.isFinal == 1) {
                 return true
             } else {

@@ -1,6 +1,8 @@
 const model = require('../models/index');
 const redisClient = require('../util/redis');
+const Sequelize = require('sequelize');
 
+const Op = Sequelize.Op
 
 exports.lists = async (req, res, next) => {
     const token = req.get('Authorization').split(' ')[1];
@@ -16,8 +18,8 @@ exports.lists = async (req, res, next) => {
 
         listTunnel = [];
 
-        if (findIdentity !== null && findIdentity.batchFim == "20") {
-            listTunnel = await model.Tunnel.findAll({ where: { name: { $not: "Next Gen" } } }).then(result => {
+        if (findIdentity !== null && findIdentity.batchFim == null) {               
+            listTunnel = await model.Tunnel.findAll({ where: { name: { [Op.not]: "Next Gen" } } }).then(result => {                
                 return result
             }).catch(err => { console.log(err) });
         } else {
