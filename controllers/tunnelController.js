@@ -33,31 +33,41 @@ exports.lists = async (req, res, next) => {
             };
         } else {
             whereNotFim = {
-                name: { [Op.not]: "Next Gen" },                
+                name: { [Op.not]: "Next Gen" },
             };
         }
 
         // conditional anak FIM
         let whereFim = null;
         if (arrayDenied.length > 0 && arrayDenied.length < 2) {
-            whereFim = {                
-                id: { [Op.notIn]: arrayDenied }
-            };
-        } else if(arrayDenied.length >= 2){
-            whereFim = {                
+            if (arrayDenied.indexOf(1) !== -1) // artinya ada next gen di sana
+            {
+                whereFim = {
+                    id: { [Op.notIn]: arrayDenied }
+                };
+            }
+            // jika tidak ada next gen , maka pilihannya hanya next Gen
+            else {
+                whereFim = {
+                    name: "Next Gen"
+                };
+            }
+
+        } else if (arrayDenied.length >= 2) {
+            whereFim = {
                 id: { [Op.in]: arrayDenied }
             };
-        }        
+        }
         else {
             whereFim = {
-                createdAt: { [Op.not]: null },                
+                createdAt: { [Op.not]: null },
             };
         }
 
         if (findIdentity !== null && findIdentity.batchFim == null) {
             listTunnel = await model.Tunnel.findAll({
                 where: whereNotFim
-            }).then(result => {                          
+            }).then(result => {
                 return result
             }).catch(err => { console.log(err) });
         }

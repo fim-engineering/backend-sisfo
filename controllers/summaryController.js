@@ -39,6 +39,7 @@ exports.updateFinal = async (req, res, next) => {
             });
         }
 
+    
         const data = {
             ktpNumber: req.body.ktpNumber,
             tunnelId: req.body.tunnelId
@@ -47,12 +48,7 @@ exports.updateFinal = async (req, res, next) => {
         const status = await model.Summary.findOne({
             where: data
         }).then(result => {            
-            if (result.isFinal == 1) {
-                return true
-            } else {
-                return false
-            }
-
+            return result
         }).catch(err => {
             return res.status(400).json({
                 status: false,
@@ -61,12 +57,21 @@ exports.updateFinal = async (req, res, next) => {
             });
         })
 
+        let decision = false;
+        if (status.isFinal == 1) {
+            decision = true;
+        } else {
+            decision = false
+        }
+
+        console.log(!status)
+
         model.Summary.update({
-            isFinal: !status
+            isFinal: !decision ? 1 : 0
         }, {
                 where: {
                     ktpNumber: req.body.ktpNumber,
-                    tunnelId: req.body.tunneId
+                    tunnelId: req.body.tunnelId
                 }
             }
         ).then((status, result) => {
@@ -77,9 +82,10 @@ exports.updateFinal = async (req, res, next) => {
             });
 
         }).catch(err => {
+            console.log(err)
             res.status(400).json({
                 status: false,
-                message: "Error",
+                message: "Error Gaes",
                 data: err
             });
         })
