@@ -26,9 +26,9 @@ exports.lists = async (req, res, next) => {
 
 exports.updateFinal = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
-   
+
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);       
+        const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
 
         if (err) {
@@ -39,7 +39,7 @@ exports.updateFinal = async (req, res, next) => {
             });
         }
 
-    
+
         const data = {
             ktpNumber: req.body.ktpNumber,
             tunnelId: req.body.tunnelId
@@ -47,7 +47,7 @@ exports.updateFinal = async (req, res, next) => {
 
         const status = await model.Summary.findOne({
             where: data
-        }).then(result => {            
+        }).then(result => {
             return result
         }).catch(err => {
             return res.status(400).json({
@@ -64,7 +64,21 @@ exports.updateFinal = async (req, res, next) => {
             decision = false
         }
 
-        console.log(!status)
+        if (decision) {
+            model.User.findOne({ where: { email: userIdentity.email } })
+                .then(user => {
+                    user.update({ status: 5 })
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 5 }))
+                })
+                .catch(err => console.log(err))
+        } else {
+            model.User.findOne({ where: { email: userIdentity.email } })
+                .then(user => {
+                    user.update({ status: 4 })
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
+                })
+                .catch(err => console.log(err))
+        }
 
         model.Summary.update({
             isFinal: !decision ? 1 : 0
