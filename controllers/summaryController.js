@@ -229,34 +229,40 @@ exports.checkDaftar = async (req, res, next) => {
         }).catch(err => console.log(err));
 
         // bukan anak FIM // kalau udah milih 1 di summary maka udah ga boleh milih yang lain lagi      
-        let status = null;
+        let statusNonFim = null;
         if (arrayDenied.length > 0) {
-            status = false;
+            statusNonFim = false;
         } else {
-            status = true
+            statusNonFim = true
         }
 
         // conditional anak FIM
-
+        let statusFim = null;
         if (arrayDenied.length > 0 && arrayDenied.length < 2) {
             if (arrayDenied.indexOf(1) !== -1) // artinya ada next gen di sana
             {
-                status = true;
+                statusFim = true;
             }
             // jika tidak ada next gen , maka pilihannya hanya next Gen
             else {
-                status = false;
+                statusFim = true;
             }
 
         } else if (arrayDenied.length >= 2) {
-            status = false;
+            statusFim = false;
         }
         else {
-            status = true;
+            statusFim = true;
+        }
+
+        if(findIdentity.batchFim == null){
+            statusnya = statusNonFim;
+        }else{
+            statusnya = statusFim;
         }
 
         res.status(200).json({
-            status: status,
+            status: statusnya,
             message: "data fetched",
         });
 
