@@ -222,7 +222,7 @@ exports.checkDaftar = async (req, res, next) => {
 
         // search di summary apakah ada
         const arrayDenied = [];
-        const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber, isFinal:1 } }).then(result => {
+        const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber, isFinal: 1 } }).then(result => {
             result.map((value) => {
                 arrayDenied.push(value.tunnelId);
             })
@@ -237,7 +237,7 @@ exports.checkDaftar = async (req, res, next) => {
         }
 
         // conditional anak FIM
-       
+
         if (arrayDenied.length > 0 && arrayDenied.length < 2) {
             if (arrayDenied.indexOf(1) !== -1) // artinya ada next gen di sana
             {
@@ -252,12 +252,12 @@ exports.checkDaftar = async (req, res, next) => {
             status = false;
         }
         else {
-            status =true;
+            status = true;
         }
 
         res.status(200).json({
-            status: true,
-            message: "data fetched",            
+            status: status,
+            message: "data fetched",
         });
 
     });
