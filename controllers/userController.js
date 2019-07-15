@@ -237,7 +237,7 @@ exports.saveProfile = async (req, res, next) => {
             const notFilled = [];
             // mengecek semua fill udah keisi
             await checkFilled.map((value, index) => {
-                if (value[0] !== "hoby" || value[0] !== "otherReligion" || value[0] !== "regional" || value[0] !== "expertise" || value[0] !== "emergencyPhone" || value[0] !== "headline") {
+                if (value[0] !== "hoby" || value[0] !== "otherReligion" || value[0] !== "batchFim" || value[0] !== "regional" || value[0] !== "expertise" || value[0] !== "emergencyPhone" || value[0] !== "headline") {
                     if (value[1] == null) { notFilled.push(value[0]) }
                 }
             })
