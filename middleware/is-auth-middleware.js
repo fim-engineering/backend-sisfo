@@ -2,11 +2,13 @@ const jwt = require('jsonwebtoken');
 const redisClient = require('../util/redis');
 
 module.exports = (req,res,next) => {
-    const authHeader = req.get('Authorization');
+    const authHeader = req.get('Authorization').split(' ')[1];
     if(!authHeader){
-        const error = new Error('Not Authenticated');
-        error.statusCode = 401;
-        throw error
+        res.status(401).json({
+            message: "NOT AUTH",
+            data: null,
+            status: false
+        })
     }
 
     let token = req.get('Authorization').split(' ')[1];
@@ -20,31 +22,32 @@ module.exports = (req,res,next) => {
             })
         }
 
-        if (response == null) {
+        if (response === null) {
             res.status(200).json({
                 message: `Token Not Found`,
                 data: null,
                 status: false
             })
         }
+
+        if (response) {
+            let decodedToken;
+            try{
+                decodedToken = jwt.verify(token, process.env.JWT_KEY);
+            } catch (err) {
+                err.statusCode = 500;
+                throw error;
+            }
+
+            if(!decodedToken) {
+                const error = new Error('Not Authenticated');
+                err.statusCode = 401;
+                throw error;
+            }
+
+            req.userId = decodedToken.userId;
+            next();
+        }
     })
 
-
-
-    let decodedToken;
-    try{
-        decodedToken = jwt.verify(token, process.env.JWT_KEY);
-    } catch (err) {
-        err.statusCode = 500;
-        throw error;
-    }
-
-    if(!decodedToken) {
-        const error = new Error('Not Authenticated');
-        err.statusCode = 401;
-        throw error;
-    }
-
-    req.userId = decodedToken.userId;
-    next();
 };
