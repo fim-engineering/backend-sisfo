@@ -7,15 +7,26 @@ exports.lists = async (req, res, next) => {
         idTunnel:req.body.tunnelId
     }
 
-    model.Question.findAll({where:{tunnelId:data.idTunnel}}).then(result => {
-        res.status(200).json({
-            status: true,
-            message: "data fetched",
-            data: result
-        });
-    }).catch(err => {
-        console.log(err)
+
+    const findTunnel = model.Tunnel.findOne({where:{tunnelId:data.idTunnel}})
+    .then(result=>{return result})
+    .catch(err=>console.log(err));
+
+    res.status(200).json({
+        status: true,
+        message: "data fetched",
+        data: findTunnel.toJSON()
     });
+
+    // model.Question.findAll({where:{tunnelId:data.idTunnel}}).then(result => {
+    //     res.status(200).json({
+    //         status: true,
+    //         message: "data fetched",
+    //         data: result
+    //     });
+    // }).catch(err => {
+    //     console.log(err)
+    // });
 }
 
 
