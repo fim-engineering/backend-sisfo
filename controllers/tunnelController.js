@@ -18,7 +18,7 @@ exports.lists = async (req, res, next) => {
 
         // search di summary apakah ada
         const arrayDenied = [];
-        const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber } }).then(result => {
+        const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber, isFinal:1 } }).then(result => {
             result.map((value) => {
                 arrayDenied.push(value.tunnelId);
             })
