@@ -136,13 +136,47 @@ exports.saveKtp = async (req, res, next) => {
             .catch(err => console.log(err))
 
         // check KTP di tabel identity jika null bikin, jika ada update
+
         if (findIdentity == null) {
             await model.Identity.create({
                 email: emailId,
                 userId: userId,
                 ktpUrl: urlKtp,
                 ktpNumber: noKtp
+            }).then(async result => {
+                // check status dan update redis
+                const findStatus = await model.Identity
+                    .findOne({ where: { ktpNumber: noKtp } })
+                    .then(result => { return result })
+                    .catch(err => { console.log(err) })
+
+                let stepupdate = 0;
+                if (findStatus !== null && findStatus.ktpUrl == null) {
+                    stepupdate = 1
+                    if (findUser.status <= 2) {
+                        findUser.update({ status: 1 }).catch(err => console.log(err));
+                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 1 }))
+                    }
+                } else {
+                    stepupdate = 2
+                    // menghindari setelah 2 
+                    if (findUser.status <= 2) {
+                        findUser.update({ status: 2 }).catch(err => console.log(err));
+                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
+                    }
+                }
+
+
+
+                return res.status(200).json({
+                    "status": true,
+                    "message": "KTP & Foto KTP berhasil update"
+                })
             }).catch(err => console.log(err));
+
+
+
+
         }
         // update
         else {
@@ -177,21 +211,23 @@ exports.saveKtp = async (req, res, next) => {
                     }
                 }
 
+
+
                 return res.status(200).json({
                     "status": true,
                     "message": "KTP & Foto KTP berhasil update"
                 })
-            }else{
+            } else {
                 return res.status(200).json({
                     "status": false,
-                    "message": "Nomor KTP sudah digunakan oleh "+findIdentity.name
+                    "message": "Nomor KTP sudah digunakan oleh " + findIdentity.name
                 })
             }
         }
 
 
 
-       
+
 
     })
 }
