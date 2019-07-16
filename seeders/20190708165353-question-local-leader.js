@@ -28,7 +28,7 @@ module.exports = {
         id:17,
         headline: "Pernyataan Komitmen",
         note:null,
-        question: "Format Terlampir",
+        question: '<a href="https://res.cloudinary.com/fim-indonesia/raw/upload/v1563242868/document/SURAT_PERNYATAAN_KOMITMEN_DIRI.docx" >Format Terlampir</a>',
         tunnelId: 3,
         createdBy: 1,
         batchFim: "20",
