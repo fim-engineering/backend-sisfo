@@ -170,7 +170,7 @@ exports.saveKtp = async (req, res, next) => {
 
                 return res.status(200).json({
                     "status": true,
-                    "message": "KTP & Foto KTP berhasil update"
+                    "message": "KTP dan foto KTP berhasil diperbarui"
                 })
             }).catch(err => console.log(err));
 
@@ -215,7 +215,7 @@ exports.saveKtp = async (req, res, next) => {
 
                 return res.status(200).json({
                     "status": true,
-                    "message": "KTP & Foto KTP berhasil update"
+                    "message": "KTP dan foto KTP berhasil diperbarui"
                 })
             } else {
                 return res.status(200).json({
