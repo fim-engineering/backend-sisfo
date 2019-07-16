@@ -146,42 +146,52 @@ exports.saveKtp = async (req, res, next) => {
         }
         // update
         else {
-            await findIdentity.update({
-                email: emailId,
-                userId: userId,
-                ktpUrl: urlKtp,
-                ktpNumber: noKtp
-            }).catch(err => console.log(err));
+            // pastikan user id masih nul jika tidak null kasih tau kalau itu sudah dipakai
+            if (findIdentity.userId == null) {
+                await findIdentity.update({
+                    email: emailId,
+                    userId: userId,
+                    ktpUrl: urlKtp,
+                    ktpNumber: noKtp
+                }).catch(err => console.log(err));
+
+                // check status dan update redis
+                const findStatus = await model.Identity
+                    .findOne({ where: { ktpNumber: noKtp } })
+                    .then(result => { return result })
+                    .catch(err => { console.log(err) })
+
+                let stepupdate = 0;
+                if (findStatus !== null && findStatus.ktpUrl == null) {
+                    stepupdate = 1
+                    if (findUser.status <= 2) {
+                        findUser.update({ status: 1 }).catch(err => console.log(err));
+                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 1 }))
+                    }
+                } else {
+                    stepupdate = 2
+                    // menghindari setelah 2 
+                    if (findUser.status <= 2) {
+                        findUser.update({ status: 2 }).catch(err => console.log(err));
+                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
+                    }
+                }
+
+                return res.status(200).json({
+                    "status": true,
+                    "message": "KTP & Foto KTP berhasil update"
+                })
+            }else{
+                return res.status(200).json({
+                    "status": false,
+                    "message": "Nomor KTP sudah digunakan oleh "+findIdentity.name
+                })
+            }
         }
 
-        // check status dan update redis
-        const findStatus = await model.Identity
-            .findOne({ where: { ktpNumber: noKtp } })
-            .then(result => { return result })
-            .catch(err => { console.log(err) })
 
-        let stepupdate = 0;
-        if (findStatus !== null && findStatus.ktpUrl == null) {
-            stepupdate = 1
-            if (findUser.status <= 2) {
-                findUser.update({ status: 1 }).catch(err => console.log(err));
-                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 1 }))
-            }
 
-        } else {
-            stepupdate = 2
-            // menghindari setelah 2 
-            if (findUser.status <= 2) {
-                findUser.update({ status: 2 }).catch(err => console.log(err));
-                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
-            }
-
-        }
-
-        return res.status(200).json({
-            "status": true,
-            "message": "KTP & Foto KTP berhasil terupload"
-        })
+       
 
     })
 }
@@ -237,10 +247,10 @@ exports.saveProfile = async (req, res, next) => {
             const notFilled = [];
             // mengecek semua fill udah keisi
             await checkFilled.map((value, index) => {
-  
-                if (value[0] !== "userId" && value[0] !== "hoby" && value[0] !== "otherReligion" && value[0] !== "batchFim" && value[0] !== "regional" && value[0] !== "expertise" && value[0] !== "emergencyPhone" && value[0] !== "headline") {                   
-                    if (value[1] == null) {                         
-                        notFilled.push(value[0]) 
+
+                if (value[0] !== "userId" && value[0] !== "hoby" && value[0] !== "otherReligion" && value[0] !== "batchFim" && value[0] !== "regional" && value[0] !== "expertise" && value[0] !== "emergencyPhone" && value[0] !== "headline") {
+                    if (value[1] == null) {
+                        notFilled.push(value[0])
                     }
 
                 }
