@@ -147,7 +147,7 @@ module.exports = {
       {
         id:12,
         headline: "Surat Rekomendasi",
-        note: '<a href="https://res.cloudinary.com/fim-indonesia/raw/upload/v1563242868/document/SURAT_PERNYATAAN_KOMITMEN_DIRI.docx" >Format Terlampir</a>',
+        note: '<a href="https://res.cloudinary.com/fim-indonesia/raw/upload/v1563327650/document/Surat_Rekomendasi_FIM_21_non_next_gen.docx" >Format Terlampir</a>',
         question: "Pada Jalur ini, rekomendasi ini dapat diberikan oleh siapapun, baik itu teman baik, dosen, tokoh masyarakat, pemuka adat, petinggi organisasi, petinggi partai politik, atau alumni FIM, siapa saja asalkan mengenal kamu dengan baik",
         tunnelId: 2,
         createdBy: 1,
