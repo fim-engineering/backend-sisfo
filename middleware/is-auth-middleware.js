@@ -35,6 +35,7 @@ module.exports = (req,res,next) => {
             try{
                 decodedToken = jwt.verify(token, process.env.JWT_KEY);
             } catch (err) {
+                const error = new Error('Not Authenticated');
                 err.statusCode = 500;
                 throw error;
             }
