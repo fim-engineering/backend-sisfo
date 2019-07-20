@@ -5,6 +5,6 @@ const {body} = require('express-validator/check')
 const homeController = require('../controllers/homeController');
 const isAuth = require('../middleware/is-auth-middleware');
 
-router.get('/',homeController.homeRoute)
+router.get('/', homeController.homeRoute)
 
 module.exports = router;
