@@ -52,9 +52,10 @@ module.exports = (req, res, next) => {
                     // err.statusCode = 401;
                     // throw error;
 
-                    res.status(500).json({
+                    res.json({
                         message: `Token Error ` + err,
-                        data: null,
+                        code:401,
+                        // data: null,
                         status: false
                     })
                 }
