@@ -48,15 +48,16 @@ module.exports = (req, res, next) => {
                 }
 
                 if (!decodedToken) {
-                    const error = new Error('Not Authenticated');
-                    err.statusCode = 401;
-                    throw error;
+                    // const error = new Error('Not Authenticated');
+                    // err.statusCode = 401;
+                    // throw error;
 
-                    // res.status(401).json({
-                    //     message: `Token Error`,
-                    //     data: null,
-                    //     status: false
-                    // })
+                    res.json({
+                        message: `Token Error ` + err,
+                        code:401,
+                        // data: null,
+                        status: false
+                    })
                 }
 
                 req.userId = decodedToken.userId;
