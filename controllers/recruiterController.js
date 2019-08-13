@@ -207,19 +207,23 @@ exports.listByRecruiter = async (req, res, next) => {
     const emailRecruiter = req.body.emailRecruiter;
 
     const theIdUser = await model.User.findOne({
-        where:{
+        where: {
             email: emailRecruiter
         }
-    }).then(result=>{        
+    }).then(result => {
         return result.id
-    }).catch(err=>{
-        console.log(err)
+    }).catch(err => {
+        return res.status(400).json({
+            status: false,
+            message: "Whoops Something Error",
+            error: err
+        });
     })
 
     const allSubmit = await model.Summary.findAll({
         where: {
             isFinal: 1,
-            recruiterId:theIdUser
+            recruiterId: theIdUser
         }
     }).then(result => {
         return result
@@ -256,13 +260,17 @@ exports.listByRecruiter = async (req, res, next) => {
             where: { isFinal: 1 },
             include: [{
                 model: model.Tunnel,
-                attributes: ['name']
+                attributes: ['name', 'id']
             }]
         }]
     }).then(result => {
         return result
     }).catch(err => {
-        console.log(err)
+        return res.status(400).json({
+            status: false,
+            message: "Whoops Something Error",
+            error: err
+        });
     })
 
     return res.status(200).json({
@@ -270,4 +278,99 @@ exports.listByRecruiter = async (req, res, next) => {
         message: "Data Fetched",
         data: listIdentity
     });
+}
+
+exports.detailParticipant = async (req, res, next) => {
+    const tunnelId = req.body.tunnelId;
+    const idUserParticipant = req.body.idUserParticipant;
+
+    model.User.findOne({
+        where: { id: idUserParticipant },
+        include: [
+            {
+                model: model.Identity,
+                include: [
+                    {
+                        model: model.Summary,
+                        where: { isFinal: 1 },
+                        include: [
+                            {
+                                model: model.Tunnel,
+                                attributes: ['name', 'id']
+                            },
+                        ]
+                    },
+                    {
+                        model: model.Answer,
+                        where: { tunnelId: tunnelId },
+                        include: [
+                            {
+                                model: model.Tunnel
+                            },
+                            {
+                                model: model.Question
+                            }
+                        ]
+                    }
+                ]
+            },
+
+        ]
+    }).then(result => {
+        return res.status(200).json({
+            status: true,
+            message: "Data Fetched",
+            data: result
+        });
+    }).catch(err => {
+        console.log(err)
+        return res.status(400).json({
+            status: false,
+            message: "Whoops Something Error",
+            error: err
+        });
+    })
+}
+
+exports.updateScore = async (req, res, next) => {
+    const tunnelId = req.body.tunnelId;
+    const idUserParticipant = req.body.ktpNumberParticipant;
+
+    model.Summary.findOne({
+        where: {
+            ktpNumber: idUserParticipant,
+            tunnelId: tunnelId
+        },
+    }).then(async result => {
+
+        await result.update({
+            scoreDataDiri: req.body.scoreDataDiri,
+            scoreAktivitas: req.body.scoreAktivitas,
+            scoreProject: req.body.scoreProject,
+            scoreOther: req.body.scoreOther,
+            notes: req.body.notes
+        }).then(result => {
+            return res.status(200).json({
+                status: true,
+                message: "Score Updated",
+                data: result
+            });
+        }).catch(err => {
+            console.log(err)
+            return res.status(400).json({
+                status: false,
+                message: "Whoops Something Error",
+                error: err
+            });
+        })
+
+
+    }).catch(err => {
+        console.log(err)
+        return res.status(400).json({
+            status: false,
+            message: "Whoops Something Error",
+            error: err
+        });
+    })
 }

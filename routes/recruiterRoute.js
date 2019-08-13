@@ -13,6 +13,8 @@ router.post('/assign', recruiterController.assignRecruiter);
 // view detail tiap capes
 router.post('/participant/by-recruiter', recruiterController.listByRecruiter);
 router.post('/participant/detail',recruiterController.detailParticipant);
+router.post('/participant/update/score',recruiterController.updateScore);
+
 
 
 

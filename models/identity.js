@@ -29,6 +29,7 @@ Identity.associate = function (models) {
   models.Identity.belongsTo(models.User, { foreignKey: 'userId' })
   models.Identity.belongsToMany(models.Tunnel, {through: models.Summary, foreignKey: 'ktpNumber'});
   models.Identity.hasMany(models.Summary, {foreignKey:'ktpNumber',sourceKey:'ktpNumber'})
+  models.Identity.hasMany(models.Answer, {foreignKey:'ktpNumber',sourceKey:'ktpNumber'})
 };
 return Identity;
 };
