@@ -7,10 +7,15 @@ module.exports = (sequelize, DataTypes) => {
     isFinal: DataTypes.INTEGER,
     recruiterId: DataTypes.INTEGER,
     scoreFinal: DataTypes.INTEGER,
-    createdBy: DataTypes.INTEGER
+    createdBy: DataTypes.INTEGER,
+    scoreDataDiri : DataTypes.INTEGER,
+    scoreAktivitas : DataTypes.INTEGER,
+    scoreProject : DataTypes.INTEGER,
+    scoreOther : DataTypes.INTEGER,
+    notes:DataTypes.TEXT
   }, {});
   Summary.associate = function(models) {
-    // associations can be defined here
+    models.Summary.belongsTo(models.Tunnel,{foreignKey:'id', sourceKey:'tunnelId'})
   };
   return Summary;
 };
