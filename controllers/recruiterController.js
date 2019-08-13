@@ -99,23 +99,23 @@ exports.listSubmitted = async (req, res, next) => {
         });
     }
 
-   const listIdentity = await model.Identity.findAll({
+    const listIdentity = await model.Identity.findAndCountAll({
         where: {
             ktpNumber: { [Op.in]: listKTPSubmitted }
         },
-        attributes: ['userId', 'name','ktpNumber'],
-        include:[{
-            model:model.Summary,
-            where:{isFinal: 1},
-            include:[{
-                model:model.Tunnel,
-                attributes:['name']
+        attributes: ['userId', 'name', 'ktpNumber'],
+        include: [{
+            model: model.Summary,
+            where: { isFinal: 1 },
+            include: [{
+                model: model.Tunnel,
+                attributes: ['name']
             }]
         }]
-    }).then(result=>{
+    }).then(result => {
         return result
-    }).catch(err=>{
-        console.log(err)        
+    }).catch(err => {
+        console.log(err)
     })
 
     return res.status(200).json({
@@ -123,4 +123,82 @@ exports.listSubmitted = async (req, res, next) => {
         message: "Data Fetched",
         data: listIdentity
     });
+}
+
+
+exports.listRecruiter = async (req, res, next) => {
+    model.Identity.findAll({
+        where: {
+            role: 2,
+        },
+        attributes: ['name', 'ktpNumber', 'phone', 'email', 'batchFim']
+
+    }).then(result => {
+        return res.status(200).json({
+            status: true,
+            message: "Data Fetched",
+            data: result
+        });
+    }).catch(err => {
+        console.log(err)
+    })
+}
+
+exports.assignRecruiter = async (req, res, next) => {
+    const ktpRecruiter = req.body.ktpRecruiter;
+    const listPeserta = req.body.ktpPeserta; // array
+
+    // const ArrayPeserta: [];
+    // listPeserta.map((value,index)=>{
+    //     value.
+    // })
+
+    // findRecruiter
+    const theRecruiter = await model.Identity.findOne({
+        where: {
+            ktpNumber: ktpRecruiter,
+        },
+        attributes: ['id', 'name', 'userId']
+    }).then(result => {
+        return result
+    }).catch(err => {
+        console.log(err)
+    })
+
+    if (theRecruiter !== null) {
+        // update Summary
+        const listSummary = await model.Summary.findAll({
+            where: { ktpNumber: { [Op.in]: listPeserta } },
+            // attributes: ['ktpNumber']
+        }).then(result => {
+            return result;
+        }).catch(err => console.log(err))
+
+        if (listSummary !== null) {
+            await listSummary.map((value, index) => {
+                value.update({
+                    recruiterId: theRecruiter.userId
+                })
+            })
+
+            return res.status(200).json({
+                status: true,
+                message: "Participant Assigned to " + theRecruiter.name
+            });
+
+
+        } else {
+            return res.status(200).json({
+                status: false,
+                message: "Participant List Null"
+            });
+        }
+
+    } else {
+        return res.status(200).json({
+            status: false,
+            message: "Recruiter User Not Found"
+        });
+    }
+
 }

@@ -6,8 +6,9 @@ const recruiterController = require('../controllers/recruiterController');
 // add admin
 router.post('/:type(recruit|admin)/add',recruiterController.addAdmin);
 // list capes submit
-router.get('/participant/submited', recruiterController.listSubmitted)
-router.post('/participant/submited/:id', recruiterController.listSubmitted)
+router.get('/participant/submited', recruiterController.listSubmitted);
+router.get('/lists', recruiterController.listRecruiter);
+router.post('/assign', recruiterController.assignRecruiter);
 
 
 module.exports = router;
