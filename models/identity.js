@@ -22,11 +22,13 @@ module.exports = (sequelize, DataTypes) => {
     hoby: DataTypes.TEXT,
     expertise: DataTypes.STRING,
     institution:DataTypes.STRING,
-    otherReligion:DataTypes.STRING  
+    otherReligion:DataTypes.STRING,
+    role:DataTypes.INTEGER  
 }, {});
 Identity.associate = function (models) {
   models.Identity.belongsTo(models.User, { foreignKey: 'userId' })
   models.Identity.belongsToMany(models.Tunnel, {through: models.Summary, foreignKey: 'ktpNumber'});
+  models.Identity.hasMany(models.Summary, {foreignKey:'ktpNumber',sourceKey:'ktpNumber'})
 };
 return Identity;
 };
