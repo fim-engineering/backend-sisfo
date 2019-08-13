@@ -10,5 +10,10 @@ router.get('/participant/submited', recruiterController.listSubmitted);
 router.get('/lists', recruiterController.listRecruiter);
 router.post('/assign', recruiterController.assignRecruiter);
 
+// view detail tiap capes
+router.post('/participant/by-recruiter', recruiterController.listByRecruiter);
+router.post('/participant/detail',recruiterController.detailParticipant);
+
+
 
 module.exports = router;

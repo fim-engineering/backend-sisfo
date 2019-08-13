@@ -202,3 +202,72 @@ exports.assignRecruiter = async (req, res, next) => {
     }
 
 }
+
+exports.listByRecruiter = async (req, res, next) => {
+    const emailRecruiter = req.body.emailRecruiter;
+
+    const theIdUser = await model.User.findOne({
+        where:{
+            email: emailRecruiter
+        }
+    }).then(result=>{        
+        return result.id
+    }).catch(err=>{
+        console.log(err)
+    })
+
+    const allSubmit = await model.Summary.findAll({
+        where: {
+            isFinal: 1,
+            recruiterId:theIdUser
+        }
+    }).then(result => {
+        return result
+    }).catch(err => {
+        console.log(err)
+        return res.status(400).json({
+            status: false,
+            message: "Whoops Something Error",
+            error: err
+        });
+    });
+
+    const listKTPSubmitted = [];
+
+    if (allSubmit !== null) {
+        await allSubmit.map((value, index) => {
+            listKTPSubmitted.push(value.ktpNumber);
+        })
+    } else {
+        return res.status(200).json({
+            status: false,
+            message: "No One Submitted",
+            data: null
+        });
+    }
+
+    const listIdentity = await model.Identity.findAll({
+        where: {
+            ktpNumber: { [Op.in]: listKTPSubmitted }
+        },
+        attributes: ['userId', 'name', 'ktpNumber'],
+        include: [{
+            model: model.Summary,
+            where: { isFinal: 1 },
+            include: [{
+                model: model.Tunnel,
+                attributes: ['name']
+            }]
+        }]
+    }).then(result => {
+        return result
+    }).catch(err => {
+        console.log(err)
+    })
+
+    return res.status(200).json({
+        status: true,
+        message: "Data Fetched",
+        data: listIdentity
+    });
+}
