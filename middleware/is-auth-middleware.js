@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
 
         let token = req.get('Authorization').split(' ')[1];
 
-        redisClient.get('login_portal:' + token, function (err, response) {
+        redisClient.get('login_portal:' + token, async function (err, response) {
             if (err) {
                 res.status(500).json({
                     message: "Somethin Went Wrong " + err,
@@ -33,32 +33,52 @@ module.exports = (req, res, next) => {
 
             if (response) {
                 let decodedToken;
-                try {
-                    decodedToken = jwt.verify(token, process.env.JWT_KEY);
-                } catch (err) {
-                    // const error = new Error('Not Authenticated');
-                    // err.statusCode = 500;
-                    // throw error;
+                
+                decodedToken = await jwt.verify(token, process.env.JWT_KEY, (err, result) => {                
+                    if(err){
+                        res.status(500).json({
+                            message: `Token Error ` + err,
+                            data: null,
+                            status: false
+                        })
+                    }else{
+                        return result;
+                    }                
+                });                
 
-                    res.status(500).json({
-                        message: `Token Error ` + err,
-                        data: null,
-                        status: false
-                    })
-                }
 
-                if (!decodedToken) {
-                    // const error = new Error('Not Authenticated');
-                    // err.statusCode = 401;
-                    // throw error;
+                // try {
+                //     decodedToken = jwt.verify(token, process.env.JWT_KEY);
+                // } catch (err) {
+                //     // const error = new Error('Not Authenticated');
+                //     // err.statusCode = 500;
+                //     // throw error;
 
-                    res.json({
-                        message: `Token Error ` + err,
-                        code:401,
-                        // data: null,
-                        status: false
-                    })
-                }
+                //     res.status(500).json({
+                //         message: `Token Error ` + err,
+                //         data: null,
+                //         status: false
+                //     })
+                // }
+
+                // if (!decodedToken) {
+                //     // const error = new Error('Not Authenticated');
+                //     // err.statusCode = 401;
+                //     // throw error;
+
+                //     res.status(400).json({
+                //         message: `Token Error ` + err,
+                //         data: null,
+                //         status: false
+                //     })
+
+                //     // res.json({
+                //     //     message: `Token Error ` + err,
+                //     //     code:401,
+                //     //     // data: null,
+                //     //     status: false
+                //     // })
+                // }
 
                 req.userId = decodedToken.userId;
                 next();
