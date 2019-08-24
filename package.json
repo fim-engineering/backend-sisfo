@@ -15,7 +15,7 @@
     "setup": "npm run migrate && npm run seed",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "start:dev": "nodemon app.js"
+    "start:dev": "NODE_ENV=test nodemon app.js"
   },
   "author": "Bagus Dwi Utama",
   "license": "ISC",
