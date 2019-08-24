@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Summary.associate = function(models) {
     models.Summary.belongsTo(models.Tunnel,{foreignKey:'id', sourceKey:'tunnelId'})
+    models.Summary.belongsTo(models.Identity,{foreignKey:'ktpNumber', targetKey:'ktpNumber'});
   };
   return Summary;
 };
