@@ -15,7 +15,9 @@ router.post('/participant/by-recruiter', recruiterController.listByRecruiter);
 router.post('/participant/detail',recruiterController.detailParticipant);
 router.post('/participant/update/score',recruiterController.updateScore);
 
-
-
+router.post('/recruiter/add', recruiterController.addRecruiter);
+router.post('/participant/available-to-assign', recruiterController.availableAssing);
+router.post('/participant/to-assign', recruiterController.toAssign);
+router.post('/participant/undo-assign', recruiterController.undoAssign);
 
 module.exports = router;

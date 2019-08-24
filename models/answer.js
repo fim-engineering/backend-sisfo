@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Answer.associate = function(models) {
     models.Answer.belongsTo(models.Tunnel, { foreignKey: 'id', sourceKey: 'tunnelId' })
-    models.Answer.belongsTo(models.Question, { foreignKey: 'id', sourceKey: 'questionId' })
+    models.Answer.belongsTo(models.Question, { sourceKey: 'questionId', targetKey: 'id' })
   };
   return Answer;
 };

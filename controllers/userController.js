@@ -2,7 +2,11 @@ const model = require('../models/index');
 const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const redisClient = require('../util/redis')
+const redisClient = require('../util/redis');
+
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op
+
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
@@ -126,7 +130,7 @@ exports.saveKtp = async (req, res, next) => {
 
         // cari nomor ktp
         const findIdentity = await model.Identity
-            .findOne({ where: { ktpNumber: noKtp } })
+            .findOne({ where: { [Op.or]: [{ktpNumber: noKtp},{email:emailId}] } })
             .then(result => { return result })
             .catch(err => { console.log(err) })
 

@@ -156,7 +156,7 @@ exports.assignRecruiter = async (req, res, next) => {
     // findRecruiter
     const theRecruiter = await model.Identity.findOne({
         where: {
-            ktpNumber: ktpRecruiter,
+            email: req.body.emailRecruiter,
         },
         attributes: ['id', 'name', 'userId']
     }).then(result => {
@@ -167,25 +167,27 @@ exports.assignRecruiter = async (req, res, next) => {
 
     if (theRecruiter !== null) {
         // update Summary
-        const listSummary = await model.Summary.findAll({
-            where: { ktpNumber: { [Op.in]: listPeserta } },
+        const listSummary = await model.Summary.findOne({
+            where: {
+                ktpNumber: req.body.ktpNumberPeserta,
+                tunnelId: req.body.tunnelId
+            },
             // attributes: ['ktpNumber']
         }).then(result => {
             return result;
         }).catch(err => console.log(err))
 
         if (listSummary !== null) {
-            await listSummary.map((value, index) => {
-                value.update({
-                    recruiterId: theRecruiter.userId
-                })
+            // await listSummary.map((value, index) => {
+            listSummary.update({
+                recruiterId: theRecruiter.userId
             })
+            // })
 
             return res.status(200).json({
                 status: true,
                 message: "Participant Assigned to " + theRecruiter.name
             });
-
 
         } else {
             return res.status(200).json({
@@ -224,98 +226,97 @@ exports.listByRecruiter = async (req, res, next) => {
         where: {
             isFinal: 1,
             recruiterId: theIdUser
-        }
+        },
+        include: [
+            {
+                model: model.Identity
+            },
+            {
+                model: model.Tunnel
+            },
+        ]
     }).then(result => {
         return result
     }).catch(err => {
         console.log(err)
-        return res.status(400).json({
-            status: false,
-            message: "Whoops Something Error",
-            error: err
-        });
     });
 
-    const listKTPSubmitted = [];
+    // const listKTPSubmitted = [];
 
-    if (allSubmit !== null) {
-        await allSubmit.map((value, index) => {
-            listKTPSubmitted.push(value.ktpNumber);
-        })
-    } else {
-        return res.status(200).json({
-            status: false,
-            message: "No One Submitted",
-            data: null
-        });
-    }
+    // if (allSubmit !== null) {
+    //     await allSubmit.map((value, index) => {
+    //         listKTPSubmitted.push(value.ktpNumber);
+    //     })
+    // } else {
+    //     return res.status(200).json({
+    //         status: false,
+    //         userId:theIdUser,
+    //         message: "No One Submitted",
+    //         data: null
+    //     });
+    // }
 
-    const listIdentity = await model.Identity.findAll({
-        where: {
-            ktpNumber: { [Op.in]: listKTPSubmitted }
-        },
-        attributes: ['userId', 'name', 'ktpNumber'],
-        include: [{
-            model: model.Summary,
-            where: { isFinal: 1 },
-            include: [{
-                model: model.Tunnel,
-                attributes: ['name', 'id']
-            }]
-        }]
-    }).then(result => {
-        return result
-    }).catch(err => {
-        return res.status(400).json({
-            status: false,
-            message: "Whoops Something Error",
-            error: err
-        });
-    })
+    // const listIdentity = await model.Identity.findAll({
+    //     where: {
+    //         ktpNumber: { [Op.in]: listKTPSubmitted }
+    //     },
+    //     attributes: ['userId', 'name', 'ktpNumber'],
+    //     include: [{
+    //         model: model.Summary,
+    //         where: { isFinal: 1 },
+    //         include: [{
+    //             model: model.Tunnel,
+    //             attributes: ['name', 'id']
+    //         }]
+    //     }]
+    // }).then(result => {
+    //     return result
+    // }).catch(err => {
+    //     return res.status(400).json({
+    //         status: false,
+    //         message: "Whoops Something Error",
+    //         error: err
+    //     });
+    // })
 
     return res.status(200).json({
         status: true,
         message: "Data Fetched",
-        data: listIdentity
+        data: allSubmit
     });
 }
 
 exports.detailParticipant = async (req, res, next) => {
     const tunnelId = req.body.tunnelId;
-    const idUserParticipant = req.body.idUserParticipant;
+    const ktpNumber = req.body.ktpNumber;
 
-    model.User.findOne({
-        where: { id: idUserParticipant },
+    model.Identity.findOne({
+        where: { ktpNumber: ktpNumber },
         include: [
             {
-                model: model.Identity,
+                model: model.Summary,
+                where: { isFinal: 1 },
                 include: [
                     {
-                        model: model.Summary,
-                        where: { isFinal: 1 },
-                        include: [
-                            {
-                                model: model.Tunnel,
-                                attributes: ['name', 'id']
-                            },
-                        ]
+                        model: model.Tunnel,
+                        attributes: ['name', 'id']
                     },
-                    {
-                        model: model.Answer,
-                        where: { tunnelId: tunnelId },
-                        include: [
-                            {
-                                model: model.Tunnel
-                            },
-                            {
-                                model: model.Question
-                            }
-                        ]
-                    }
                 ]
             },
-
+            {
+                model: model.Answer,
+                where: { tunnelId: tunnelId },
+                include: [
+                    {
+                        model: model.Tunnel
+                    },
+                    {
+                        model: model.Question
+                    }
+                ]
+            }
         ]
+
     }).then(result => {
         return res.status(200).json({
             status: true,
@@ -334,11 +335,11 @@ exports.detailParticipant = async (req, res, next) => {
 
 exports.updateScore = async (req, res, next) => {
     const tunnelId = req.body.tunnelId;
-    const idUserParticipant = req.body.ktpNumberParticipant;
+    const ktpNumber = req.body.ktpNumber;   
 
     model.Summary.findOne({
         where: {
-            ktpNumber: idUserParticipant,
+            ktpNumber: ktpNumber,
             tunnelId: tunnelId
         },
     }).then(async result => {
@@ -348,6 +349,7 @@ exports.updateScore = async (req, res, next) => {
             scoreAktivitas: req.body.scoreAktivitas,
             scoreProject: req.body.scoreProject,
             scoreOther: req.body.scoreOther,
+            scoreFinal: parseInt(req.body.scoreDataDiri,10) * 0.15 + parseInt(req.body.scoreAktivitas,10) * 0.5 + parseInt(req.body.scoreProject,10) * 0.3 + parseInt(req.body.scoreOther, 10) * 0.05,
             notes: req.body.notes
         }).then(result => {
             return res.status(200).json({
@@ -373,4 +375,175 @@ exports.updateScore = async (req, res, next) => {
             error: err
         });
     })
+}
+
+exports.addRecruiter = async (req, res, next) => {
+    const email = req.body.email;
+    const findIdentity = await model.Identity.findOne({
+        where: {
+            email: email
+        }
+    }).then(resp => {
+        return resp;
+    }).catch(err => {
+        console.log(err)
+    })
+
+    if (findIdentity == null) {
+        model.Identity.create({
+            email: email,
+            role: 2
+        }).then(resp => {
+            return res.status(200).json({
+                status: true,
+                message: "Recruiter " + email + " Added",
+            });
+        })
+    } else {
+        if (findIdentity.role == 2) {
+            return res.status(200).json({
+                status: false,
+                message: "Recruiter " + email + " Already Exists",
+            });
+        } else {
+            findIdentity.update({
+                role: 2
+            }).then(result => {
+                return res.status(200).json({
+                    status: true,
+                    message: "Recruiter " + email + " Updated",
+                });
+            }).catch(err => {
+                return res.status(400).json({
+                    status: false
+                });
+            })
+        }
+    }
+}
+
+exports.availableAssing = (req, res, next) => {
+    const email = req.body.email;
+
+    model.Summary.findAll({
+        where: {
+            recruiterId: null,
+            isFinal: 1,
+        },
+        include: [
+            {
+                model: model.Identity
+            },
+            {
+                model: model.Tunnel
+            },
+        ]
+    }).then(result => {
+        return res.status(200).json({
+            status: true,
+            message: "Lists Fetched",
+            data: result
+        });
+    }).catch(err => {
+        console.log(err)
+        return res.status(400).json({
+            status: false,
+            message: "Something Error " + err,
+        });
+    })
+}
+
+exports.toAssign = async (req, res, next) => {
+    const email = req.body.email;
+
+    // find UserId
+    const theRecuiter = await model.Identity.findOne({
+        where: {
+            email: email
+        }
+    }).then(result => {
+        return result
+    }).catch(err => {
+        console.log(err)
+    })
+
+    model.Summary.findAll({
+        where: {
+            recruiterId: theRecuiter.userId
+        },
+        include: [
+            {
+                model: model.Identity
+            },
+            {
+                model: model.Tunnel
+            },
+        ]
+    }).then(result => {
+        return res.status(200).json({
+            status: true,
+            message: "Lists Fetched",
+            data: result
+        });
+    }).catch(err => {
+        console.log(err)
+        return res.status(400).json({
+            status: false,
+            message: "Something Error " + err,
+        });
+    })
+}
+
+exports.undoAssign = async (req, res, next) => {
+
+
+    // findRecruiter
+    const theRecruiter = await model.Identity.findOne({
+        where: {
+            email: req.body.emailRecruiter,
+        },
+        attributes: ['id', 'name', 'userId']
+    }).then(result => {
+        return result
+    }).catch(err => {
+        console.log(err)
+    })
+
+    if (theRecruiter !== null) {
+        // update Summary
+        const listSummary = await model.Summary.findOne({
+            where: {
+                ktpNumber: req.body.ktpNumberPeserta,
+                tunnelId: req.body.tunnelId
+            },
+            // attributes: ['ktpNumber']
+        }).then(result => {
+            return result;
+        }).catch(err => console.log(err))
+
+        if (listSummary !== null) {
+            // await listSummary.map((value, index) => {
+            listSummary.update({
+                recruiterId: null
+            })
+            // })
+
+            return res.status(200).json({
+                status: true,
+                message: "Participant Assigned to " + theRecruiter.name
+            });
+
+        } else {
+            return res.status(200).json({
+                status: false,
+                message: "Participant List Null"
+            });
+        }
+
+    } else {
+        return res.status(200).json({
+            status: false,
+            message: "Recruiter User Not Found"
+        });
+    }
 }
