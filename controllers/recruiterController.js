@@ -349,6 +349,7 @@ exports.updateScore = async (req, res, next) => {
             scoreAktivitas: req.body.scoreAktivitas,
             scoreProject: req.body.scoreProject,
             scoreOther: req.body.scoreOther,
+            scoreFinal: parseInt(req.body.scoreDataDiri,10) * 0.15 + parseInt(req.body.scoreAktivitas,10) * 0.5 + parseInt(req.body.scoreProject,10) * 0.3 + parseInt(req.body.scoreOther, 10) * 0.05,
             notes: req.body.notes
         }).then(result => {
             return res.status(200).json({
