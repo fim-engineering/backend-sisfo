@@ -5,11 +5,11 @@ module.exports = (sequelize, DataTypes) => {
     ktpNumber: DataTypes.STRING,
     TunnelId: DataTypes.INTEGER,
     createdBy: DataTypes.INTEGER,
-    questionId:DataTypes.INTEGER
+    QuestionId:DataTypes.INTEGER
   }, {});
   Answer.associate = function(models) {
     models.Answer.belongsTo(models.Tunnel, { foreignKey: 'id', sourceKey: 'TunnelId' })
-    models.Answer.belongsTo(models.Question, { sourceKey: 'questionId', targetKey: 'id' })
+    models.Answer.belongsTo(models.Question, { sourceKey: 'QuestionId', targetKey: 'id' })
   };
   return Answer;
 };

@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     note:DataTypes.STRING,
   }, {});
   Question.associate = function(models) {
-    models.Question.belongsToMany(models.Tunnel,{through:models.tunnelQuestion,foreignKey:'questionId'});
+    models.Question.belongsToMany(models.Tunnel,{through:models.tunnelQuestion,foreignKey:'QuestionId'});
   };
   return Question;
 };
