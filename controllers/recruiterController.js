@@ -423,8 +423,7 @@ exports.addRecruiter = async (req, res, next) => {
 }
 
 exports.availableAssing = (req, res, next) => {
-    const email = req.body.email;
-
+    const email = req.body.email;    
     model.Summary.findAll({
         where: {
             recruiterId: null,
