@@ -4,7 +4,7 @@ const redisClient = require('../util/redis');
 
 exports.lists = async (req, res, next) => {
     const data = {
-        idTunnel: req.body.tunnelId
+        idTunnel: req.body.TunnelId
     }
 
 
@@ -23,7 +23,7 @@ exports.lists = async (req, res, next) => {
         data: findTunnel.Questions
     });
 
-    // model.Question.findAll({where:{tunnelId:data.idTunnel}}).then(result => {
+    // model.Question.findAll({where:{TunnelId:data.idTunnel}}).then(result => {
     //     res.status(200).json({
     //         status: true,
     //         message: "data fetched",
@@ -45,7 +45,7 @@ exports.create = async (req, res, next) => {
             question: req.body.question,
             isMany: req.body.isMany,
             header: JSON.stringify(req.body.header),
-            tunnelId: req.body.tunnelId,
+            TunnelId: req.body.TunnelId,
             batchFim: req.body.batchFim,
             createdBy: userId
         }
@@ -107,7 +107,7 @@ exports.update = async (req, res, next) => {
             question: req.body.question,
             isMany: req.body.isMany,
             header: JSON.stringify(req.body.header),
-            tunnelId: req.body.tunnelId,
+            TunnelId: req.body.TunnelId,
             batchFim: req.body.batchFim,
             createdBy: userId
         }

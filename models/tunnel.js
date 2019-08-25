@@ -7,8 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     urlPicture:DataTypes.STRING
   }, {});
   Tunnel.associate = function(models) {
-    models.Tunnel.belongsToMany(models.Identity, {through: models.Summary, foreignKey: 'tunnelId'});
-    models.Tunnel.belongsToMany(models.Question,{through:models.tunnelQuestion,foreignKey:'tunnelId'});
+    models.Tunnel.belongsToMany(models.Identity, {through: models.Summary, foreignKey: 'TunnelId'});
+    models.Tunnel.belongsToMany(models.Question,{through:models.tunnelQuestion,foreignKey:'TunnelId'});
   };
   return Tunnel;
 };

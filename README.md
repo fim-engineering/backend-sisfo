@@ -295,7 +295,7 @@
 
 ```
 {	
-	tunnelId: "INTEGER	
+	TunnelId: "INTEGER	
 }
 ```
 
@@ -382,7 +382,7 @@
 			'no':'number'
 		}
 	
-	tunnelId : "INT",
+	TunnelId : "INT",
 	batchFim : "STRING"
 }
 ```
@@ -442,7 +442,7 @@
 			'header_name':header_html_type, for <input type="header_html_type">
 			'no':'number'
 		}
-    tunnelId: tunnelId,
+    TunnelId: TunnelId,
     batchFim: batchFim,
 }
 ```
@@ -495,7 +495,7 @@
 
 ```
 {
-	idTunnel: req.body.tunnelId,
+	idTunnel: req.body.TunnelId,
     ktpNumber: req.body.ktpNumber
 }
 ```
@@ -530,7 +530,7 @@
             // ]
 
     ktpNumber: req.body.ktpNumber,
-    tunnelId: req.body.tunnelId,
+    TunnelId: req.body.TunnelId,
     createdBy: userId
 }
 ```
@@ -585,7 +585,7 @@
 ```
 {
 	 ktpNumber: req.body.ktpNumber,
-     tunnelId: req.body.tunneId
+     TunnelId: req.body.tunneId
 }
 ```
 
@@ -611,7 +611,7 @@
 ```
 {
 	    ktpNumber: req.body.ktpNumber,
-    	tunnelId: req.body.tunneId,
+    	TunnelId: req.body.tunneId,
         recruiterId: req.body.recruiterId
 }
 ```
