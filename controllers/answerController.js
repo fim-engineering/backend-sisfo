@@ -40,7 +40,7 @@ exports.saveAnswer = async (req, res, next) => {
             Answer: req.body.answers, // Array
             // [
             //     {
-            //         questionId:1,
+            //         QuestionId:1,
             //         answer: JSON with serialize header
             //     }
             // ]
@@ -64,7 +64,7 @@ exports.saveAnswer = async (req, res, next) => {
             // berdasarkan nomor ktp dan id pertanyaan
             model.Answer.findOne({
                 where: {
-                    questionId: value.questionId,
+                    QuestionId: value.QuestionId,
                     ktpNumber: data.ktpNumber
                 }
             }).then(async result => {
@@ -73,7 +73,7 @@ exports.saveAnswer = async (req, res, next) => {
                 if (result == null) {
                     model.Answer.create({
                         answer: JSON.stringify(value.answer), // bentuk object
-                        questionId: value.questionId,
+                        QuestionId: value.QuestionId,
                         ktpNumber: data.ktpNumber,
                         TunnelId: data.TunnelId
                     })
@@ -98,7 +98,7 @@ exports.saveAnswer = async (req, res, next) => {
                 } else {
                     result.update({
                         answer: JSON.stringify(value.answer),
-                        questionId: value.questionId,
+                        QuestionId: value.QuestionId,
                         ktpNumber: data.ktpNumber,
                         TunnelId: data.TunnelId
                     })
