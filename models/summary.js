@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Summary = sequelize.define('Summary', {
     ktpNumber: DataTypes.STRING,
-    tunnelId: DataTypes.INTEGER,
+    TunnelId: DataTypes.INTEGER,
     batchFim: DataTypes.STRING,
     isFinal: DataTypes.INTEGER,
     recruiterId: DataTypes.INTEGER,
