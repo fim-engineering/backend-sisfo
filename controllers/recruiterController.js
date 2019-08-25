@@ -287,7 +287,7 @@ exports.listByRecruiter = async (req, res, next) => {
 }
 
 exports.detailParticipant = async (req, res, next) => {
-    const TunnelId = req.body.TunnelId;
+    const TunnelId = req.body.tunnelId;
     const ktpNumber = req.body.ktpNumber;
 
     model.Identity.findOne({
