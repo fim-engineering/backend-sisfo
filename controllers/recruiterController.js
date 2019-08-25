@@ -147,7 +147,7 @@ exports.listRecruiter = async (req, res, next) => {
 exports.assignRecruiter = async (req, res, next) => {
     const ktpRecruiter = req.body.ktpRecruiter;
     const listPeserta = req.body.ktpPeserta; // array
-
+    console.log(req.body)
     // const ArrayPeserta: [];
     // listPeserta.map((value,index)=>{
     //     value.
@@ -287,8 +287,10 @@ exports.listByRecruiter = async (req, res, next) => {
 }
 
 exports.detailParticipant = async (req, res, next) => {
-    const TunnelId = req.body.tunnelId;
+    const TunnelId = req.body.TunnelId;
     const ktpNumber = req.body.ktpNumber;
+
+    console.log(TunnelId);
 
     model.Identity.findOne({
         where: { ktpNumber: ktpNumber },
