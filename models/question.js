@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Question = sequelize.define('Question', {
     headline:DataTypes.STRING,
     question: DataTypes.TEXT,
-    tunnelId: DataTypes.INTEGER,
+    TunnelId: DataTypes.INTEGER,
     createdBy: DataTypes.INTEGER,
     batchFim: DataTypes.STRING,
     isMany:DataTypes.INTEGER,

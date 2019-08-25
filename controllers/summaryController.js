@@ -41,7 +41,7 @@ exports.updateFinal = async (req, res, next) => {
 
         const data = {
             ktpNumber: req.body.ktpNumber,
-            tunnelId: req.body.tunnelId
+            TunnelId: req.body.TunnelId
         }
 
         const status = await model.Summary.findOne({
@@ -85,7 +85,7 @@ exports.updateFinal = async (req, res, next) => {
         }, {
                 where: {
                     ktpNumber: req.body.ktpNumber,
-                    tunnelId: req.body.tunnelId
+                    TunnelId: req.body.TunnelId
                 }
             }
         ).then((status, result) => {
@@ -132,7 +132,7 @@ exports.updateScore = async (req, res, next) => {
 
         const data = {
             ktpNumber: req.body.ktpNumber,
-            tunnelId: req.body.tunneId,
+            TunnelId: req.body.tunneId,
             score: req.body.score
         }
 
@@ -142,7 +142,7 @@ exports.updateScore = async (req, res, next) => {
         }, {
                 where: {
                     ktpNumber: req.body.ktpNumber,
-                    tunnelId: req.body.tunneId
+                    TunnelId: req.body.tunneId
                 }
             }
         ).then((status, result) => {
@@ -179,7 +179,7 @@ exports.updateEvaluator = async (req, res, next) => {
 
         const data = {
             ktpNumber: req.body.ktpNumber,
-            tunnelId: req.body.tunneId,
+            TunnelId: req.body.tunneId,
             recruiterId: req.body.recruiterId
         }
 
@@ -189,7 +189,7 @@ exports.updateEvaluator = async (req, res, next) => {
         }, {
                 where: {
                     ktpNumber: req.body.ktpNumber,
-                    tunnelId: req.body.tunneId
+                    TunnelId: req.body.tunneId
                 }
             }
         ).then((status, result) => {
@@ -233,7 +233,7 @@ exports.checkDaftar = async (req, res, next) => {
         const arrayDenied = [];
         const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber, isFinal: 1 } }).then(result => {
             result.map((value) => {
-                arrayDenied.push(value.tunnelId);
+                arrayDenied.push(value.TunnelId);
             })
         }).catch(err => console.log(err));
 

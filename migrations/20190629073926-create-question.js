@@ -11,7 +11,7 @@ module.exports = {
       question: {
         type: Sequelize.STRING
       },
-      tunnelId: {
+      TunnelId: {
         type: Sequelize.INTEGER
       },
       createdBy: {

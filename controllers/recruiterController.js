@@ -170,7 +170,7 @@ exports.assignRecruiter = async (req, res, next) => {
         const listSummary = await model.Summary.findOne({
             where: {
                 ktpNumber: req.body.ktpNumberPeserta,
-                tunnelId: req.body.tunnelId
+                TunnelId: req.body.TunnelId
             },
             // attributes: ['ktpNumber']
         }).then(result => {
@@ -287,7 +287,7 @@ exports.listByRecruiter = async (req, res, next) => {
 }
 
 exports.detailParticipant = async (req, res, next) => {
-    const tunnelId = req.body.tunnelId;
+    const TunnelId = req.body.TunnelId;
     const ktpNumber = req.body.ktpNumber;
 
     model.Identity.findOne({
@@ -305,7 +305,7 @@ exports.detailParticipant = async (req, res, next) => {
             },
             {
                 model: model.Answer,
-                where: { tunnelId: tunnelId },
+                where: { TunnelId: TunnelId },
                 include: [
                     {
                         model: model.Tunnel
@@ -334,13 +334,13 @@ exports.detailParticipant = async (req, res, next) => {
 }
 
 exports.updateScore = async (req, res, next) => {
-    const tunnelId = req.body.tunnelId;
+    const TunnelId = req.body.TunnelId;
     const ktpNumber = req.body.ktpNumber;   
 
     model.Summary.findOne({
         where: {
             ktpNumber: ktpNumber,
-            tunnelId: tunnelId
+            TunnelId: TunnelId
         },
     }).then(async result => {
 
@@ -513,7 +513,7 @@ exports.undoAssign = async (req, res, next) => {
         const listSummary = await model.Summary.findOne({
             where: {
                 ktpNumber: req.body.ktpNumberPeserta,
-                tunnelId: req.body.tunnelId
+                TunnelId: req.body.TunnelId
             },
             // attributes: ['ktpNumber']
         }).then(result => {

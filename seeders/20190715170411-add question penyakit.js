@@ -8,7 +8,7 @@ module.exports = {
         headline: "Dalam kurun waktu 2 minggu ini, seberapa sering/banyak Anda terganggu dengan masalah berikut ini",
         note: null,
         question: "0 = Tidak Pernah | 1 = Jarang / kurang dari 1 atau 2 hari | 2 = Beberapa hari | 3 = Lebih dari beberapa hari dalam seminggu | 4 =  Hampir setiap hari",
-        tunnelId: 8,
+        TunnelId: 8,
         createdBy: 1,
         batchFim: "20",
         isMany: 0,
