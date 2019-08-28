@@ -293,7 +293,12 @@ exports.detailParticipant = async (req, res, next) => {
     console.log(TunnelId);
 
     model.Identity.findOne({
-        where: { ktpNumber: ktpNumber },
+        where: { 
+            ktpNumber: ktpNumber,
+            userId: {
+                [Op.ne]: null
+            }
+        },
         include: [
             {
                 model: model.Summary,
