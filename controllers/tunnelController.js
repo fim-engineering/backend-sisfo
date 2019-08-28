@@ -20,7 +20,7 @@ exports.lists = async (req, res, next) => {
         const arrayDenied = [];
         const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber, isFinal:1 } }).then(result => {
             result.map((value) => {
-                arrayDenied.push(value.tunnelId);
+                arrayDenied.push(value.TunnelId);
             })
         }).catch(err => console.log(err));
 

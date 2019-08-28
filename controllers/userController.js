@@ -371,7 +371,7 @@ exports.saveTunnel = (req, res, nex) => {
     let token = req.get('Authorization').split(' ')[1];
 
     const data = {
-        tunnelId: req.body.tunnelId
+        TunnelId: req.body.TunnelId
     }
 
     redisClient.get('login_portal:' + token, function (err, response) {
@@ -380,7 +380,7 @@ exports.saveTunnel = (req, res, nex) => {
 
         model.User.findOne({ where: { id: userId } }).then(result => {
             result.update({
-                tunnelId: data.tunnelId,
+                TunnelId: data.TunnelId,
                 status: 4
             }).then(dataresult => {
                 redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))

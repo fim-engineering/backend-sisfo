@@ -8,10 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      tunnelId: {
+      TunnelId: {
         type: Sequelize.INTEGER
       },
-      questionId: {
+      QuestionId: {
         type: Sequelize.INTEGER
       },
       createdAt: {

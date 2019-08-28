@@ -11,7 +11,7 @@ exports.lists = async (req, res, next) => {
         const userId = userIdentity.userId;
 
         const data = {
-            tunnelId: req.body.tunnelId,
+            TunnelId: req.body.TunnelId,
             ktpNumber: req.body.ktpNumber
         }
 
@@ -40,13 +40,13 @@ exports.saveAnswer = async (req, res, next) => {
             Answer: req.body.answers, // Array
             // [
             //     {
-            //         questionId:1,
+            //         QuestionId:1,
             //         answer: JSON with serialize header
             //     }
             // ]
 
             ktpNumber: req.body.ktpNumber,
-            tunnelId: req.body.tunnelId,
+            TunnelId: req.body.TunnelId,
             createdBy: userId
         }
 
@@ -64,7 +64,7 @@ exports.saveAnswer = async (req, res, next) => {
             // berdasarkan nomor ktp dan id pertanyaan
             model.Answer.findOne({
                 where: {
-                    questionId: value.questionId,
+                    QuestionId: value.QuestionId,
                     ktpNumber: data.ktpNumber
                 }
             }).then(async result => {
@@ -73,22 +73,22 @@ exports.saveAnswer = async (req, res, next) => {
                 if (result == null) {
                     model.Answer.create({
                         answer: JSON.stringify(value.answer), // bentuk object
-                        questionId: value.questionId,
+                        QuestionId: value.QuestionId,
                         ktpNumber: data.ktpNumber,
-                        tunnelId: data.tunnelId
+                        TunnelId: data.TunnelId
                     })
 
                     // // create di summary model mendeteksi dia ikut jalur apa 
                     // // berdasarkan pertanyaan yang dia jawab
                     // await model.Summary.findOne({
                     //     where: {
-                    //         tunnelId: data.tunnelId,
+                    //         TunnelId: data.TunnelId,
                     //         ktpNumber: data.ktpNumber
                     //     }
                     // }).then(async result => {
                     //     if (result == null) {
                     //        await model.Summary.create({
-                    //             tunnelId: data.tunnelId,
+                    //             TunnelId: data.TunnelId,
                     //             ktpNumber: data.ktpNumber,
                     //             isFinal: 0
                     //         })
@@ -98,9 +98,9 @@ exports.saveAnswer = async (req, res, next) => {
                 } else {
                     result.update({
                         answer: JSON.stringify(value.answer),
-                        questionId: value.questionId,
+                        QuestionId: value.QuestionId,
                         ktpNumber: data.ktpNumber,
-                        tunnelId: data.tunnelId
+                        TunnelId: data.TunnelId
                     })
                 }
 
@@ -115,7 +115,7 @@ exports.saveAnswer = async (req, res, next) => {
 
         model.Summary.findOrCreate({
             where: {
-                tunnelId: data.tunnelId,
+                TunnelId: data.TunnelId,
                 ktpNumber: data.ktpNumber
             },
             defaults: {
@@ -172,7 +172,7 @@ exports.saveAnswer = async (req, res, next) => {
 //         const data = {
 //             idAnswer: req.body.idAnswer,
 //             Answer: req.body.Answer,
-//             tunnelId: req.body.tunnelId,
+//             TunnelId: req.body.TunnelId,
 //             batchFim: req.body.batchFim,
 //             createdBy: userId
 //         }
