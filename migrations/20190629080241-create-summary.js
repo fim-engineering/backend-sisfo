@@ -11,7 +11,7 @@ module.exports = {
       ktpNumber: {
         type: Sequelize.STRING
       },
-      TunnelId: {
+      tunnelId: {
         type: Sequelize.INTEGER
       },
       batchFim: {
