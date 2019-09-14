@@ -90,6 +90,18 @@ exports.lists = async (req, res, next) => {
     });
 }
 
+exports.listsAll = async (req,res,next) => {
+    const listTunnel = await model.Tunnel.findAll().then(result=>{
+        return result
+    })
+
+    res.status(200).json({
+        status: true,
+        message: "data fetched",
+        data: listTunnel
+    });
+}
+
 
 exports.create = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
