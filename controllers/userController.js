@@ -130,7 +130,9 @@ exports.saveKtp = async (req, res, next) => {
 
         // cari nomor ktp
         const findIdentity = await model.Identity
-            .findOne({ where: { [Op.or]: [{ktpNumber: noKtp},{email:emailId}] } })
+            .findOne({ where: { [Op.or]: [{ktpNumber: noKtp}
+                // ,{email:emailId} // ini kemarin bikin kasus ktp anda digunakan oleh null
+            ] } })
             .then(result => { return result })
             .catch(err => { console.log(err) })
 
@@ -140,8 +142,7 @@ exports.saveKtp = async (req, res, next) => {
             .catch(err => console.log(err))
 
         // check KTP di tabel identity jika null bikin, jika ada update
-
-        if (findIdentity == null) {
+        if (findIdentity === null) {
             await model.Identity.create({
                 email: emailId,
                 userId: userId,
@@ -301,8 +302,8 @@ exports.saveProfile = async (req, res, next) => {
                 model.User.findOne({ where: { email: userIdentity.email } })
                     .then(user => {
                         if (user.status < 4) {
-                            user.update({ status: 2 })
-                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
+                            user.update({ status: 3 })
+                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
                         }
                     })
                     .catch(err => console.log(err))
@@ -318,8 +319,8 @@ exports.saveProfile = async (req, res, next) => {
                 model.User.findOne({ where: { email: userIdentity.email } })
                     .then(user => {
                         if (user.status < 4) {
-                            user.update({ status: 3 })
-                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
+                            user.update({ status: 4 })
+                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
                         }
                     })
                     .catch(err => console.log(err))
@@ -381,9 +382,9 @@ exports.saveTunnel = (req, res, nex) => {
         model.User.findOne({ where: { id: userId } }).then(result => {
             result.update({
                 TunnelId: data.TunnelId,
-                status: 4
+                status: 3
             }).then(dataresult => {
-                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
+                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
 
                 return res.status(200).json({
                     "status": true,

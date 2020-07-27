@@ -16,7 +16,10 @@ exports.lists = async (req, res, next) => {
             return identity;
         }).catch(err => console.log(err))
 
-        // search di summary apakah ada
+
+        // search di summary apakah ada jalur yang sudah final. 
+        // karena ada kemungkinan 1 user ada banyak summary ketika dia tidak jadi memilih 1 jalur dan belum final
+        // Hal ini mencegah peserta daftar di multi jalur
         const arrayDenied = [];
         const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber, isFinal:1 } }).then(result => {
             result.map((value) => {
@@ -24,16 +27,21 @@ exports.lists = async (req, res, next) => {
             })
         }).catch(err => console.log(err));
 
-        // bukan anak FIM // kalau udah milih 1 di summary maka udah ga boleh milih yang lain lagi      
+
+        // bukan anak FIM 
+        // kalau udah milih 1 di summary dan sudah menunjukan data final 
+        // maka udah ga boleh milih yang lain lagi      
         let whereNotFim = null;
         if (arrayDenied.length > 0) {
             whereNotFim = {
-                name: { [Op.not]: "Next Gen" },
-                id: { [Op.in]: arrayDenied }
+                name: { [Op.not]: "Alumni FIM 20" },
+                id: { [Op.in]: arrayDenied },
+                batchFim: '22'
             };
         } else {
             whereNotFim = {
-                name: { [Op.not]: "Next Gen" },
+                name: { [Op.not]: "Alumni FIM 20" },
+                batchFim: '22'
             };
         }
 
@@ -43,27 +51,32 @@ exports.lists = async (req, res, next) => {
             if (arrayDenied.indexOf(1) !== -1) // artinya ada next gen di sana
             {
                 whereFim = {
-                    id: { [Op.notIn]: arrayDenied }
+                    id: { [Op.notIn]: arrayDenied },
+                    batchFim: '22'
                 };
             }
             // jika tidak ada next gen , maka pilihannya hanya next Gen
             else {
                 whereFim = {
-                    name: "Next Gen"
+                    name: "Alumni FIM 20",
+                    batchFim: '22'
                 };
             }
 
         } else if (arrayDenied.length >= 2) {
             whereFim = {
-                id: { [Op.in]: arrayDenied }
+                id: { [Op.in]: arrayDenied },
+                batchFim: '22'
             };
         }
         else {
             whereFim = {
                 createdAt: { [Op.not]: null },
+                batchFim: '22'
             };
         }
 
+        // bukan anak fim
         if (findIdentity !== null && findIdentity.batchFim == null) {
             listTunnel = await model.Tunnel.findAll({
                 where: whereNotFim

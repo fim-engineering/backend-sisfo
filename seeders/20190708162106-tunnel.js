@@ -10,7 +10,8 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/NG_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png'
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/NG_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        batchFim: '21'
       },
       {
         id:2,
@@ -19,7 +20,8 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/CL_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png'
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/CL_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        batchFim: '21'
       },
       {
         id:3,
@@ -28,7 +30,8 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/LL_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png'
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/LL_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        batchFim: '21'
       },
       {
         id:4,
@@ -37,7 +40,8 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328024/icon/YP_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png'
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328024/icon/YP_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        batchFim: '21'
       },
       {
         id:5,
@@ -46,7 +50,8 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328024/icon/YE_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png'
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328024/icon/YE_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        batchFim: '21'
       },
       {
         id:6,
@@ -55,7 +60,8 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/PS_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png'
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/PS_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        batchFim: '21'
       },
       {
         id:7,
@@ -64,7 +70,8 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/MI_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png'
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/MI_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        batchFim: '21'
       },
       {
         id:8,
@@ -73,7 +80,8 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/IF_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png'
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/IF_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        batchFim: '21'
       }
     ], {});
   },
