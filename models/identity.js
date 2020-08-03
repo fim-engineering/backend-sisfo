@@ -23,7 +23,14 @@ module.exports = (sequelize, DataTypes) => {
     expertise: DataTypes.STRING,
     institution:DataTypes.STRING,
     otherReligion:DataTypes.STRING,
-    role:DataTypes.INTEGER  
+    role:DataTypes.INTEGER,
+    occupation: DataTypes.STRING,
+    instagram: DataTypes.TEXT,
+    twitter: DataTypes.STRING,
+    facebook: DataTypes.STRING,
+    website: DataTypes.STRING,
+    reference_by: DataTypes.STRING,
+    video_editing: DataTypes.STRING
 }, {});
 Identity.associate = function (models) {
   models.Identity.belongsTo(models.User, { foreignKey: 'userId' })

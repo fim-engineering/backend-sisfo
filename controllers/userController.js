@@ -240,6 +240,7 @@ exports.saveKtp = async (req, res, next) => {
 exports.saveProfile = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
+    console.log(req.body.instagram)
     const data = {
         name: req.body.name,
         address: req.body.address,
@@ -257,7 +258,15 @@ exports.saveProfile = async (req, res, next) => {
         hoby: req.body.hoby,
         expertise: req.body.expertise,
         institution: req.body.institution,
-        otherReligion: req.body.otherReligion
+        otherReligion: req.body.otherReligion,
+
+        occupation: req.body.occupation,
+        instagram: req.body.instagram,
+        twitter: req.body.twitter,
+        facebook: req.body.facebook,
+        website: req.body.website,
+        reference_by: req.body.reference_by,
+        video_editing: req.body.video_editing
     }
 
     redisClient.get('login_portal:' + token, async function (err, response) {

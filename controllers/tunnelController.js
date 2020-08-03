@@ -71,10 +71,13 @@ exports.lists = async (req, res, next) => {
         }
         else {
             whereFim = {
+                name: "Alumni FIM 20",
                 createdAt: { [Op.not]: null },
                 batchFim: '22'
             };
         }
+
+        console.log(whereFim)
 
         // bukan anak fim
         if (findIdentity !== null && findIdentity.batchFim == null) {
