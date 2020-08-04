@@ -394,5 +394,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
+    return await queryInterface.bulkDelete('Questions', {id: {$between: [36,52]}}, {});
   }
 };
