@@ -139,7 +139,7 @@ module.exports = {
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
-          "Nama Kegiatan ": { type: "text", placeholder: "Silahkan tulis nama kegiatan yang diikuti dan nama penyelenggaranya" },
+          "Nama Kegiatan 1": { type: "text", placeholder: "Silahkan tulis nama kegiatan yang diikuti dan nama penyelenggaranya" },
           "Tugas / tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
           "Peran": { type: "textarea", placeholder: "Ceritakan apa saja yang kamu lakukan untuk melaksanakan tugas serta dukungan dalam pelaksanaan kegiatan (ex: koordinator, bendahara, sie acara, peserta)" },
           "Durasi Kegiatan": { type: "text", placeholder: "Silahkan tulis berapa lama rentang waktu kegiatan dari persiapan sampai penutupan (ex: 2 minggu, 3 bulan)" },
