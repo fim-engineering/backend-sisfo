@@ -70,9 +70,18 @@ exports.addAdmin = async (req, res, next) => {
 
 exports.listSubmitted = async (req, res, next) => {
 
+    const fimBatch = await model.Fimbatch.findAll({
+        limit: 1,
+        order: [['id', 'DESC']]
+    }).then(result => {
+        return result[0]
+    })
+
+
     const allSubmit = await model.Summary.findAll({
         where: {
-            isFinal: 1
+            isFinal: 1,
+            updatedAt: { $between: [fimBatch.date_start_registration, fimBatch.date_end_registration] }
         }
     }).then(result => {
         return result
@@ -104,14 +113,23 @@ exports.listSubmitted = async (req, res, next) => {
             ktpNumber: { [Op.in]: listKTPSubmitted }
         },
         attributes: ['userId', 'name', 'ktpNumber'],
-        include: [{
-            model: model.Summary,
-            where: { isFinal: 1 },
-            include: [{
-                model: model.Tunnel,
-                attributes: ['name']
-            }]
-        }]
+        include: [
+            {
+                model: model.Summary,
+                where: { isFinal: 1 },
+                include: [{
+                    model: model.Tunnel,
+                    attributes: ['name']
+                }]
+            },
+            {
+                model: model.User,
+                include: [{
+                    model: model.Regional,
+                    attributes: ['name', 'city', 'province']
+                }]
+            },
+        ]
     }).then(result => {
         return result
     }).catch(err => {
@@ -293,7 +311,7 @@ exports.detailParticipant = async (req, res, next) => {
     console.log(TunnelId);
 
     model.Identity.findOne({
-        where: { 
+        where: {
             ktpNumber: ktpNumber,
             userId: {
                 [Op.ne]: null
@@ -342,7 +360,7 @@ exports.detailParticipant = async (req, res, next) => {
 
 exports.updateScore = async (req, res, next) => {
     const TunnelId = req.body.TunnelId;
-    const ktpNumber = req.body.ktpNumber;   
+    const ktpNumber = req.body.ktpNumber;
 
     model.Summary.findOne({
         where: {
@@ -356,7 +374,7 @@ exports.updateScore = async (req, res, next) => {
             scoreAktivitas: req.body.scoreAktivitas,
             scoreProject: req.body.scoreProject,
             scoreOther: req.body.scoreOther,
-            scoreFinal: parseInt(req.body.scoreDataDiri,10) * 0.15 + parseInt(req.body.scoreAktivitas,10) * 0.5 + parseInt(req.body.scoreProject,10) * 0.3 + parseInt(req.body.scoreOther, 10) * 0.05,
+            scoreFinal: parseInt(req.body.scoreDataDiri, 10) * 0.15 + parseInt(req.body.scoreAktivitas, 10) * 0.5 + parseInt(req.body.scoreProject, 10) * 0.3 + parseInt(req.body.scoreOther, 10) * 0.05,
             notes: req.body.notes
         }).then(result => {
             return res.status(200).json({
@@ -430,7 +448,7 @@ exports.addRecruiter = async (req, res, next) => {
 }
 
 exports.availableAssing = (req, res, next) => {
-    const email = req.body.email;    
+    const email = req.body.email;
     model.Summary.findAll({
         where: {
             recruiterId: null,

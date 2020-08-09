@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const compression = require('compression');
 const { Client } = require('pg');
-
+var cors = require('cors')
 // Route Require
 const userRoute = require('./routes/userRoute');
 const homeRoute = require('./routes/homeRoute');
@@ -19,8 +19,11 @@ const recruiterRoute = require('./routes/recruiterRoute');
 const regionalRoute = require('./routes/regionalRoute');
 
 
+
 // init express js
 const app = express();
+app.use(cors());
+app.options('*', cors()) 
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

@@ -77,7 +77,7 @@ exports.lists = async (req, res, next) => {
             };
         }
 
-        console.log(whereFim)
+        // console.log(whereFim)
 
         // bukan anak fim
         if (findIdentity !== null && findIdentity.batchFim == null) {

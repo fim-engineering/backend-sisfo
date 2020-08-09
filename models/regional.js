@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: DataTypes.DATE
   }, {});
 
-  // Regional.associate = function (models) {
-  //   // associations can be defined here
-  // };
+  Regional.associate = function (models) {
+    models.Regional.hasMany(models.User, {foreignKey:'RegionalId',sourceKey:'id'})
+  };
 
   return Regional;
 };

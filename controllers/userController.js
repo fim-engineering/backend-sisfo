@@ -240,7 +240,6 @@ exports.saveKtp = async (req, res, next) => {
 exports.saveProfile = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
-    console.log(req.body.instagram)
     const data = {
         name: req.body.name,
         address: req.body.address,
