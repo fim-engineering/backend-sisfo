@@ -6,7 +6,7 @@ module.exports = {
       {
         id: 9,
         name: 'Alumni FIM 20',
-        description: 'jika kamu merupakan alumni FIM 20 pilih jalur ini',
+        description: 'Merupakan Jalur Kader NextGen FIM yang telah mengikuti Rangkaian Pelatihan FIM Wilayah angkatan 20.',
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -16,7 +16,7 @@ module.exports = {
       {
         id: 10,
         name: 'Volunteer FIM',
-        description: 'Jika kamu pernah pernah terlibat sebagai volunteer di salah satu agenda FIM pilih jalur ini',
+        description: 'Merupakan anggota relawan FIM Regional yang ditetapkan dalam SK Keanggotaan dari FIM Regional.',
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -26,7 +26,7 @@ module.exports = {
       {
         id: 11,
         name: 'Sahabat FIM',
-        description: 'Tahu tentang fim dan hanya sebatas kenal beberapa orang yang merupakan anggota FIM, pilih jalur ini ',
+        description: 'Merupakan pemuda, mahasiswa, dan profesional dengan berbagai latar belakang (Non Alumni FIM) dan pernah memiliki pengalaman mengikuti kegiatan FIM baik di FIM Pusat, FIM Regional, maupun kegiatan FIM Club (misal: pernah mengikuti Public Seminar, Webinar FIM, kerjasama komunitas, dll).',
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
