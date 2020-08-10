@@ -257,7 +257,15 @@ exports.saveProfile = async (req, res, next) => {
         hoby: req.body.hoby,
         expertise: req.body.expertise,
         institution: req.body.institution,
-        otherReligion: req.body.otherReligion
+        otherReligion: req.body.otherReligion,
+
+        occupation: req.body.occupation,
+        instagram: req.body.instagram,
+        twitter: req.body.twitter,
+        facebook: req.body.facebook,
+        website: req.body.website,
+        reference_by: req.body.reference_by,
+        video_editing: req.body.video_editing
     }
 
     redisClient.get('login_portal:' + token, async function (err, response) {
@@ -372,7 +380,8 @@ exports.saveTunnel = (req, res, nex) => {
     let token = req.get('Authorization').split(' ')[1];
 
     const data = {
-        TunnelId: req.body.TunnelId
+        TunnelId: req.body.TunnelId,
+        RegionalId: req.body.RegionalId
     }
 
     redisClient.get('login_portal:' + token, function (err, response) {
@@ -382,6 +391,7 @@ exports.saveTunnel = (req, res, nex) => {
         model.User.findOne({ where: { id: userId } }).then(result => {
             result.update({
                 TunnelId: data.TunnelId,
+                RegionalId:data.RegionalId,
                 status: 3
             }).then(dataresult => {
                 redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))

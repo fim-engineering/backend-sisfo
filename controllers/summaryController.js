@@ -34,7 +34,7 @@ exports.updateFinal = async (req, res, next) => {
         if (err) {
             return res.status(400).json({
                 status: false,
-                message: "Whoops Something Error Coy",
+                message: "Whoops Something Error",
                 data: err
             });
         }
@@ -79,13 +79,21 @@ exports.updateFinal = async (req, res, next) => {
         //         .catch(err => console.log(err))
         // }
 
+        const fimBatch = await model.Fimbatch.findAll({
+            limit: 1,
+            order: [['id', 'DESC']]
+        }).then(result => {
+            return result[0]
+        })
+
         model.Summary.update({
             // isFinal: !decision ? 1 : 0
             isFinal: 1
         }, {
                 where: {
                     ktpNumber: req.body.ktpNumber,
-                    TunnelId: req.body.TunnelId
+                    TunnelId: req.body.TunnelId,
+                    batchFim: fimBatch.name
                 }
             }
         ).then((status, result) => {

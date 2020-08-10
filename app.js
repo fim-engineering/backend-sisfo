@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const compression = require('compression');
 const { Client } = require('pg');
-
+var cors = require('cors')
 // Route Require
 const userRoute = require('./routes/userRoute');
 const homeRoute = require('./routes/homeRoute');
@@ -16,9 +16,14 @@ const questionRoute = require('./routes/questionRoute');
 const answerRoute = require('./routes/answerRoute');
 const summaryRoute = require('./routes/summaryRoute');
 const recruiterRoute = require('./routes/recruiterRoute');
+const regionalRoute = require('./routes/regionalRoute');
+
+
 
 // init express js
 const app = express();
+app.use(cors());
+app.options('*', cors()) 
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -40,6 +45,8 @@ app.use('/question', questionRoute);
 app.use('/answer',answerRoute);
 app.use('/summary',summaryRoute);
 app.use('/recruiter', recruiterRoute);
+app.use('/regional',regionalRoute);
+
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 
