@@ -186,7 +186,7 @@ exports.saveKtp = async (req, res, next) => {
         // update
         else {
             // pastikan user id masih nul jika tidak null kasih tau kalau itu sudah dipakai
-            if (findIdentity.userId == null || findIdentity.email == eamilId) {
+            if (findIdentity.userId == null || findIdentity.email == emailId) {
                 await findIdentity.update({
                     email: emailId,
                     userId: userId,
