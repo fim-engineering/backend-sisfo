@@ -20,7 +20,7 @@ module.exports = {
           "Scope/ Cakupan Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -45,7 +45,7 @@ module.exports = {
           "Scope/ Cakupan Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -70,7 +70,7 @@ module.exports = {
           "Scope/ Cakupan Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -95,7 +95,7 @@ module.exports = {
           "Scope/ Cakupan Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -120,7 +120,7 @@ module.exports = {
           "Scope/ Cakupan Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -294,9 +294,9 @@ module.exports = {
       },
       {
         id: 49,
-        headline: "Rencana program yang akan dilakukan setelah menyelesaikan Pelatihan FIM 22",
+        headline: "Rencana program (Minimal 1) yang akan dilakukan setelah menyelesaikan Pelatihan FIM 22",
         note: null,
-        question: "",
+        question: "Rencana Program 1",
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
@@ -325,16 +325,13 @@ module.exports = {
         id: 50,
         headline: null,
         note: null,
-        question: "Rencana program yang akan dilakukan setelah menyelesaikan Pelatihan FIM 22",
+        question: "Rencana program 2",
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
         isMany: 1,
-        header: JSON.stringify({
-          "Jelaskan kondisi terkini regional kamu saat ini (sesuai dengan domisili saat ini/ satu tahun kedepan)": {
-            type: "textarea", placeholder: null,            
-          },
-          "Tuliskan rencana program yang akan dilaksanakan": {
+        header: JSON.stringify({        
+          "Tuliskan rencana program 2 dan deksripsinya yang akan dilaksanakan": {
             type: "textarea", placeholder: null,            
           },
           "Tuliskan pihak-pihak yang mungkin akan terlibat dalam program tersebut": {

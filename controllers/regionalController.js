@@ -7,16 +7,21 @@ const Op = Sequelize.Op
 exports.lists = async (req, res, next) => {
     listProvince = await model.Regional.findAll({
         attributes: ['province'],
-        group: ['province']
+        group: ['province'],
+        order: [['province', 'ASC']]
     }).then(result => {
         return result
     }).catch(err => { console.log(err) });
 
-    listRegional = await model.Regional.findAll().then(result => {
+    console.log("HALO")
+
+    listRegional = await model.Regional.findAll({
+        order: [['province', 'ASC']]
+    }).then(result => {
         return JSON.parse(JSON.stringify(result))
     }).catch(err => { console.log(err) });
 
-
+    
     const object = [];
     listProvince.map( async (value,index)=> {
         const fil = listRegional.filter((regional)=> {                    

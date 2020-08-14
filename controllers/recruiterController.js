@@ -129,6 +129,16 @@ exports.listSubmitted = async (req, res, next) => {
                     attributes: ['name', 'city', 'province']
                 }]
             },
+            {
+                model: model.ParticipantRecruiter,
+                // include: [{
+                //     model: model.User,
+                //     include: [{
+                //         model: model.Identity,
+                //         attributes: ['name']
+                //     }]
+                // }]
+            }
         ]
     }).then(result => {
         return result
@@ -160,6 +170,39 @@ exports.listRecruiter = async (req, res, next) => {
     }).catch(err => {
         console.log(err)
     })
+}
+
+exports.newAssignRecruiter = async (req, res, next) => {
+    const theRecruiter = await model.User.findOne({
+        where: {
+            email: req.body.emailRecruiter,
+        },
+        attributes: ['id']
+    }).then(result => {
+        return result
+    }).catch(err => {
+        console.log(err)
+    })
+
+    try {
+        model.ParticipantRecruiter.findOrCreate({
+            where: {
+                ktpNumber: req.body.ktpParticipant,
+                recruiterId: theRecruiter.id
+            }
+        })
+
+        res.status(200).json({
+            status: true,
+            message: "Recruiter Assigned",
+        });
+    } catch (error) {
+        res.status(200).json({
+            status: false,
+            message: error,
+        });
+    }
+
 }
 
 exports.assignRecruiter = async (req, res, next) => {
@@ -240,10 +283,17 @@ exports.listByRecruiter = async (req, res, next) => {
         });
     })
 
+    const listsParticipants = [];
+    const findListParticipant = await model.ParticipantRecruiter.findAll({
+        where: { recruiterId: theIdUser }
+    }).then(result => {
+        listsParticipants.push(result.ktpNumber)
+    }).catch(err => console.log(err))
+
     const allSubmit = await model.Summary.findAll({
         where: {
             isFinal: 1,
-            recruiterId: theIdUser
+            ktpNumber: { $in: listsParticipants }
         },
         include: [
             {
