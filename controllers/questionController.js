@@ -10,8 +10,9 @@ exports.lists = async (req, res, next) => {
 
     const findTunnel = await model.Tunnel.findOne({
         where: { id: data.idTunnel },
-        include:[{
+        include: [{
             model: model.Question,
+            order: [['id', 'ASC']]
         }]
     })
         .then(result => { return result })
