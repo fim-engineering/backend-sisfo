@@ -368,13 +368,30 @@ module.exports = {
         id: 52,
         headline: "Upload Berkas Pendukung",
         note: null,
-        question: "Upload SK Keanggotaan FIM Regional untuk Volunteer FIM Regional dan Surat Rekomendasi dari Alumni FIM untuk Sahabat FIM",
+        question: "Upload SK Keanggotaan FIM Regional untuk Volunteer FIM Regional",
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
         isMany: 1,
         header: JSON.stringify({
           "Dokumen sk keanggotaan FIM Regional": {
+            type: "upload", placeholder: null,            
+          }          
+        }),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 53,
+        headline: "Upload Berkas Pendukung",
+        note: null,
+        question: "Upload Surat Rekomendasi dari Alumni FIM untuk Sahabat FIM",
+        TunnelId: 9,
+        createdBy: 1,
+        batchFim: "22",
+        isMany: 1,
+        header: JSON.stringify({
+          "Surat Rekomendasi dari Alumni FIM": {
             type: "upload", placeholder: null,            
           }          
         }),
