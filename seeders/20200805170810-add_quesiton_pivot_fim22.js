@@ -50,10 +50,9 @@ module.exports = {
       { id: 144, TunnelId: 11, QuestionId: 50, createdAt: new Date(), updatedAt: new Date() },
       { id: 145, TunnelId: 9, QuestionId: 51, createdAt: new Date(), updatedAt: new Date() },
       { id: 146, TunnelId: 10, QuestionId: 51, createdAt: new Date(), updatedAt: new Date() },
-      { id: 147, TunnelId: 11, QuestionId: 51, createdAt: new Date(), updatedAt: new Date() },
-      { id: 148, TunnelId: 9, QuestionId: 52, createdAt: new Date(), updatedAt: new Date() },
+      { id: 147, TunnelId: 11, QuestionId: 51, createdAt: new Date(), updatedAt: new Date() },      
       { id: 149, TunnelId: 10, QuestionId: 52, createdAt: new Date(), updatedAt: new Date() },
-      { id: 150, TunnelId: 11, QuestionId: 52, createdAt: new Date(), updatedAt: new Date() }
+      { id: 150, TunnelId: 11, QuestionId: 53, createdAt: new Date(), updatedAt: new Date() }
     ])
   },
 
