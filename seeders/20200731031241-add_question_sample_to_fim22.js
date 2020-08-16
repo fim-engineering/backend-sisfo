@@ -13,14 +13,14 @@ module.exports = {
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
-          "Nama Aktivitas 1 / Pencapaian 1": "text",
+          "Nama Aktivitas 1/Pencapaian 1": "text",
           "Penyelenggara": "text",
           "Waktu Mulai": "date",
-          "Durasi (Bulan)": "number",
-          "Scope/ Cakupan Wilayah": "text",
-          "Peran/ Prestasi": "text",
-          "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Waktu Selesai": "date",          
+          "Scope/Cakupan Wilayah": "text",
+          "Peran/Prestasi": "text",
+          "No. Telepon Ketua/Penanggung Jawab": "text",
+          "Tuliskan alasan mengapa aktivitas/pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -38,14 +38,14 @@ module.exports = {
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
-          "Nama Aktivitas 2 / Pencapaian 2": "text",
+          "Nama Aktivitas 2/Pencapaian 2": "text",
           "Penyelenggara": "text",
           "Waktu Mulai": "date",
-          "Durasi (Bulan)": "number",
-          "Scope/ Cakupan Wilayah": "text",
-          "Peran/ Prestasi": "text",
-          "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Waktu Selesai": "date",
+          "Scope/Cakupan Wilayah": "text",
+          "Peran/Prestasi": "text",
+          "No. Telepon Ketua/Penanggung Jawab": "text",
+          "Tuliskan alasan mengapa aktivitas/pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -63,14 +63,14 @@ module.exports = {
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
-          "Nama Aktivitas 3 / Pencapaian 3": "text",
+          "Nama Aktivitas 3/Pencapaian 3": "text",
           "Penyelenggara": "text",
           "Waktu Mulai": "date",
-          "Durasi (Bulan)": "number",
-          "Scope/ Cakupan Wilayah": "text",
-          "Peran/ Prestasi": "text",
-          "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Waktu Selesai": "date",
+          "Scope/Cakupan Wilayah": "text",
+          "Peran/Prestasi": "text",
+          "No. Telepon Ketua/Penanggung Jawab": "text",
+          "Tuliskan alasan mengapa aktivitas/pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -88,14 +88,14 @@ module.exports = {
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
-          "Nama Aktivitas 4 / Pencapaian 4": "text",
+          "Nama Aktivitas 4/Pencapaian 4": "text",
           "Penyelenggara": "text",
           "Waktu Mulai": "date",
-          "Durasi (Bulan)": "number",
-          "Scope/ Cakupan Wilayah": "text",
-          "Peran/ Prestasi": "text",
-          "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Waktu Selesai": "date",
+          "Scope/Cakupan Wilayah": "text",
+          "Peran/Prestasi": "text",
+          "No. Telepon Ketua/Penanggung Jawab": "text",
+          "Tuliskan alasan mengapa aktivitas/pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -113,14 +113,14 @@ module.exports = {
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
-          "Nama Aktivitas 5 / Pencapaian 5": "text",
+          "Nama Aktivitas 5/Pencapaian 5": "text",
           "Penyelenggara": "text",
           "Waktu Mulai": "date",
-          "Durasi (Bulan)": "number",
-          "Scope/ Cakupan Wilayah": "text",
-          "Peran/ Prestasi": "text",
-          "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Tuliskan alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
+          "Waktu Selesai": "date",
+          "Scope/Cakupan Wilayah": "text",
+          "Peran/Prestasi": "text",
+          "No. Telepon Ketua/Penanggung Jawab": "text",
+          "Tuliskan alasan mengapa aktivitas/pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "textarea",
           "Apa yang kamu lakukan sehingga dapat mencapai prestasi tersebut": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut berdampak bagi diri sendiri": "textarea",
           "Tuliskan bagaimana aktivitas/pencapaian tersebut dapat berdampak bagi lingkungan di sekitar kamu": "textarea"
@@ -132,15 +132,15 @@ module.exports = {
       {
         id: 41,
         headline: "FIM Experience",
-        note: 'Jelaskan FIM Experience yang pernah kamu rasakan (diurutkan dari pengalaman yang paling bermakna ya! minimal 1 pengalaman yg harus kamu masukkan disini)',
-        question: "FIM experience apa saja yang pernah kamu ikuti ?",
+        note: 'Jelaskan FIM Experience yang pernah kamu rasakan (diurutkan dari pengalaman yang paling bermakna ya! Minimal 1 pengalaman yg harus kamu masukkan di sini)',
+        question: "<small>FIM Experience berisikan tentang pengalaman bersama FIM. Baik sebagai pengurus aktif, volunteer regional, partner kolaborasi maupun sebagai peserta dalam kegiatan yang diadakan oleh FIM (regional & pusat). Contoh: Webinar FIM, Kegiatan Sosial Penyaluran Bantuan Kemanusiaan FIM, Public Seminar FIM, dll.<small> <br> FIM Experience apa saja yang pernah kamu ikuti ? <br> <br> FIM Experience 1",
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
           "Nama Kegiatan 1": { type: "text", placeholder: "Silahkan tulis nama kegiatan yang diikuti dan nama penyelenggaranya" },
-          "Tugas / tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
+          "Tugas/tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
           "Peran": { type: "textarea", placeholder: "Ceritakan apa saja yang kamu lakukan untuk melaksanakan tugas serta dukungan dalam pelaksanaan kegiatan (ex: koordinator, bendahara, sie acara, peserta)" },
           "Durasi Kegiatan": { type: "text", placeholder: "Silahkan tulis berapa lama rentang waktu kegiatan dari persiapan sampai penutupan (ex: 2 minggu, 3 bulan)" },
           "Skala kegiatan": { type: "text", placeholder: "Silahkan tulis skala kegiatan yang dilaksanakan (FIM Pusat, FIM Regional, atau FIM Club)" },
@@ -153,14 +153,14 @@ module.exports = {
         id: 42,
         headline: null,
         note: null,
-        question: "FIM experience apa saja yang pernah kamu ikuti 2 ?",
+        question: "FIM Experience 2 ?",
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
           "Nama Kegiatan 2": { type: "text", placeholder: "Silahkan tulis nama kegiatan yang diikuti dan nama penyelenggaranya" },
-          "Tugas / tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
+          "Tugas/tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
           "Peran": { type: "textarea", placeholder: "Ceritakan apa saja yang kamu lakukan untuk melaksanakan tugas serta dukungan dalam pelaksanaan kegiatan (ex: koordinator, bendahara, sie acara, peserta)" },
           "Durasi Kegiatan": { type: "text", placeholder: "Silahkan tulis berapa lama rentang waktu kegiatan dari persiapan sampai penutupan (ex: 2 minggu, 3 bulan)" },
           "Skala kegiatan": { type: "text", placeholder: "Silahkan tulis skala kegiatan yang dilaksanakan (FIM Pusat, FIM Regional, atau FIM Club)" },
@@ -173,14 +173,14 @@ module.exports = {
         id: 43,
         headline: null,
         note: null,
-        question: "FIM experience apa saja yang pernah kamu ikuti 3 ?",
+        question: "FIM Experience 3 ?",
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
           "Nama Kegiatan 3": { type: "text", placeholder: "Silahkan tulis nama kegiatan yang diikuti dan nama penyelenggaranya" },
-          "Tugas / tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
+          "Tugas/tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
           "Peran": { type: "textarea", placeholder: "Ceritakan apa saja yang kamu lakukan untuk melaksanakan tugas serta dukungan dalam pelaksanaan kegiatan (ex: koordinator, bendahara, sie acara, peserta)" },
           "Durasi Kegiatan": { type: "text", placeholder: "Silahkan tulis berapa lama rentang waktu kegiatan dari persiapan sampai penutupan (ex: 2 minggu, 3 bulan)" },
           "Skala kegiatan": { type: "text", placeholder: "Silahkan tulis skala kegiatan yang dilaksanakan (FIM Pusat, FIM Regional, atau FIM Club)" },
@@ -193,14 +193,14 @@ module.exports = {
         id: 44,
         headline: null,
         note: null,
-        question: "FIM experience apa saja yang pernah kamu ikuti 4 ?",
+        question: "FIM Experience 4 ?",
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
           "Nama Kegiatan 4": { type: "text", placeholder: "Silahkan tulis nama kegiatan yang diikuti dan nama penyelenggaranya" },
-          "Tugas / tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
+          "Tugas/tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
           "Peran": { type: "textarea", placeholder: "Ceritakan apa saja yang kamu lakukan untuk melaksanakan tugas serta dukungan dalam pelaksanaan kegiatan (ex: koordinator, bendahara, sie acara, peserta)" },
           "Durasi Kegiatan": { type: "text", placeholder: "Silahkan tulis berapa lama rentang waktu kegiatan dari persiapan sampai penutupan (ex: 2 minggu, 3 bulan)" },
           "Skala kegiatan": { type: "text", placeholder: "Silahkan tulis skala kegiatan yang dilaksanakan (FIM Pusat, FIM Regional, atau FIM Club)" },
@@ -213,14 +213,14 @@ module.exports = {
         id: 45,
         headline: null,
         note: null,
-        question: "FIM experience apa saja yang pernah kamu ikuti 5 ?",
+        question: "FIM Experience 5 ?",
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
         isMany: 0,
         header: JSON.stringify({
           "Nama Kegiatan 5": { type: "text", placeholder: "Silahkan tulis nama kegiatan yang diikuti dan nama penyelenggaranya" },
-          "Tugas / tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
+          "Tugas/tanggung jawab": { type: "text", placeholder: "Silahkan tulis tugas yang diberikan kepadamu pada kegiatan ini " },
           "Peran": { type: "textarea", placeholder: "Ceritakan apa saja yang kamu lakukan untuk melaksanakan tugas serta dukungan dalam pelaksanaan kegiatan (ex: koordinator, bendahara, sie acara, peserta)" },
           "Durasi Kegiatan": { type: "text", placeholder: "Silahkan tulis berapa lama rentang waktu kegiatan dari persiapan sampai penutupan (ex: 2 minggu, 3 bulan)" },
           "Skala kegiatan": { type: "text", placeholder: "Silahkan tulis skala kegiatan yang dilaksanakan (FIM Pusat, FIM Regional, atau FIM Club)" },
@@ -294,7 +294,7 @@ module.exports = {
       },
       {
         id: 49,
-        headline: "Rencana program (Minimal 1) yang akan dilakukan setelah menyelesaikan Pelatihan FIM 22",
+        headline: "Rencana program yang akan dilakukan setelah menyelesaikan Pelatihan FIM 22 (Wajib diisi)",
         note: null,
         question: "Rencana Program 1",
         TunnelId: 9,
@@ -302,36 +302,10 @@ module.exports = {
         batchFim: "22",
         isMany: 1,
         header: JSON.stringify({
-          "Jelaskan kondisi terkini regional kamu saat ini (sesuai dengan domisili saat ini/ satu tahun kedepan)": {
+          "Jelaskan kondisi terkini regional kamu saat ini (sesuai dengan domisili saat ini/satu tahun kedepan)": {
             type: "textarea", placeholder: null,            
           },
           "Tuliskan rencana program yang akan dilaksanakan": {
-            type: "textarea", placeholder: null,            
-          },
-          "Tuliskan pihak-pihak yang mungkin akan terlibat dalam program tersebut": {
-            type: "textarea", placeholder: null,            
-          },
-          "Apa saja indikator keberhasilan dari program tersebut (misalnya: jumlah penerima manfaat 50 orang, kegiatan terpublikasi di 3 media nasional, dst)": {
-            type: "textarea", placeholder: null,            
-          },
-          "Tulisan langkah-langkah bagaimana kamu mewujudkan program tersebut disertai dengan timeline": {
-            type: "textarea", placeholder: null,            
-          },
-        }),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: 50,
-        headline: null,
-        note: null,
-        question: "Rencana program 2",
-        TunnelId: 9,
-        createdBy: 1,
-        batchFim: "22",
-        isMany: 1,
-        header: JSON.stringify({        
-          "Tuliskan rencana program 2 dan deksripsinya yang akan dilaksanakan": {
             type: "textarea", placeholder: null,            
           },
           "Tuliskan pihak-pihak yang mungkin akan terlibat dalam program tersebut": {
@@ -372,9 +346,9 @@ module.exports = {
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
-        isMany: 1,
+        isMany: 0,
         header: JSON.stringify({
-          "Dokumen sk keanggotaan FIM Regional": {
+          "Dokumen SK keanggotaan FIM Regional": {
             type: "upload", placeholder: null,            
           }          
         }),
@@ -389,7 +363,7 @@ module.exports = {
         TunnelId: 9,
         createdBy: 1,
         batchFim: "22",
-        isMany: 1,
+        isMany: 0,
         header: JSON.stringify({
           "Surat Rekomendasi dari Alumni FIM": {
             type: "upload", placeholder: null,            
@@ -408,6 +382,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    return await queryInterface.bulkDelete('Questions', {id: {$between: [36,52]}}, {});
+    return await queryInterface.bulkDelete('Questions', {id: {$between: [36,53]}}, {});
   }
 };
