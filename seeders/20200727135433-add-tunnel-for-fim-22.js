@@ -10,7 +10,7 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/NG_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1597599523/icon/Icon-alumni.png',
         batchFim: '22'
       },
       {
@@ -20,7 +20,7 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/NG_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1597599523/icon/Icon-volunteer.png',
         batchFim: '22'
       },
       {
@@ -30,7 +30,7 @@ module.exports = {
         createdBy: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
-        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1563328023/icon/NG_-_IKON_JALUR_MASUK_-_WEB_-_ILUSTRASI.png',
+        urlPicture: 'https://res.cloudinary.com/fim-indonesia/image/upload/v1597599523/icon/Icon-sahabat.png',
         batchFim: '22'
       }
 

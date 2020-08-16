@@ -297,7 +297,18 @@ exports.saveProfile = async (req, res, next) => {
             // mengecek semua fill udah keisi
             await checkFilled.map((value, index) => {
 
-                if (value[0] !== "userId" && value[0] !== "hoby" && value[0] !== "otherReligion" && value[0] !== "batchFim" && value[0] !== "regional" && value[0] !== "expertise" && value[0] !== "emergencyPhone" && value[0] !== "headline") {
+                if (value[0] !== "userId" && 
+                    value[0] !== "hoby" && 
+                    value[0] !== "otherReligion" && 
+                    value[0] !== "batchFim" && 
+                    value[0] !== "regional" && 
+                    value[0] !== "expertise" && 
+                    value[0] !== "emergencyPhone" && 
+                    value[0] !== "headline" &&
+                    value[0] !== "twitter" &&
+                    value[0] !== "facebook" &&
+                    value[0] !== "website"
+                    ) {
                     if (value[1] == null) {
                         notFilled.push(value[0])
                     }
@@ -309,9 +320,9 @@ exports.saveProfile = async (req, res, next) => {
                 // Jika sudah terisi semua maka update step cuma sampai 2
                 model.User.findOne({ where: { email: userIdentity.email } })
                     .then(user => {
-                        if (user.status < 4) {
-                            user.update({ status: 3 })
-                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
+                        if (user.status <= 4) {
+                            user.update({ status: 4 })
+                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
                         }
                     })
                     .catch(err => console.log(err))
