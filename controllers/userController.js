@@ -225,7 +225,7 @@ exports.saveKtp = async (req, res, next) => {
             } else {
                 return res.status(200).json({
                     "status": false,
-                    "message": "Nomor KTP sudah digunakan oleh " + findIdentity.name
+                    "message": "Nomor KTP sudah digunakan oleh " + findIdentity.name + " - " + findIdentity.email
                 })
             }
         }
