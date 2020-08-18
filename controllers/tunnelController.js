@@ -21,7 +21,11 @@ exports.lists = async (req, res, next) => {
         // karena ada kemungkinan 1 user ada banyak summary ketika dia tidak jadi memilih 1 jalur dan belum final
         // Hal ini mencegah peserta daftar di multi jalur
         const arrayDenied = [];
-        const findSummary = await model.Summary.findAll({ where: { ktpNumber: findIdentity.ktpNumber, isFinal:1 } }).then(result => {
+        const findSummary = await model.Summary.findAll({ where: { 
+            ktpNumber: findIdentity.ktpNumber, 
+            isFinal:1 ,
+            batchFim: '22'
+        } }).then(result => {
             result.map((value) => {
                 arrayDenied.push(value.TunnelId);
             })
