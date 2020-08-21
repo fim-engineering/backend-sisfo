@@ -305,8 +305,12 @@ exports.listByRecruiter = async (req, res, next) => {
     const findListParticipant = await model.ParticipantRecruiter.findAll({
         where: { recruiterId: theIdUser }
     }).then(result => {
-        listsParticipants.push(result.ktpNumber)
+        const strResult = JSON.parse(JSON.stringify(result))
+        strResult.map((value)=> {
+            listsParticipants.push(value.ktpNumber)
+        })
     }).catch(err => console.log(err))
+
 
     const allSubmit = await model.Summary.findAll({
         where: {
