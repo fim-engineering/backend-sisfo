@@ -108,6 +108,15 @@ exports.listSubmitted = async (req, res, next) => {
         });
     }
 
+
+
+    const listRecruiter = await model.ParticipantRecruiter.findAll({}).then(result => {
+        return JSON.parse(JSON.stringify(result))
+    }).catch(err => {
+        console.log(err)
+    })
+
+    const listRecruiterParticipant = [];
     const listIdentity = await model.Identity.findAndCountAll({
         where: {
             ktpNumber: { [Op.in]: listKTPSubmitted }
@@ -129,27 +138,29 @@ exports.listSubmitted = async (req, res, next) => {
                     attributes: ['name', 'city', 'province']
                 }]
             },
-            {
-                model: model.ParticipantRecruiter,
-                // include: [{
-                //     model: model.User,
-                //     include: [{
-                //         model: model.Identity,
-                //         attributes: ['name']
-                //     }]
-                // }]
-            }
         ]
     }).then(result => {
-        return result
+        return result.rows
     }).catch(err => {
         console.log(err)
+    })
+
+    await listIdentity.map(async (value) => {
+        const rec = await listRecruiter.filter((recruit) => {
+            return recruit.ktpNumber == value.ktpNumber
+        })
+
+        // console.log(rec)
+        await listRecruiterParticipant.push({
+            ...JSON.parse(JSON.stringify(value)),
+            recruiters: rec
+        })
     })
 
     return res.status(200).json({
         status: true,
         message: "Data Fetched",
-        data: listIdentity
+        data: listRecruiterParticipant
     });
 }
 
@@ -177,6 +188,11 @@ exports.newAssignRecruiter = async (req, res, next) => {
         where: {
             email: req.body.emailRecruiter,
         },
+        include: [
+            {
+                model: model.Identity
+            }
+        ],
         attributes: ['id']
     }).then(result => {
         return result
@@ -188,7 +204,9 @@ exports.newAssignRecruiter = async (req, res, next) => {
         model.ParticipantRecruiter.findOrCreate({
             where: {
                 ktpNumber: req.body.ktpParticipant,
-                recruiterId: theRecruiter.id
+                recruiterId: theRecruiter.id,
+                emailRecruiter: req.body.emailRecruiter,
+                nameRecruiter: theRecruiter.Identity.name
             }
         })
 
@@ -287,8 +305,12 @@ exports.listByRecruiter = async (req, res, next) => {
     const findListParticipant = await model.ParticipantRecruiter.findAll({
         where: { recruiterId: theIdUser }
     }).then(result => {
-        listsParticipants.push(result.ktpNumber)
+        const strResult = JSON.parse(JSON.stringify(result))
+        strResult.map((value)=> {
+            listsParticipants.push(value.ktpNumber)
+        })
     }).catch(err => console.log(err))
+
 
     const allSubmit = await model.Summary.findAll({
         where: {
@@ -620,4 +642,28 @@ exports.undoAssign = async (req, res, next) => {
             message: "Recruiter User Not Found"
         });
     }
+}
+
+exports.removeAssignRecruiter = async (req, res, next) => {
+    const ktpNumber = req.body.ktpParticipant;
+    const recruiterId = req.body.recruiterId;
+
+    model.ParticipantRecruiter.destroy({
+        where: {
+            ktpNumber: ktpNumber,
+            recruiterId: recruiterId
+        }
+    }).then(result => {
+        res.status(200).json({
+            status: true,
+            message: "Data Deleted",
+            data: result
+        });
+    }).catch(err => {
+        res.status(400).json({
+            status: false,
+            message: "Error Occured",
+            data: err
+        });
+    })
 }

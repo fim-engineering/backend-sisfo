@@ -1,5 +1,6 @@
 const model = require('../models/index');
 const redisClient = require('../util/redis');
+const { json } = require('sequelize');
 
 
 exports.lists = async (req, res, next) => {
@@ -90,20 +91,20 @@ exports.updateFinal = async (req, res, next) => {
             // isFinal: !decision ? 1 : 0
             isFinal: 1
         }, {
-                where: {
-                    ktpNumber: req.body.ktpNumber,
-                    TunnelId: req.body.TunnelId,
-                    batchFim: fimBatch.name
-                }
+            where: {
+                ktpNumber: req.body.ktpNumber,
+                TunnelId: req.body.TunnelId,
+                batchFim: fimBatch.name
             }
+        }
         ).then((status, result) => {
 
             model.User.findOne({ where: { email: userIdentity.email } })
-            .then(user => {
-                user.update({ status: 5 })
-                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 5 }))
-            })
-            .catch(err => console.log(err))
+                .then(user => {
+                    user.update({ status: 5 })
+                    redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 5 }))
+                })
+                .catch(err => console.log(err))
 
             res.status(200).json({
                 status: true,
@@ -148,11 +149,11 @@ exports.updateScore = async (req, res, next) => {
         model.Summary.update({
             score: data.score
         }, {
-                where: {
-                    ktpNumber: req.body.ktpNumber,
-                    TunnelId: req.body.tunneId
-                }
+            where: {
+                ktpNumber: req.body.ktpNumber,
+                TunnelId: req.body.tunneId
             }
+        }
         ).then((status, result) => {
             res.status(200).json({
                 status: true,
@@ -195,11 +196,11 @@ exports.updateEvaluator = async (req, res, next) => {
         model.Summary.update({
             recruiterId: data.recruiterId
         }, {
-                where: {
-                    ktpNumber: req.body.ktpNumber,
-                    TunnelId: req.body.tunneId
-                }
+            where: {
+                ktpNumber: req.body.ktpNumber,
+                TunnelId: req.body.tunneId
             }
+        }
         ).then((status, result) => {
             res.status(200).json({
                 status: true,
@@ -272,9 +273,9 @@ exports.checkDaftar = async (req, res, next) => {
             statusFim = true;
         }
 
-        if(findIdentity.batchFim == null){
+        if (findIdentity.batchFim == null) {
             statusnya = statusNonFim;
-        }else{
+        } else {
             statusnya = statusFim;
         }
 
@@ -284,6 +285,69 @@ exports.checkDaftar = async (req, res, next) => {
         });
 
     });
+}
+
+exports.statisticBatch = async (req, res) => {
+    const listTunnelCurrentFim = await model.Tunnel.findAll({
+        where: {
+            batchFim: '22'
+        }
+    }).then(result => {
+        return JSON.parse(JSON.stringify(result))
+    }).catch(err => console.log(err))
+
+
+    const refractArray = [];
+
+
+    const getData = () => {
+        return Promise.all(
+            listTunnelCurrentFim.map(async (value) => {
+                const countFinal = await model.Summary.count({
+                    where: {
+                        TunnelId: value.id,
+                        isFinal: 1
+                    }
+                }).then(result => {
+                    return result
+                }).catch(err => console.log(err))
+
+                const countFinalAll = await model.Summary.count({
+                    where: {
+                        TunnelId: value.id,
+                    }
+                }).then(result => {
+                    return result
+                }).catch(err => console.log(err))
+
+                await refractArray.push({
+                    tunnelId: value.id,
+                    nameTunnel: value.name,
+                    urlPicture: value.urlPicture,
+                    count: countFinalAll,
+                    countFinal: countFinal
+                })
+            })
+        )
+    }
+
+    getData().then(resu => {
+        const sumAll = refractArray.reduce((a, { count }) => a + count, 0)
+
+        res.status(200).json({
+            status:true,
+            data: refractArray,
+            total: sumAll,
+            message: "data fetched",
+        });
+    }).catch(err=> {
+        res.status(400).json({
+            status:false,
+            data: null
+        });
+    })
+
+
 }
 
 

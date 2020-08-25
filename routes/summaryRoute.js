@@ -12,4 +12,7 @@ router.post('/update-evaluator', summaryController.updateEvaluator);
 router.post('/check',summaryController.checkDaftar )
 
 
+// Statistic
+router.get('/statistic-in-batch', summaryController.statisticBatch);
+
 module.exports = router;
