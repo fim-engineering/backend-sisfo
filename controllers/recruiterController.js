@@ -168,7 +168,7 @@ exports.listSubmitted = async (req, res, next) => {
 exports.listRecruiter = async (req, res, next) => {
     model.Identity.findAll({
         where: {
-            role: 2,
+            role: {$in: [2,3]},
         },
         attributes: ['name', 'ktpNumber', 'phone', 'email', 'batchFim']
 
@@ -380,8 +380,6 @@ exports.detailParticipant = async (req, res, next) => {
     const TunnelId = req.body.TunnelId;
     const ktpNumber = req.body.ktpNumber;
 
-    console.log(TunnelId);
-
     model.Identity.findOne({
         where: {
             ktpNumber: ktpNumber,
@@ -415,6 +413,7 @@ exports.detailParticipant = async (req, res, next) => {
         ]
 
     }).then(result => {
+        console.log(result)
         return res.status(200).json({
             status: true,
             message: "Data Fetched",
