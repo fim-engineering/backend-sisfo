@@ -413,7 +413,6 @@ exports.detailParticipant = async (req, res, next) => {
         ]
 
     }).then(result => {
-        console.log(result)
         return res.status(200).json({
             status: true,
             message: "Data Fetched",
