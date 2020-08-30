@@ -14,5 +14,7 @@ router.post('/check',summaryController.checkDaftar )
 
 // Statistic
 router.get('/statistic-in-batch', summaryController.statisticBatch);
+// router.get('/statistic-by-regional', summaryController.statisticBatchByRegional);
+
 
 module.exports = router;

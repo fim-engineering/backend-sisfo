@@ -1,6 +1,7 @@
 const model = require('../models/index');
 const redisClient = require('../util/redis');
 const { json } = require('sequelize');
+const { Sequelize } = require('../models/index');
 
 
 exports.lists = async (req, res, next) => {
@@ -287,7 +288,7 @@ exports.checkDaftar = async (req, res, next) => {
     });
 }
 
-exports.statisticBatch = async (req, res) => {
+exports.statisticBatchX = async (req, res) => {
     const listTunnelCurrentFim = await model.Tunnel.findAll({
         where: {
             batchFim: '22'
@@ -335,18 +336,149 @@ exports.statisticBatch = async (req, res) => {
         const sumAll = refractArray.reduce((a, { count }) => a + count, 0)
 
         res.status(200).json({
-            status:true,
+            status: true,
             data: refractArray,
             total: sumAll,
             message: "data fetched",
         });
-    }).catch(err=> {
+    }).catch(err => {
         res.status(400).json({
-            status:false,
+            status: false,
             data: null
         });
     })
 
+
+}
+
+exports.statisticBatch = async (req, res) => {
+    const listTunnelCurrentFim = await model.Tunnel.findAll({
+        where: {
+            batchFim: '22'
+        }
+    }).then(result => {
+        return JSON.parse(JSON.stringify(result))
+    }).catch(err => console.log(err))
+
+    const refractArray = [];
+
+    const getData = () => {
+        return Promise.all(
+            listTunnelCurrentFim.map(async (value) => {
+
+                const cityArray2 = [];
+                const refractCounCity2 = [];
+                const countFinal = await model.Summary.findAll({
+                    where: {
+                        TunnelId: value.id,
+                        isFinal: 1,
+                        batchFim: "22"
+                    },
+                    attributes: ['ktpNumber'],
+                    include: [{
+                        model: model.Identity,
+                        attributes: ['ktpNumber', 'name'],
+                        include: [{
+                            model: model.User,
+                            attributes: ['RegionalId'],
+                            include: [{
+                                model: model.Regional,
+                                attributes: ['city']
+                            }]
+                        }]
+                    }]
+                }).then(result => {
+                    return JSON.parse(JSON.stringify(result))
+                }).catch(err =>
+                    console.log(err)
+                )
+                await countFinal.map((value) => {
+                    if (value.Identity.User.Regional !== null) {
+                        cityArray2.push(value.Identity.User.Regional.city)
+                    }
+                })
+                const uniqueSet2 = [...new Set(cityArray2)]
+                uniqueSet2.map((vall) => {
+                    const filtering = cityArray2.filter((item) => {
+                        return cityArray2 == vall
+                    });
+                    refractCounCity2.push({
+                        city: vall,
+                        count: filtering.length
+                    })
+                })
+
+                const cityArray = [];
+                const refractCounCity = [];
+                const countFinalAll = await model.Summary.findAll({
+                    where: {
+                        TunnelId: value.id,
+                        batchFim: "22"
+                    },
+                    attributes: ['ktpNumber'],
+                    include: [{
+                        model: model.Identity,
+                        attributes: ['ktpNumber', 'name'],
+                        include: [{
+                            model: model.User,
+                            attributes: ['RegionalId'],
+                            include: [{
+                                model: model.Regional,
+                                attributes: ['city']
+                            }]
+                        }]
+                    }]
+                }).then(result => {
+                    return JSON.parse(JSON.stringify(result))
+                }).catch(err =>
+                    console.log(JSON.parse(JSON.stringify(err)))
+                )
+                await countFinalAll.map((value) => {
+                    if (value.Identity.User.Regional !== null) {
+                        cityArray.push(value.Identity.User.Regional.city)
+                    }
+                })
+                const uniqueSet = [...new Set(cityArray)]
+                uniqueSet.map((vall) => {
+                    const filtering = cityArray.filter((item) => {
+                        return cityArray == vall
+                    });
+                    refractCounCity.push({
+                        city: vall,
+                        count: filtering.length
+                    })
+                })
+
+
+                await refractArray.push({
+                    tunnelId: value.id,
+                    nameTunnel: value.name,
+                    urlPicture: value.urlPicture,
+                    count: countFinalAll.length,
+                    detailByRegional: refractCounCity,
+                    countFinal: countFinal.length,
+                    detailByRegionalFinal: refractCounCity2
+                })
+            })
+        )
+    }
+
+    getData().then(resu => {
+        const sumAll = refractArray.reduce((a, { count }) => a + count, 0)
+
+        res.status(200).json({
+            status: true,
+            data: refractArray,
+            total: sumAll,
+            message: "data fetched",
+        });
+    }).catch(err => {
+        console.log(err)
+        res.status(400).json({
+            status: false,
+            data: null
+        });
+    })
 
 }
 
