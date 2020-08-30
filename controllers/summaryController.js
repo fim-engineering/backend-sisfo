@@ -473,10 +473,10 @@ exports.statisticBatch = async (req, res) => {
             message: "data fetched",
         });
     }).catch(err => {
-        console.log(err)
+        
         res.status(400).json({
             status: false,
-            data: null
+            data: err
         });
     })
 
