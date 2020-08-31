@@ -393,7 +393,7 @@ exports.statisticBatch = async (req, res) => {
                     console.log(err)
                 )
                 await countFinal.map((value) => {
-                    if (value.Identity.User.Regional !== null) {
+                    if (value.Identity.User !== null && value.Identity.User.Regional !== null) {
                         cityArray2.push(value.Identity.User.Regional.city)
                     }
                 })
