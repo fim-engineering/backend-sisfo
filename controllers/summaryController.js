@@ -434,19 +434,21 @@ exports.statisticBatch = async (req, res) => {
                     console.log(JSON.parse(JSON.stringify(err)))
                 )
                 await countFinalAll.map((value) => {
-                    console.log(value.Identity.User !== null && value.Identity.User.Regional !== null)
                     if (value.Identity.User !== null && value.Identity.User.Regional !== null) {
                         cityArray.push(value.Identity.User.Regional.city)
                     }
                 })
+
                 const uniqueSet = [...new Set(cityArray)]
-                uniqueSet.map((vall) => {
+
+
+                await uniqueSet.map( async (vall) => {
                     const filtering = cityArray.filter((item) => {
                         return cityArray == vall
                     });
-                    refractCounCity.push({
+                    await refractCounCity.push({
                         city: vall,
-                        count: filtering.length
+                        count: await filtering.length
                     })
                 })
 
