@@ -41,6 +41,14 @@ exports.updateFinal = async (req, res, next) => {
             });
         }
 
+        if (req.body.TunnelId == 9 || req.body.TunnelId == 10 ) {
+            return res.status(400).json({
+                status: false,
+                message: "Time is over. Thankyou",
+                data: err
+            });
+        }
+
         const data = {
             ktpNumber: req.body.ktpNumber,
             TunnelId: req.body.TunnelId
