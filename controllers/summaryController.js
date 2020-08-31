@@ -363,7 +363,7 @@ exports.statisticBatchX = async (req, res) => {
 exports.statisticBatch = async (req, res) => {
     const listTunnelCurrentFim = await model.Tunnel.findAll({
         where: {
-            batchFim: '22'
+            batchFim: { $in: ['22', '22x'] }
         }
     }).then(result => {
         return JSON.parse(JSON.stringify(result))
@@ -381,7 +381,7 @@ exports.statisticBatch = async (req, res) => {
                     where: {
                         TunnelId: value.id,
                         isFinal: 1,
-                        batchFim: { $in: ["22","22x"] }
+                        batchFim: "22"
                     },
                     attributes: ['ktpNumber'],
                     include: [{
