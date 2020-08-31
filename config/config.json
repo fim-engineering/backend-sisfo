@@ -24,6 +24,7 @@
     "database": "d2dvles4teusdg",
     "host": "ec2-34-238-26-109.compute-1.amazonaws.com",
     "dialect": "postgres",
-    "timezone": "+07:00"
+    "timezone": "+07:00",
+    "logging": false
   }
 }
