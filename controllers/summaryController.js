@@ -400,7 +400,7 @@ exports.statisticBatch = async (req, res) => {
                 const uniqueSet2 = [...new Set(cityArray2)]
                 uniqueSet2.map((vall) => {
                     const filtering = cityArray2.filter((item) => {
-                        return cityArray2 == vall
+                        return item == vall
                     });
                     refractCounCity2.push({
                         city: vall,
@@ -444,7 +444,7 @@ exports.statisticBatch = async (req, res) => {
 
                 await uniqueSet.map( async (vall) => {
                     const filtering = cityArray.filter((item) => {
-                        return cityArray == vall
+                        return item == vall
                     });
                     await refractCounCity.push({
                         city: vall,
