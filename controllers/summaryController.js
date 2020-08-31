@@ -43,7 +43,7 @@ exports.updateFinal = async (req, res, next) => {
 
         // penutupan pendaftaran Alumni FIM & Volunteer FIM
         if (req.body.TunnelId == 9 || req.body.TunnelId == 10 || req.body.TunnelId == null ) {
-            return res.status(400).json({
+            return res.status(200).json({
                 status: false,
                 message: "Time is over. Thankyou",
                 data: err
