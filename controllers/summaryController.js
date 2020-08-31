@@ -42,7 +42,7 @@ exports.updateFinal = async (req, res, next) => {
         }
 
         // penutupan pendaftaran Alumni FIM & Volunteer FIM
-        if (req.body.TunnelId == 9 || req.body.TunnelId == 10 || req.body.TunnelId == null ) {
+        if (req.body.TunnelId == 9 || req.body.TunnelId == 10 || req.body.TunnelId == null) {
             return res.status(200).json({
                 status: false,
                 message: "Time is over. Thankyou",
@@ -381,7 +381,7 @@ exports.statisticBatch = async (req, res) => {
                     where: {
                         TunnelId: value.id,
                         isFinal: 1,
-                        batchFim: "22"
+                        batchFim: { $in: ["22","22x"] }
                     },
                     attributes: ['ktpNumber'],
                     include: [{
@@ -451,7 +451,7 @@ exports.statisticBatch = async (req, res) => {
                 const uniqueSet = [...new Set(cityArray)]
 
 
-                await uniqueSet.map( async (vall) => {
+                await uniqueSet.map(async (vall) => {
                     const filtering = cityArray.filter((item) => {
                         return item == vall
                     });
