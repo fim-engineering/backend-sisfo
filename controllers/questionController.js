@@ -11,7 +11,7 @@ exports.lists = async (req, res, next) => {
     const findTunnel = await model.Tunnel.findOne({
         where: { 
             id: data.idTunnel,
-            batchFim:'22'
+            batchFim: req.body.isRecruiter ? {$in:['22','22x']} : '22'
          },
         include: [{
             model: model.Question,
