@@ -21,6 +21,14 @@ exports.lists = async (req, res, next) => {
         .then(result => { return result })
         .catch(err => console.log(err));
 
+    if (findTunnel == null) {
+        res.status(200).json({
+            status: true,
+            message: "data fetched",
+            data: null
+        });
+    }
+
     res.status(200).json({
         status: true,
         message: "data fetched",
