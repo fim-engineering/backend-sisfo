@@ -25,7 +25,7 @@ exports.lists = async (req, res, next) => {
         res.status(200).json({
             status: true,
             message: "data fetched",
-            data: null
+            data: []
         });
     }
 
