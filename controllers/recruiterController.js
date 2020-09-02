@@ -168,7 +168,7 @@ exports.listSubmitted = async (req, res, next) => {
 exports.listRecruiter = async (req, res, next) => {
     model.Identity.findAll({
         where: {
-            role: {$in: [2,3]},
+            role: { $in: [2, 3] },
         },
         attributes: ['name', 'ktpNumber', 'phone', 'email', 'batchFim']
 
@@ -306,7 +306,7 @@ exports.listByRecruiter = async (req, res, next) => {
         where: { recruiterId: theIdUser }
     }).then(result => {
         const strResult = JSON.parse(JSON.stringify(result))
-        strResult.map((value)=> {
+        strResult.map((value) => {
             listsParticipants.push(value.ktpNumber)
         })
     }).catch(err => console.log(err))
@@ -322,7 +322,8 @@ exports.listByRecruiter = async (req, res, next) => {
                 model: model.Identity
             },
             {
-                model: model.Tunnel
+                model: model.Tunnel,
+                where: { batchFim: { $in: ['22', '22x'] } }
             },
         ]
     }).then(result => {
