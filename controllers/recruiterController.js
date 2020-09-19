@@ -145,6 +145,8 @@ exports.listSubmitted = async (req, res, next) => {
         console.log(err)
     })
 
+
+    // Menambahkan list recruiter yang ditugaskan
     await listIdentity.map(async (value) => {
         const rec = await listRecruiter.filter((recruit) => {
             return recruit.ktpNumber == value.ktpNumber
