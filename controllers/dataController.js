@@ -102,7 +102,7 @@ exports.downloadExcel = async (req, res, next) => {
     const restructurization = [];
     await Promise.all([
         listIdentity.map(async (value) => {
-            // console.log(JSON.parse(JSON.stringify(value)))
+            
             const jawb = JawabanRegionalBaru.filter((regi) => {
                 return value.ktpNumber == regi.ktpNumber
             })
@@ -123,6 +123,7 @@ exports.downloadExcel = async (req, res, next) => {
                 email: value.User.email,
                 phone: value.phone,
                 ktpNumber: value.ktpNumber,
+                jalur: value.Summaries !== null ? value.Summaries[0].Tunnel.name : null,
                 regional: value.User.Regional !== null ? value.User.Regional.city : null,
                 videoEdit: value.video_editing,
                 nextActivity: jawab,
@@ -132,7 +133,7 @@ exports.downloadExcel = async (req, res, next) => {
     ]).then(result => {
         res.status(200).json({
             status: true,
-            message: "university data fetched",
+            message: "data fetched",
             data: restructurization
         });
     })
