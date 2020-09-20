@@ -17,7 +17,7 @@ const answerRoute = require('./routes/answerRoute');
 const summaryRoute = require('./routes/summaryRoute');
 const recruiterRoute = require('./routes/recruiterRoute');
 const regionalRoute = require('./routes/regionalRoute');
-
+const participantRoute = require('./routes/participantRoute');
 
 
 // init express js
@@ -46,6 +46,7 @@ app.use('/answer',answerRoute);
 app.use('/summary',summaryRoute);
 app.use('/recruiter', recruiterRoute);
 app.use('/regional',regionalRoute);
+app.use('/participant', participantRoute);
 
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})

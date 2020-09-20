@@ -121,7 +121,7 @@ exports.listSubmitted = async (req, res, next) => {
         where: {
             ktpNumber: { [Op.in]: listKTPSubmitted }
         },
-        attributes: ['userId', 'name', 'ktpNumber'],
+        attributes: ['userId', 'name', 'ktpNumber','status_accept'],
         include: [
             {
                 model: model.Summary,
