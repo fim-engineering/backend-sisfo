@@ -121,7 +121,7 @@ exports.listSubmitted = async (req, res, next) => {
         where: {
             ktpNumber: { [Op.in]: listKTPSubmitted }
         },
-        attributes: ['userId', 'name', 'ktpNumber','status_accept'],
+        attributes: ['userId', 'name', 'ktpNumber', 'status_accept'],
         include: [
             {
                 model: model.Summary,
@@ -288,6 +288,45 @@ exports.assignRecruiter = async (req, res, next) => {
 
 exports.listByRecruiter = async (req, res, next) => {
     const emailRecruiter = req.body.emailRecruiter;
+
+    if (req.query.ktpNum !== undefined) {
+
+        const allSubmit = await model.Summary.findAll({
+            where: {
+                isFinal: 1,
+                ktpNumber: req.query.ktpNum
+            },
+            include: [
+                {
+                    model: model.Identity,
+                    include: [
+                        {
+                            model: model.User,
+                            include: [{
+                                model: model.Regional,
+                                attributes: ['name', 'city', 'province']
+                            }]
+                        },
+                    ]
+                },
+                {
+                    model: model.Tunnel,
+                    where: { batchFim: { $in: ['22', '22x'] } }
+                },
+            ]
+        }).then(result => {
+            return result
+        }).catch(err => {
+            console.log(err)
+        });
+
+
+        return res.status(200).json({
+            status: true,
+            message: "Data Fetched",
+            data: allSubmit
+        });
+    }
 
     const theIdUser = await model.User.findOne({
         where: {
