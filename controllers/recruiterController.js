@@ -78,6 +78,7 @@ exports.listSubmitted = async (req, res, next) => {
     })
 
 
+    // Cari yang sudah submit final
     const allSubmit = await model.Summary.findAll({
         where: {
             isFinal: 1,
@@ -94,6 +95,7 @@ exports.listSubmitted = async (req, res, next) => {
         });
     });
 
+    // dapatktpsubmit
     const listKTPSubmitted = [];
 
     if (allSubmit !== null) {
@@ -108,8 +110,22 @@ exports.listSubmitted = async (req, res, next) => {
         });
     }
 
+    // query jika ada parameter fimBatch maka ambil peserta yang statusnya seperti nama fim dan kode x bagi yang tidak bisa ikut
+    const listLolosKtp = [];
+    if (req.query.fimBatch) {
+
+        const listLolos = await model.Identity.findAll({
+            where: { status_accept: 2 },
+            attributes: ['batchFim', 'ktpNumber']
+        }).then(result => {
+            JSON.parse(JSON.stringify(result)).map((value, index) => {
+                listLolosKtp.push(value.ktpNumber)
+            })
+        })
+    }
 
 
+    // fetch recruiter dari masing-masing peserta
     const listRecruiter = await model.ParticipantRecruiter.findAll({}).then(result => {
         return JSON.parse(JSON.stringify(result))
     }).catch(err => {
@@ -119,9 +135,20 @@ exports.listSubmitted = async (req, res, next) => {
     const listRecruiterParticipant = [];
     const listIdentity = await model.Identity.findAndCountAll({
         where: {
-            ktpNumber: { [Op.in]: listKTPSubmitted }
+            ktpNumber: { [Op.in]: req.query.fimBatch && listLolosKtp > 0 ? listLolosKtp : listKTPSubmitted }
         },
-        attributes: ['userId', 'name', 'ktpNumber', 'status_accept'],
+        attributes: [
+            'userId',
+            'name',
+            'ktpNumber',
+            'status_accept',
+            'batchFim',
+            'attendenceConfirmationDate',
+            'mbti',
+            'paymentDate',
+            'bankTransfer',
+            'urlTransferPhoto'
+        ],
         include: [
             {
                 model: model.Summary,
@@ -139,7 +166,7 @@ exports.listSubmitted = async (req, res, next) => {
                 }]
             },
         ]
-    }).then(result => {
+    }).then(result => {        
         return result.rows
     }).catch(err => {
         console.log(err)

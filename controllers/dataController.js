@@ -46,6 +46,18 @@ exports.downloadExcel = async (req, res, next) => {
         });
     });
 
+    const listLolosKtp = [];
+    if (req.query.fimBatch) {
+        const listLolos = await model.Identity.findAll({
+            where: { status_accept: 2 },
+            attributes: ['batchFim', 'ktpNumber']
+        }).then(result => {
+            JSON.parse(JSON.stringify(result)).map((value, index) => {
+                listLolosKtp.push(value.ktpNumber)
+            })
+        })
+    }
+
     const listKTPSubmitted = [];
     await allSubmit.map((value, index) => {
         listKTPSubmitted.push(value.ktpNumber);
@@ -53,7 +65,7 @@ exports.downloadExcel = async (req, res, next) => {
 
     const listIdentity = await model.Identity.findAndCountAll({
         where: {
-            ktpNumber: { [Op.in]: listKTPSubmitted }
+            ktpNumber: { [Op.in]: req.query.fimBatch && listLolosKtp > 0 ? listLolosKtp : listKTPSubmitted }
         },
         // attributes: ['userId', 'name', 'ktpNumber', 'video_editing'],
         include: [
@@ -127,7 +139,8 @@ exports.downloadExcel = async (req, res, next) => {
                 regional: value.User.Regional !== null ? value.User.Regional.city : null,
                 videoEdit: value.video_editing,
                 nextActivity: jawab,
-                newRegional: newRegional
+                newRegional: newRegional,
+                mbti:value.mbti
             })
         })
     ]).then(result => {

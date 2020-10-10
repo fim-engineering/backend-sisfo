@@ -402,7 +402,7 @@ exports.statisticBatch = async (req, res) => {
                     console.log(err)
                 )
                 await countFinal.map((value) => {
-                    if (value.Identity.User !== null && value.Identity.User.Regional !== null) {
+                    if (value.Identity.User !== null && value.Identity.User.Regional !== null && value.Identity.attendenceConfirmationDate !== null) {
                         cityArray2.push(value.Identity.User.Regional.city)
                     }
                 })
@@ -417,6 +417,13 @@ exports.statisticBatch = async (req, res) => {
                     })
                 })
 
+                let fimbatch = {};
+                if (req.query.fimBatch) {
+                    fimbatch = {
+                        where: { status_accept: 2 }
+                    }
+                }
+
                 const cityArray = [];
                 const refractCounCity = [];
                 const countFinalAll = await model.Summary.findAll({
@@ -427,7 +434,8 @@ exports.statisticBatch = async (req, res) => {
                     attributes: ['ktpNumber'],
                     include: [{
                         model: model.Identity,
-                        attributes: ['ktpNumber', 'name'],
+                        ...fimbatch,
+                        attributes: ['ktpNumber', 'name', 'status_accept', 'batchFim'],
                         include: [{
                             model: model.User,
                             attributes: ['RegionalId'],
@@ -442,6 +450,8 @@ exports.statisticBatch = async (req, res) => {
                 }).catch(err =>
                     console.log(JSON.parse(JSON.stringify(err)))
                 )
+
+
                 await countFinalAll.map((value) => {
                     if (value.Identity.User !== null && value.Identity.User.Regional !== null) {
                         cityArray.push(value.Identity.User.Regional.city)
