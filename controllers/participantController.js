@@ -14,7 +14,7 @@ exports.update_status_accept = async (req, res, next) => {
         where: { 'ktpNumber': ktpNumber }
     }).then(async result => {
 
-        if (value == 0 || value == 1 || value == 999999) {
+        if (value == 0 || value == 1 || value == 2 || value == 999999) {
             await result.update({
                 status_accept: value
             })
