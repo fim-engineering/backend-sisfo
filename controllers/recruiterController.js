@@ -228,7 +228,6 @@ exports.newAssignRecruiter = async (req, res, next) => {
 exports.assignRecruiter = async (req, res, next) => {
     const ktpRecruiter = req.body.ktpRecruiter;
     const listPeserta = req.body.ktpPeserta; // array
-    console.log(req.body)
     // const ArrayPeserta: [];
     // listPeserta.map((value,index)=>{
     //     value.
