@@ -135,7 +135,7 @@ exports.listSubmitted = async (req, res, next) => {
     const listRecruiterParticipant = [];
     const listIdentity = await model.Identity.findAndCountAll({
         where: {
-            ktpNumber: { [Op.in]: req.query.fimBatch && listLolosKtp > 0 ? listLolosKtp : listKTPSubmitted }
+            ktpNumber: { [Op.in]: req.query.fimBatch && listLolosKtp.length > 0 ? listLolosKtp : listKTPSubmitted }
         },
         attributes: [
             'userId',
