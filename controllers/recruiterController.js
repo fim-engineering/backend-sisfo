@@ -147,7 +147,8 @@ exports.listSubmitted = async (req, res, next) => {
             'mbti',
             'paymentDate',
             'bankTransfer',
-            'urlTransferPhoto'
+            'urlTransferPhoto',
+            'phone'
         ],
         include: [
             {
