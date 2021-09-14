@@ -4,7 +4,7 @@
   "description": "FIM Restful API",
   "main": "app.js",
   "engines": {
-    "node": "11.2.0",
+    "node": "12.16.2",
     "npm": "7.23.0"
   },
   "scripts": {
