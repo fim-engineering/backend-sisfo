@@ -20,4 +20,6 @@ router.post('/participant/available-to-assign', recruiterController.availableAss
 router.post('/participant/to-assign', recruiterController.toAssign);
 router.post('/participant/undo-assign', recruiterController.undoAssign);
 
+router.post('/new-assign', recruiterController.newAssignRecruiter);
+router.post('/remove-assign', recruiterController.removeAssignRecruiter);
 module.exports = router;

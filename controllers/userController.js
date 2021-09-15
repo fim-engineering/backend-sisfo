@@ -130,7 +130,9 @@ exports.saveKtp = async (req, res, next) => {
 
         // cari nomor ktp
         const findIdentity = await model.Identity
-            .findOne({ where: { [Op.or]: [{ktpNumber: noKtp},{email:emailId}] } })
+            .findOne({ where: { [Op.or]: [{ktpNumber: noKtp}
+                // ,{email:emailId} // ini kemarin bikin kasus ktp anda digunakan oleh null
+            ] } })
             .then(result => { return result })
             .catch(err => { console.log(err) })
 
@@ -140,8 +142,7 @@ exports.saveKtp = async (req, res, next) => {
             .catch(err => console.log(err))
 
         // check KTP di tabel identity jika null bikin, jika ada update
-
-        if (findIdentity == null) {
+        if (findIdentity === null) {
             await model.Identity.create({
                 email: emailId,
                 userId: userId,
@@ -185,7 +186,7 @@ exports.saveKtp = async (req, res, next) => {
         // update
         else {
             // pastikan user id masih nul jika tidak null kasih tau kalau itu sudah dipakai
-            if (findIdentity.userId == null) {
+            if (findIdentity.userId == null || findIdentity.email == emailId) {
                 await findIdentity.update({
                     email: emailId,
                     userId: userId,
@@ -224,7 +225,7 @@ exports.saveKtp = async (req, res, next) => {
             } else {
                 return res.status(200).json({
                     "status": false,
-                    "message": "Nomor KTP sudah digunakan oleh " + findIdentity.name
+                    "message": "Nomor KTP sudah digunakan oleh " + findIdentity.name + " - " + findIdentity.email
                 })
             }
         }
@@ -256,7 +257,15 @@ exports.saveProfile = async (req, res, next) => {
         hoby: req.body.hoby,
         expertise: req.body.expertise,
         institution: req.body.institution,
-        otherReligion: req.body.otherReligion
+        otherReligion: req.body.otherReligion,
+
+        occupation: req.body.occupation,
+        instagram: req.body.instagram,
+        twitter: req.body.twitter,
+        facebook: req.body.facebook,
+        website: req.body.website,
+        reference_by: req.body.reference_by,
+        video_editing: req.body.video_editing
     }
 
     redisClient.get('login_portal:' + token, async function (err, response) {
@@ -288,7 +297,18 @@ exports.saveProfile = async (req, res, next) => {
             // mengecek semua fill udah keisi
             await checkFilled.map((value, index) => {
 
-                if (value[0] !== "userId" && value[0] !== "hoby" && value[0] !== "otherReligion" && value[0] !== "batchFim" && value[0] !== "regional" && value[0] !== "expertise" && value[0] !== "emergencyPhone" && value[0] !== "headline") {
+                if (value[0] !== "userId" && 
+                    value[0] !== "hoby" && 
+                    value[0] !== "otherReligion" && 
+                    value[0] !== "batchFim" && 
+                    value[0] !== "regional" && 
+                    value[0] !== "expertise" && 
+                    value[0] !== "emergencyPhone" && 
+                    value[0] !== "headline" &&
+                    value[0] !== "twitter" &&
+                    value[0] !== "facebook" &&
+                    value[0] !== "website"
+                    ) {
                     if (value[1] == null) {
                         notFilled.push(value[0])
                     }
@@ -300,9 +320,9 @@ exports.saveProfile = async (req, res, next) => {
                 // Jika sudah terisi semua maka update step cuma sampai 2
                 model.User.findOne({ where: { email: userIdentity.email } })
                     .then(user => {
-                        if (user.status < 4) {
-                            user.update({ status: 2 })
-                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
+                        if (user.status <= 4) {
+                            user.update({ status: 4 })
+                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
                         }
                     })
                     .catch(err => console.log(err))
@@ -318,8 +338,8 @@ exports.saveProfile = async (req, res, next) => {
                 model.User.findOne({ where: { email: userIdentity.email } })
                     .then(user => {
                         if (user.status < 4) {
-                            user.update({ status: 3 })
-                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
+                            user.update({ status: 4 })
+                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
                         }
                     })
                     .catch(err => console.log(err))
@@ -371,7 +391,8 @@ exports.saveTunnel = (req, res, nex) => {
     let token = req.get('Authorization').split(' ')[1];
 
     const data = {
-        TunnelId: req.body.TunnelId
+        TunnelId: req.body.TunnelId,
+        RegionalId: req.body.RegionalId
     }
 
     redisClient.get('login_portal:' + token, function (err, response) {
@@ -381,9 +402,10 @@ exports.saveTunnel = (req, res, nex) => {
         model.User.findOne({ where: { id: userId } }).then(result => {
             result.update({
                 TunnelId: data.TunnelId,
-                status: 4
+                RegionalId:data.RegionalId,
+                status: 3
             }).then(dataresult => {
-                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
+                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
 
                 return res.status(200).json({
                     "status": true,

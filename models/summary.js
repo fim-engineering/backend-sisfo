@@ -8,15 +8,16 @@ module.exports = (sequelize, DataTypes) => {
     recruiterId: DataTypes.INTEGER,
     scoreFinal: DataTypes.INTEGER,
     createdBy: DataTypes.INTEGER,
-    scoreDataDiri : DataTypes.INTEGER,
-    scoreAktivitas : DataTypes.INTEGER,
-    scoreProject : DataTypes.INTEGER,
-    scoreOther : DataTypes.INTEGER,
-    notes:DataTypes.TEXT
+    scoreDataDiri: DataTypes.INTEGER,
+    scoreAktivitas: DataTypes.INTEGER,
+    scoreProject: DataTypes.INTEGER,
+    scoreOther: DataTypes.INTEGER,
+    notes: DataTypes.TEXT
   }, {});
-  Summary.associate = function(models) {
+  Summary.associate = function (models) {
     models.Summary.belongsTo(models.Tunnel)
-    models.Summary.belongsTo(models.Identity,{foreignKey:'ktpNumber', targetKey:'ktpNumber'});
+    models.Summary.belongsTo(models.Identity, { foreignKey: 'ktpNumber', targetKey: 'ktpNumber' });
+    models.Summary.belongsToMany(models.User, { through: models.ParticipantRecruiter, foreignKey:'ktpNumber' })
   };
   return Summary;
 };

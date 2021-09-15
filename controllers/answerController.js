@@ -31,7 +31,7 @@ exports.lists = async (req, res, next) => {
 
 exports.saveAnswer = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
-    redisClient.get('login_portal:' + token, function (err, response) {
+    redisClient.get('login_portal:' + token, async function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
 
@@ -112,11 +112,19 @@ exports.saveAnswer = async (req, res, next) => {
                 });
             })
         })
+        
+        const fimBatch = await model.Fimbatch.findAll({
+            limit:1,
+            order:[['id', 'DESC']]
+        }).then(result=>{
+            return result[0]
+        })
 
         model.Summary.findOrCreate({
             where: {
                 TunnelId: data.TunnelId,
-                ktpNumber: data.ktpNumber
+                ktpNumber: data.ktpNumber,
+                batchFim: fimBatch.name
             },
             defaults: {
                 isFinal: 0

@@ -9,13 +9,25 @@ exports.lists = async (req, res, next) => {
 
 
     const findTunnel = await model.Tunnel.findOne({
-        where: { id: data.idTunnel },
-        include:[{
+        where: { 
+            id: data.idTunnel,
+            batchFim: req.body.isRecruiter ? {$in:['22','22x']} : '22'
+         },
+        include: [{
             model: model.Question,
+            order: [['id', 'ASC']]
         }]
     })
         .then(result => { return result })
         .catch(err => console.log(err));
+
+    if (findTunnel == null) {
+        res.status(200).json({
+            status: true,
+            message: "data fetched",
+            data: []
+        });
+    }
 
     res.status(200).json({
         status: true,

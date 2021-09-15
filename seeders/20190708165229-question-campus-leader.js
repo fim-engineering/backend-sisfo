@@ -21,7 +21,7 @@ module.exports = {
           "Scope/Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "text"
+          "Alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "text"
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -44,7 +44,7 @@ module.exports = {
           "Scope/Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "text"
+          "Alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "text"
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -67,7 +67,7 @@ module.exports = {
           "Scope/Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "text"
+          "Alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "text"
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -90,7 +90,7 @@ module.exports = {
           "Scope/Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "text"
+          "Alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "text"
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -113,7 +113,7 @@ module.exports = {
           "Scope/Wilayah": "text",
           "Peran/ Prestasi": "text",
           "No. Telpon Ketua/ Penanggung Jawab": "text",
-          "Alasan mengapa aktivitas / pencapaian ini merupaka yang terbaik bagi Anda ? (max. 350 kata)": "text"
+          "Alasan mengapa aktivitas / pencapaian ini merupakan yang terbaik bagi Anda ? (max. 350 kata)": "text"
         }),
         createdAt: new Date(),
         updatedAt: new Date()

@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     address: DataTypes.TEXT,
     ktpUrl: DataTypes.STRING,
     email: DataTypes.STRING,
-    phone: DataTypes.STRING,    
+    phone: DataTypes.STRING,
     headline: DataTypes.STRING,
     photoUrl: DataTypes.STRING,
     religion: DataTypes.STRING,
@@ -21,16 +21,30 @@ module.exports = (sequelize, DataTypes) => {
     bloodGroup: DataTypes.STRING,
     hoby: DataTypes.TEXT,
     expertise: DataTypes.STRING,
-    institution:DataTypes.STRING,
-    otherReligion:DataTypes.STRING,
-    role:DataTypes.INTEGER  
-}, {});
-Identity.associate = function (models) {
-  models.Identity.belongsTo(models.User, { foreignKey: 'userId' })
-  models.Identity.belongsToMany(models.Tunnel, {through: models.Summary, foreignKey: 'ktpNumber'});
-  models.Identity.hasMany(models.Summary, {foreignKey:'ktpNumber',sourceKey:'ktpNumber'})
-  models.Identity.hasMany(models.Answer, {foreignKey:'ktpNumber',sourceKey:'ktpNumber'})
-  
-};
-return Identity;
+    institution: DataTypes.STRING,
+    otherReligion: DataTypes.STRING,
+    role: DataTypes.INTEGER,
+    occupation: DataTypes.STRING,
+    instagram: DataTypes.TEXT,
+    twitter: DataTypes.STRING,
+    facebook: DataTypes.STRING,
+    website: DataTypes.STRING,
+    reference_by: DataTypes.STRING,
+    video_editing: DataTypes.STRING,
+    status_accept: DataTypes.INTEGER,
+    
+    attendenceConfirmationDate: DataTypes.DATE,
+    mbti: DataTypes.STRING,
+    paymentDate: DataTypes.DATE,
+    bankTransfer: DataTypes.STRING,
+    urlTransferPhoto: DataTypes.STRING,
+  }, {});
+  Identity.associate = function (models) {
+    models.Identity.belongsTo(models.User, { foreignKey: 'userId' })
+    models.Identity.belongsToMany(models.Tunnel, { through: models.Summary, foreignKey: 'ktpNumber' });
+    models.Identity.hasMany(models.Summary, { foreignKey: 'ktpNumber', sourceKey: 'ktpNumber' })
+    models.Identity.hasMany(models.Answer, { foreignKey: 'ktpNumber', sourceKey: 'ktpNumber' })
+    models.Identity.hasMany(models.ParticipantRecruiter, { foreignKey: 'ktpNumber', sourceKey: 'ktpNumber' });
+  };
+  return Identity;
 };

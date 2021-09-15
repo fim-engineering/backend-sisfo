@@ -19,11 +19,12 @@
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "username": "root",
-    "password": "",
-    "database": "fim_portal_backend",
-    "host": "localhost",
-    "dialect": "mysql",
-    "timezone": "+07:00"
+    "username": "eqrnbhasfirpkx",
+    "password": "24523ae2d20b19df82242999193d4940ef418b1cc435d9f91db2978bb208ca04",
+    "database": "d2dvles4teusdg",
+    "host": "ec2-34-238-26-109.compute-1.amazonaws.com",
+    "dialect": "postgres",
+    "timezone": "+07:00",
+    "logging": false
   }
 }
