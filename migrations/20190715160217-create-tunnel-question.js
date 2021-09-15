@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      TunnelId: {
+      tunnelId: {
         type: Sequelize.INTEGER
       },
       QuestionId: {

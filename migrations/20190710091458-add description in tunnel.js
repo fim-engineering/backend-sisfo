@@ -12,7 +12,7 @@ module.exports = {
    
    return Promise.all([
      queryInterface.addColumn('Tunnels', 'description', {type:Sequelize.TEXT}),
-     queryInterface.addColumn('Users', 'TunnelId', {type:Sequelize.INTEGER}),
+     queryInterface.addColumn('Users', 'tunnelId', {type:Sequelize.INTEGER}),
    ]) 
   },
 
@@ -26,7 +26,7 @@ module.exports = {
     */
    return Promise.all([
      queryInterface.removeColumn('Tunnels', 'description'),
-     queryInterface.removeColumn('Users', 'TunnelId'),
+     queryInterface.removeColumn('Users', 'tunnelId'),
    ]); 
   }
 };
