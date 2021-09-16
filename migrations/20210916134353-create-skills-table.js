@@ -15,7 +15,7 @@ module.exports = {
        },
        isAbleVideoEditing: {
          type: Sequelize.BOOLEAN,
-         defaultValue: 0
+         defaultValue: false
        },
        videoEditingPortofolioUrl: {
          type: Sequelize.STRING
