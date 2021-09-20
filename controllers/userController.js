@@ -7,7 +7,6 @@ const redisClient = require('../util/redis');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op
 
-
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
 
@@ -239,9 +238,15 @@ exports.saveKtp = async (req, res, next) => {
 
 exports.saveProfile = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
+    
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let fullName = firstName.concat(lastName);
 
     const data = {
-        name: req.body.name,
+        name: fullName,
+        firstName: firstName,
+        lastName: lastName,
         address: req.body.address,
         phone: req.body.phone,
         headline: req.body.headline,
@@ -258,12 +263,7 @@ exports.saveProfile = async (req, res, next) => {
         expertise: req.body.expertise,
         institution: req.body.institution,
         otherReligion: req.body.otherReligion,
-
         occupation: req.body.occupation,
-        instagram: req.body.instagram,
-        twitter: req.body.twitter,
-        facebook: req.body.facebook,
-        website: req.body.website,
         reference_by: req.body.reference_by,
         video_editing: req.body.video_editing
     }
@@ -368,10 +368,17 @@ exports.getProfile = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
-
-        model.User.findOne({ where: { id: userId }, include: [{ model: model.Identity }] }).then(result => {
+        const user = JSON.parse(response);
+        const userId = user.userId;
+        
+        model.User.findOne({ where: { id: userId }, attributes: {exclude: ['password', 'status', 'createdAt', 'updatedAt']}, include: [
+            { model: model.Identity, attributes: {exclude: ['id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion', 'reference_by', 'expertise', 'video_editing', 'mbti', 'createdAt', 'updatedAt']} },
+            { model: model.Skill, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+            { model: model.SocmedSite, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+            { model: model.AlumniReference, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+            { model: model.FimActivity, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+            { model: model.OrganizationExperience, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} }
+        ]}).then(result => {
             return res.status(200).json({
                 "status": true,
                 "message": "Data Fetched",
