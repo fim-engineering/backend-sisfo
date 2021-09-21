@@ -245,9 +245,14 @@ exports.getProfile = async (req, res, next) => {
         
         model.User.findOne({ where: { id: userId }, attributes: {exclude: ['password', 'status', 'createdAt', 'updatedAt']}, include: [
             { 
-                model: model.Identity, attributes: {exclude: ['id', 'userId', 'email', 'ktpNumber', 
-                'ktpUrl', 'headline', 'batchFim', 'otherReligion', 'reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'status_accept', 
-                'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt']}
+                model: model.Identity,
+                attributes: {
+                    exclude: [
+                        'id', 'userId', 'email', 'ktpNumber', 'ktpUrl', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise',
+                        'video_editing', 'mbti', 'role', 'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto',
+                        'createdAt', 'updatedAt'
+                    ]
+                }
             },
             { model: model.Skill, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
             { model: model.SocialMedia, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
@@ -420,6 +425,114 @@ exports.saveSocialMedia = async (req, res, next) => {
             })
         } else {
             findSocialMedia.update(data).then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Updated",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
+    })
+}
+
+exports.saveAlumniReference = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    redisClient.get('login_portal:' + token, async function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        const data = {
+            userId: userId,
+            fullName: req.body.fullName,
+            batch: req.body.batch,
+            phoneNumber: req.body.phoneNumber,
+            relationship: req.body.relationship,
+            acquaintedSince: req.body.acquaintedSince,
+        }
+
+        const findAlumniReference = await model.AlumniReference.findOne({ 
+            where: { userId: userId }, 
+            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
+        })
+
+        if (!findAlumniReference) {
+            await model.AlumniReference.create(data)
+            .then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Inserted",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            findAlumniReference.update(data).then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Updated",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
+    })
+}
+
+exports.saveFimActivity = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    redisClient.get('login_portal:' + token, async function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        const data = {
+            userId: userId,
+            responsibility: req.body.responsibility,
+            role: req.body.role,
+            duration: req.body.duration,
+            eventScale: req.body.eventScale,
+            result: req.body.result,
+        }
+
+        const findFimActivity = await model.FimActivity.findOne({ 
+            where: { userId: userId }, 
+            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
+        })
+
+        if (!findFimActivity) {
+            await model.FimActivity.create(data)
+            .then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Inserted",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            findFimActivity.update(data).then(dataresult => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
