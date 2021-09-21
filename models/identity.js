@@ -3,7 +3,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Identity = sequelize.define('Identity', {
     userId: DataTypes.INTEGER,
-    name: DataTypes.STRING,
+    fullName: DataTypes.STRING,
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
     email: DataTypes.STRING,
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     provinceAddress: DataTypes.STRING,
     gender: DataTypes.STRING,
     bloodGroup: DataTypes.STRING,
-    hoby: DataTypes.TEXT,
+    hobby: DataTypes.TEXT,
     institution: DataTypes.STRING,
     occupation: DataTypes.STRING,
     role: DataTypes.INTEGER,

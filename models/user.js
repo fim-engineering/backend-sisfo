@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function (models) {
     models.User.hasOne(models.Identity, { foreignKey: 'userId' })
     models.User.hasOne(models.Skill, { foreignKey: 'userId' })
-    models.User.hasOne(models.SocmedSite, { foreignKey: 'userId' })
+    models.User.hasOne(models.SocialMedia, { foreignKey: 'userId' })
     models.User.hasOne(models.AlumniReference, { foreignKey: 'userId' })
     models.User.hasOne(models.FimActivity, { foreignKey: 'userId' })
     models.User.hasMany(models.OrganizationExperience, { foreignKey: 'userId' })

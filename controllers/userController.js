@@ -236,134 +236,6 @@ exports.saveKtp = async (req, res, next) => {
     })
 }
 
-exports.saveProfile = async (req, res, next) => {
-    let token = req.get('Authorization').split(' ')[1];
-    
-    let firstName = req.body.firstName;
-    let lastName = req.body.lastName;
-    let fullName = firstName.concat(lastName);
-
-    const data = {
-        name: fullName,
-        firstName: firstName,
-        lastName: lastName,
-        address: req.body.address,
-        phone: req.body.phone,
-        headline: req.body.headline,
-        photoUrl: req.body.photoUrl,
-        religion: req.body.religion,
-        bornPlace: req.body.bornPlace,
-        bornDate: req.body.bornDate,
-        cityAddress: req.body.cityAddress,
-        provinceAddress: req.body.provinceAddress,
-        emergencyPhone: req.body.emergencyPhone,
-        gender: req.body.gender,
-        bloodGroup: req.body.bloodGroup,
-        hoby: req.body.hoby,
-        expertise: req.body.expertise,
-        institution: req.body.institution,
-        otherReligion: req.body.otherReligion,
-        occupation: req.body.occupation,
-        reference_by: req.body.reference_by,
-        video_editing: req.body.video_editing
-    }
-
-    redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
-
-        if (err) {
-            res.status(500).json({
-                message: "Somethin Went Wrong " + err,
-                data: null,
-                status: false
-            })
-        }
-
-        const findIdentity = await model.Identity.findOne({ where: { userId: userId } })
-            .then(result => { return result })
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-
-        findIdentity.update(data).then(async data => {
-
-            const checkFilled = Object.entries(data.toJSON());
-            const notFilled = [];
-            // mengecek semua fill udah keisi
-            await checkFilled.map((value, index) => {
-
-                if (value[0] !== "userId" && 
-                    value[0] !== "hoby" && 
-                    value[0] !== "otherReligion" && 
-                    value[0] !== "batchFim" && 
-                    value[0] !== "regional" && 
-                    value[0] !== "expertise" && 
-                    value[0] !== "emergencyPhone" && 
-                    value[0] !== "headline" &&
-                    value[0] !== "twitter" &&
-                    value[0] !== "facebook" &&
-                    value[0] !== "website"
-                    ) {
-                    if (value[1] == null) {
-                        notFilled.push(value[0])
-                    }
-
-                }
-            })
-
-            if (notFilled.length > 0) {
-                // Jika sudah terisi semua maka update step cuma sampai 2
-                model.User.findOne({ where: { email: userIdentity.email } })
-                    .then(user => {
-                        if (user.status <= 4) {
-                            user.update({ status: 4 })
-                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
-                        }
-                    })
-                    .catch(err => console.log(err))
-
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Updated",
-                    "nullData": notFilled,
-                    "data": data
-                })
-            } else {
-                // Jika sudah terisi semua maka update step 
-                model.User.findOne({ where: { email: userIdentity.email } })
-                    .then(user => {
-                        if (user.status < 4) {
-                            user.update({ status: 4 })
-                            redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
-                        }
-                    })
-                    .catch(err => console.log(err))
-
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Updated",
-                    "nullData": notFilled,
-                    "data": data
-                })
-            }
-
-
-        }).catch(err => {
-            return res.status(400).json({
-                "status": false,
-                "message": "Something Error " + err,
-                "data": null
-            })
-        })
-
-    })
-}
-
 exports.getProfile = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
@@ -372,12 +244,16 @@ exports.getProfile = async (req, res, next) => {
         const userId = user.userId;
         
         model.User.findOne({ where: { id: userId }, attributes: {exclude: ['password', 'status', 'createdAt', 'updatedAt']}, include: [
-            { model: model.Identity, attributes: {exclude: ['id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion', 'reference_by', 'expertise', 'video_editing', 'mbti', 'createdAt', 'updatedAt']} },
+            { 
+                model: model.Identity, attributes: {exclude: ['id', 'userId', 'email', 'ktpNumber', 
+                'ktpUrl', 'headline', 'batchFim', 'otherReligion', 'reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'status_accept', 
+                'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt']}
+            },
             { model: model.Skill, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-            { model: model.SocmedSite, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+            { model: model.SocialMedia, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
             { model: model.AlumniReference, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
             { model: model.FimActivity, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-            { model: model.OrganizationExperience, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} }
+            { model: model.OrganizationExperience, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} }
         ]}).then(result => {
             return res.status(200).json({
                 "status": true,
@@ -391,6 +267,172 @@ exports.getProfile = async (req, res, next) => {
                 "data": null
             })
         })
+    })
+}
+
+exports.saveIdentity = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+    
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let fullName = firstName.concat(" ", lastName);
+
+    const data = {
+        name: fullName,
+        firstName: firstName,
+        lastName: lastName,
+        phone: req.body.phone,
+        emergencyPhone: req.body.emergencyPhone,
+        photoUrl: req.body.photoUrl,
+        religion: req.body.religion,
+        bornPlace: req.body.bornPlace,
+        bornDate: req.body.bornDate,
+        address: req.body.address,
+        cityAddress: req.body.cityAddress,
+        provinceAddress: req.body.provinceAddress,
+        gender: req.body.gender,
+        bloodGroup: req.body.bloodGroup,
+        hobby: req.body.hobby,
+        institution: req.body.institution,
+        occupation: req.body.occupation
+    }
+
+    redisClient.get('login_portal:' + token, async function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        const findIdentity = await model.Identity.findOne({ 
+            where: { userId: userId }, 
+            attributes: {
+                exclude: [
+                    'userId', 'email', 'ktpNumber', 'ktpUrl', 'headline', 'batchFim', 'hobby', 'otherReligion', 'reference_by', 'expertise', 'video_editing',
+                    'mbti', 'role', 'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
+                ]
+            }
+        })
+        
+        findIdentity.update(data).then(dataresult => {
+            return res.status(200).json({
+                "status": true,
+                "message": "Data Updated",
+                "data": dataresult
+            })
+        }).catch(err => {
+            return res.status(400).json({
+                "status": false,
+                "message": "Something Error " + err,
+                "data": null
+            })
+        })
+
+    })
+}
+
+exports.saveSkill = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    redisClient.get('login_portal:' + token, async function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        const data = {
+            userId: userId,
+            isAbleVideoEditing: req.body.isAbleVideoEditing,
+            videoEditingPortofolioUrl: req.body.videoEditingPortofolioUrl,
+            firstCertificateUrl: req.body.firstCertificateUrl,
+            secondCertificateUrl: req.body.secondCertificateUrl,
+            thirdCertificateUrl: req.body.thirdCertificateUrl,
+        }
+
+        const findSkill = await model.Skill.findOne({ 
+            where: { userId: userId }, 
+            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
+        })
+
+        if (!findSkill) {
+            await model.Skill.create(data)
+            .then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Inserted",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            findSkill.update(data).then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Updated",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
+    })
+}
+
+exports.saveSocialMedia = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    redisClient.get('login_portal:' + token, async function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+
+        const data = {
+            userId: userId,
+            instagramUrl: req.body.instagramUrl,
+            twitterUrl: req.body.twitterUrl,
+            facebookUrl: req.body.facebookUrl,
+            websiteUrl: req.body.websiteUrl,
+            otherSiteUrl: req.body.otherSiteUrl,
+        }
+
+        const findSocialMedia = await model.SocialMedia.findOne({ 
+            where: { userId: userId }, 
+            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
+        })
+
+        if (!findSocialMedia) {
+            await model.SocialMedia.create(data)
+            .then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Inserted",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            findSocialMedia.update(data).then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Updated",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
     })
 }
 
@@ -421,7 +463,6 @@ exports.saveTunnel = (req, res, nex) => {
                 })
             })
         }).catch(err => {
-            console.log(err)
             return res.status(400).json({
                 "status": false,
                 "message": "Something Error " + err,

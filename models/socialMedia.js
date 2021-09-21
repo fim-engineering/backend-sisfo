@@ -1,18 +1,23 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  const socmedSite = sequelize.define('SocmedSite', {
+  const socialMedia = sequelize.define('SocialMedia', {
     userId: DataTypes.INTEGER,
     instagramUrl: DataTypes.STRING,
     twitterUrl: DataTypes.STRING,
     facebookUrl: DataTypes.STRING,
     websiteUrl: DataTypes.STRING,
     otherSiteUrl: DataTypes.STRING,
+  }, {
+    name: {
+      singular: 'SocialMedia',
+      plural: 'SocialMedia',
+    }
   }, {});
 
-  socmedSite.associate = function (models) {
-    models.SocmedSite.belongsTo(models.User, { foreignKey: 'userId' })
+  socialMedia.associate = function (models) {
+    models.SocialMedia.belongsTo(models.User, { foreignKey: 'userId' })
   };
 
-  return socmedSite;
+  return socialMedia;
 };
