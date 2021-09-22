@@ -549,6 +549,113 @@ exports.saveFimActivity = async (req, res, next) => {
     })
 }
 
+exports.createOrganizationExperience = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    redisClient.get('login_portal:' + token, async function (err, response) {
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;
+        const data = {
+            userId: userId,
+            referencePerson: req.body.referencePerson,
+            role: req.body.role,
+            duration: req.body.duration,
+            eventScale: req.body.eventScale,
+            result: req.body.result,
+        }
+
+
+        model.OrganizationExperience.findAndCountAll({
+            where: { userId: userId }
+        })
+        .then(result => {
+            if (result.count >= 3) {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Data can't be more than 3 items",
+                    "data": null
+                })
+            }
+            
+            model.OrganizationExperience.create(data)
+            .then(dataresult => {
+                response = {
+                    id: dataresult.dataValues.id,
+                    referencePerson: dataresult.dataValues.referencePerson,
+                    role: dataresult.dataValues.role,
+                    duration: dataresult.dataValues.duration,
+                    eventScale: dataresult.dataValues.eventScale,
+                    result: dataresult.dataValues.result,
+                }
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Inserted",
+                    "data": response
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        })
+    })
+}
+
+exports.updateOrganizationExperience = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+
+    redisClient.get('login_portal:' + token, async function (err, response) {  
+        const userIdentity = JSON.parse(response);
+        const userId = userIdentity.userId;      
+        const data = {
+            referencePerson: req.body.referencePerson,
+            role: req.body.role,
+            duration: req.body.duration,
+            eventScale: req.body.eventScale,
+            result: req.body.result,
+        }
+
+        const findOrganizationExperience = await model.OrganizationExperience.findOne({ 
+            where: { id: req.params.organizationExperienceId, userId: userId }, 
+            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
+        })
+
+        if (!findOrganizationExperience) {
+            return res.status(400).json({
+                "status": false,
+                "message": "Data not found",
+                "data": null
+            })
+        } else {
+            findOrganizationExperience.update(data)
+            .then(dataresult => {
+                response = {
+                    id: dataresult.dataValues.id,
+                    referencePerson: dataresult.dataValues.referencePerson,
+                    role: dataresult.dataValues.role,
+                    duration: dataresult.dataValues.duration,
+                    eventScale: dataresult.dataValues.eventScale,
+                    result: dataresult.dataValues.result,
+                }
+
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Updated",
+                    "data": response
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
+    })
+}
+
 exports.saveTunnel = (req, res, nex) => {
     let token = req.get('Authorization').split(' ')[1];
 

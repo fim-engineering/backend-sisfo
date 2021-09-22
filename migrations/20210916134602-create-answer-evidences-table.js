@@ -33,7 +33,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }).then(() => queryInterface.addIndex('AnswerEvidences', ['userId']));
   },
 
   down: async (queryInterface, Sequelize) => {

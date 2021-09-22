@@ -5,7 +5,7 @@ module.exports = {
     return Promise.all([
       queryInterface.addColumn('Questions', 'order', { type: Sequelize.INTEGER }),
       queryInterface.addColumn('Questions', 'category', { type: Sequelize.STRING })
-    ])
+    ]).then(() => queryInterface.addIndex('Questions', ['order']))
     
   },
 

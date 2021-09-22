@@ -37,7 +37,7 @@ module.exports = {
          allowNull: false,
          type: Sequelize.DATE
        }
-      });
+      }).then(() => queryInterface.addIndex('Skills', ['userId']));
     },
 
   down: async (queryInterface, Sequelize) => {

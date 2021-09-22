@@ -36,7 +36,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }).then(() => queryInterface.addIndex('AlumniReferences', ['userId']));
   },
 
   down: async (queryInterface, Sequelize) => {
