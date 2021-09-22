@@ -3,9 +3,9 @@ const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const redisClient = require('../util/redis');
-
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op
+
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
@@ -36,7 +36,6 @@ exports.checkSession = (req, res, next) => {
 }
 
 exports.signUp = (req, res, next) => {
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const error = new Error('Validation Failed Bro');
@@ -49,26 +48,26 @@ exports.signUp = (req, res, next) => {
     let name = req.body.name;
     let password = req.body.password;
 
-    // Enkripsi Password
+    // Password encryption
     bcrypt.hash(password, 12)
-        .then(hashPass => {
-            model.User.create({
-                email: email,
-                password: hashPass,
-                name: name
-            });
-        }).then(result => {
-            res.status(201).json({
-                message: "User Created",
-                userId: result
-            })
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
+    .then(hashPass => {
+        model.User.create({
+            email: email,
+            password: hashPass,  
+            name: name
         });
+    }).then(result => {
+        res.status(201).json({
+            message: "User Created",
+            userId: result
+        })
+    }).catch(err => {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+    
+        next(err);
+    });
 }
 
 
@@ -80,9 +79,7 @@ exports.SocialLogin = (req, res, next) => {
     let profilPicture = req.body.profilPicture;
 
     model.User.findOrCreate({
-        where: {
-            email: email
-        },
+        where: { email: email },
         defaults: {
             profilPicture: profilPicture,
             socialId: socialId,
@@ -91,7 +88,6 @@ exports.SocialLogin = (req, res, next) => {
     }).then(async ([user, created]) => {
         const userData = await user.get();
         let status = userData.status !== null ? userData.status : 0;
-
         const data_identity = {
             email: userData.email,
             userId: userData.id,
@@ -108,7 +104,6 @@ exports.SocialLogin = (req, res, next) => {
         });
 
     }).catch(err => {
-        console.log(err)
         return res.json({
             code: 401,
             message: err
@@ -118,7 +113,6 @@ exports.SocialLogin = (req, res, next) => {
 
 exports.saveKtp = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
-
 
     redisClient.get('login_portal:' + token, async function (err, response) {
         const userIdentity = JSON.parse(response);
@@ -248,9 +242,8 @@ exports.getProfile = async (req, res, next) => {
                 model: model.Identity,
                 attributes: {
                     exclude: [
-                        'id', 'userId', 'email', 'ktpNumber', 'ktpUrl', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise',
-                        'video_editing', 'mbti', 'role', 'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto',
-                        'createdAt', 'updatedAt'
+                        'id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role',
+                        'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
                     ]
                 }
             },
@@ -288,6 +281,8 @@ exports.saveIdentity = async (req, res, next) => {
         lastName: lastName,
         phone: req.body.phone,
         emergencyPhone: req.body.emergencyPhone,
+        ktpNumber: req.body.ktpNumber,
+        ktpUrl: req.body.ktpUrl,
         photoUrl: req.body.photoUrl,
         religion: req.body.religion,
         bornPlace: req.body.bornPlace,
@@ -310,13 +305,14 @@ exports.saveIdentity = async (req, res, next) => {
             where: { userId: userId }, 
             attributes: {
                 exclude: [
-                    'userId', 'email', 'ktpNumber', 'ktpUrl', 'headline', 'batchFim', 'hobby', 'otherReligion', 'reference_by', 'expertise', 'video_editing',
-                    'mbti', 'role', 'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
+                    'userId', 'email', 'headline', 'batchFim', 'hobby', 'otherReligion', 'reference_by', 'expertise', 'video_editing', 'mbti', 'role',
+                    'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
                 ]
             }
         })
         
-        findIdentity.update(data).then(dataresult => {
+        findIdentity.update(data)
+        .then(dataresult => {
             return res.status(200).json({
                 "status": true,
                 "message": "Data Updated",
@@ -370,7 +366,8 @@ exports.saveSkill = async (req, res, next) => {
                 })
             })
         } else {
-            findSkill.update(data).then(dataresult => {
+            findSkill.update(data)
+            .then(dataresult => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
@@ -424,7 +421,8 @@ exports.saveSocialMedia = async (req, res, next) => {
                 })
             })
         } else {
-            findSocialMedia.update(data).then(dataresult => {
+            findSocialMedia.update(data)
+            .then(dataresult => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
@@ -478,7 +476,8 @@ exports.saveAlumniReference = async (req, res, next) => {
                 })
             })
         } else {
-            findAlumniReference.update(data).then(dataresult => {
+            findAlumniReference.update(data)
+            .then(dataresult => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
@@ -532,7 +531,8 @@ exports.saveFimActivity = async (req, res, next) => {
                 })
             })
         } else {
-            findFimActivity.update(data).then(dataresult => {
+            findFimActivity.update(data)
+            .then(dataresult => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
@@ -564,11 +564,9 @@ exports.createOrganizationExperience = async (req, res, next) => {
             result: req.body.result,
         }
 
-
         model.OrganizationExperience.findAndCountAll({
             where: { userId: userId }
-        })
-        .then(result => {
+        }).then(result => {
             if (result.count >= 3) {
                 return res.status(400).json({
                     "status": false,
@@ -668,7 +666,8 @@ exports.saveTunnel = (req, res, nex) => {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
 
-        model.User.findOne({ where: { id: userId } }).then(result => {
+        model.User.findOne({ where: { id: userId } })
+        .then(result => {
             result.update({
                 TunnelId: data.TunnelId,
                 RegionalId:data.RegionalId,
@@ -691,4 +690,3 @@ exports.saveTunnel = (req, res, nex) => {
         });
     });
 }
-

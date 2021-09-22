@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const { Client } = require('pg');
 var cors = require('cors')
+
 // Route Require
 const userRoute = require('./routes/userRoute');
 const homeRoute = require('./routes/homeRoute');
@@ -18,7 +19,7 @@ const summaryRoute = require('./routes/summaryRoute');
 const recruiterRoute = require('./routes/recruiterRoute');
 const regionalRoute = require('./routes/regionalRoute');
 const participantRoute = require('./routes/participantRoute');
-
+const documentRoute = require('./routes/documentRoute');
 
 // init express js
 const app = express();
@@ -47,7 +48,7 @@ app.use('/summary',summaryRoute);
 app.use('/recruiter', recruiterRoute);
 app.use('/regional',regionalRoute);
 app.use('/participant', participantRoute);
-
+app.use('', documentRoute);
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 
