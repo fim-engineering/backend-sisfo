@@ -242,7 +242,7 @@ exports.getProfile = async (req, res, next) => {
                 model: model.Identity,
                 attributes: {
                     exclude: [
-                        'id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role',
+                        'id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
                         'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
                     ]
                 }
@@ -282,7 +282,6 @@ exports.saveIdentity = async (req, res, next) => {
         phone: req.body.phone,
         emergencyPhone: req.body.emergencyPhone,
         ktpNumber: req.body.ktpNumber,
-        ktpUrl: req.body.ktpUrl,
         photoUrl: req.body.photoUrl,
         religion: req.body.religion,
         bornPlace: req.body.bornPlace,
@@ -305,7 +304,7 @@ exports.saveIdentity = async (req, res, next) => {
             where: { userId: userId }, 
             attributes: {
                 exclude: [
-                    'userId', 'email', 'headline', 'batchFim', 'hobby', 'otherReligion', 'reference_by', 'expertise', 'video_editing', 'mbti', 'role',
+                    'userId', 'email', 'headline', 'batchFim', 'hobby', 'otherReligion', 'reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
                     'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
                 ]
             }
