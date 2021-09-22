@@ -4,8 +4,7 @@
   "description": "FIM Restful API",
   "main": "app.js",
   "engines": {
-    "node": "14.17.6",
-    "npm": "6.4.1"
+    "node": "14.17.6"
   },
   "scripts": {
     "docker:up": "docker-compose up -d",
