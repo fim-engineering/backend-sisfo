@@ -25,7 +25,12 @@
     "host": "ec2-23-23-164-251.compute-1.amazonaws.com",
     "dialect": "postgres",
     "timezone": "+07:00",
-    "logging": false
+    "logging": false,
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
