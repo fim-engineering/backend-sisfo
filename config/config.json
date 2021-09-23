@@ -17,6 +17,16 @@
     "timezone": "+07:00",
     "logging": false
   },
+  "staging": {
+    "use_env_variable": "DATABASE_URL",
+    "username": "oteqipjmaaowbm",
+    "password": "9bfccf597dcd7b65b880730a07b09e00ada0c50b484755306cc6ca9f16927d87",
+    "database": "d3dlvf7u2it0q4",
+    "host": "ec2-23-23-164-251.compute-1.amazonaws.com",
+    "dialect": "postgres",
+    "timezone": "+07:00",
+    "logging": false
+  },
   "production": {
     "use_env_variable": "DATABASE_URL",
     "username": "eqrnbhasfirpkx",
