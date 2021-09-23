@@ -4,46 +4,42 @@ const redisClient = require('../util/redis');
 
 exports.lists = async (req, res, next) => {
     const data = {
-        idTunnel: req.body.TunnelId
+        tunnelId: req.query.tunnelId
     }
-
 
     const findTunnel = await model.Tunnel.findOne({
         where: { 
-            id: data.idTunnel,
-            batchFim: req.body.isRecruiter ? {$in:['22','22x']} : '22'
+            id: data.tunnelId,
+            batchFim: req.query.batchFim
          },
         include: [{
             model: model.Question,
             order: [['id', 'ASC']]
         }]
     })
-        .then(result => { return result })
-        .catch(err => console.log(err));
 
     if (findTunnel == null) {
         res.status(200).json({
             status: true,
-            message: "data fetched",
+            message: "Data Fetched",
             data: []
         });
+    } else {
+        var questions = findTunnel.Questions
+        if (questions) {
+            return res.status(200).json({
+                "status": true,
+                "message": "Data Fetched",
+                "data": questions
+            })
+        } else {
+            return res.status(200).json({
+                "status": true,
+                "message": "Data Fetched",
+                "data": []
+            })
+        }
     }
-
-    res.status(200).json({
-        status: true,
-        message: "data fetched",
-        data: findTunnel.Questions
-    });
-
-    // model.Question.findAll({where:{TunnelId:data.idTunnel}}).then(result => {
-    //     res.status(200).json({
-    //         status: true,
-    //         message: "data fetched",
-    //         data: result
-    //     });
-    // }).catch(err => {
-    //     console.log(err)
-    // });
 }
 
 
