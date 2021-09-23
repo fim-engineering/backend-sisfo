@@ -275,30 +275,30 @@ exports.saveIdentity = async (req, res, next) => {
     let lastName = req.body.lastName;
     let fullName = firstName.concat(" ", lastName);
 
-    const data = {
-        name: fullName,
-        firstName: firstName,
-        lastName: lastName,
-        phone: req.body.phone,
-        emergencyPhone: req.body.emergencyPhone,
-        ktpNumber: req.body.ktpNumber,
-        photoUrl: req.body.photoUrl,
-        religion: req.body.religion,
-        bornPlace: req.body.bornPlace,
-        bornDate: req.body.bornDate,
-        address: req.body.address,
-        cityAddress: req.body.cityAddress,
-        provinceAddress: req.body.provinceAddress,
-        gender: req.body.gender,
-        bloodGroup: req.body.bloodGroup,
-        hobby: req.body.hobby,
-        institution: req.body.institution,
-        occupation: req.body.occupation
-    }
-
     redisClient.get('login_portal:' + token, async function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
+        const data = {
+            userId: userId,
+            fullName: fullName,
+            firstName: firstName,
+            lastName: lastName,
+            phone: req.body.phone,
+            emergencyPhone: req.body.emergencyPhone,
+            ktpNumber: req.body.ktpNumber,
+            photoUrl: req.body.photoUrl,
+            religion: req.body.religion,
+            bornPlace: req.body.bornPlace,
+            bornDate: req.body.bornDate,
+            address: req.body.address,
+            cityAddress: req.body.cityAddress,
+            provinceAddress: req.body.provinceAddress,
+            gender: req.body.gender,
+            bloodGroup: req.body.bloodGroup,
+            hobby: req.body.hobby,
+            institution: req.body.institution,
+            occupation: req.body.occupation
+        }
 
         const findIdentity = await model.Identity.findOne({ 
             where: { userId: userId }, 
@@ -309,22 +309,38 @@ exports.saveIdentity = async (req, res, next) => {
                 ]
             }
         })
-        
-        findIdentity.update(data)
-        .then(dataresult => {
-            return res.status(200).json({
-                "status": true,
-                "message": "Data Updated",
-                "data": dataresult
-            })
-        }).catch(err => {
-            return res.status(400).json({
-                "status": false,
-                "message": "Something Error " + err,
-                "data": null
-            })
-        })
 
+        if (!findIdentity) {
+            await model.Identity.create(data)
+            .then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Inserted",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            findIdentity.update(data)
+            .then(dataresult => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Updated",
+                    "data": dataresult
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
     })
 }
 
