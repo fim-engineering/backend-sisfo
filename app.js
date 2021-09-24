@@ -20,7 +20,6 @@ const recruiterRoute = require('./routes/recruiterRoute');
 const regionalRoute = require('./routes/regionalRoute');
 const participantRoute = require('./routes/participantRoute');
 const documentRoute = require('./routes/documentRoute');
-const formCompletenessRoute = require('./routes/formCompletenessRoute');
 
 // init express js
 const app = express();
@@ -50,7 +49,6 @@ app.use('/recruiter', recruiterRoute);
 app.use('/regional',regionalRoute);
 app.use('/participant', participantRoute);
 app.use('', documentRoute);
-app.use('', formCompletenessRoute);
 
 // const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 
