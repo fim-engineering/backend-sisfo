@@ -13,6 +13,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return await queryInterface.bulkDelete('tunnelQuestions', {id: {$between: [159,166]}}, {})
+    return await queryInterface.bulkDelete('tunnelQuestions', {id: {$between: [160,165]}}, {})
   }
 };
