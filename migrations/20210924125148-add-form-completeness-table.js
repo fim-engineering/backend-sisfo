@@ -13,20 +13,30 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      fimBatch: {
+        type: Sequelize.STRING
+      },
       isFirstStepCompleted: {
-        type: Sequelize.BOOLEAN
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       isSecondStepCompleted: {
-        type: Sequelize.BOOLEAN
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       isThirdStepCompleted: {
-        type: Sequelize.BOOLEAN
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       isFourthStepCompleted: {
-        type: Sequelize.BOOLEAN
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       submittedAt: {
-        allowNull: false,
         type: Sequelize.DATE
       },
       createdAt: {

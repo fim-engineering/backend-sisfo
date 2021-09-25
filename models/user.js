@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     models.User.hasOne(models.AlumniReference, { foreignKey: 'userId' })
     models.User.hasOne(models.FimActivity, { foreignKey: 'userId' })
     models.User.hasOne(models.PersonalDocument, { foreignKey: 'userId' })
+    models.User.hasOne(models.FormCompleteness, { foreignKey: 'userId' })
     models.User.hasMany(models.OrganizationExperience, { foreignKey: 'userId' })
     models.User.belongsTo(models.Regional, { foreignKey: 'RegionalId' })
     models.User.belongsToMany(models.Summary, { through: models.ParticipantRecruiter, foreignKey: 'recruiterId' })

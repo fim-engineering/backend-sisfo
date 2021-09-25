@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
     isThirdStepCompleted: DataTypes.BOOLEAN,
     isFourthStepCompleted: DataTypes.BOOLEAN,
     submittedAt: DataTypes.DATE,
+  }, {
+    freezeTableName: true,
+    name: {
+      singular: 'FormCompleteness',
+      plural: 'FormCompleteness',
+    }
   }, {});
 
   formCompleteness.associate = function (models) {
