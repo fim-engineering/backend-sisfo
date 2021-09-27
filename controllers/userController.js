@@ -237,21 +237,24 @@ exports.getProfile = async (req, res, next) => {
         const user = JSON.parse(response);
         const userId = user.userId;
         
-        model.User.findOne({ where: { id: userId }, attributes: {exclude: ['password', 'status', 'createdAt', 'updatedAt']}, include: [
-            { 
-                model: model.Identity,
-                attributes: {
-                    exclude: [
-                        'id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
-                        'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
-                    ]
-                }
-            },
-            { model: model.Skill, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-            { model: model.SocialMedia, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-            { model: model.AlumniReference, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-            { model: model.FimActivity, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-            { model: model.OrganizationExperience, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} }
+        model.User.findOne({ 
+            where: { id: userId },
+            attributes: {exclude: ['password', 'status', 'createdAt', 'updatedAt']}, 
+            include: [
+                { 
+                    model: model.Identity,
+                    attributes: {
+                        exclude: [
+                            'id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
+                            'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
+                        ]
+                    }
+                },
+                { model: model.Skill, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+                { model: model.SocialMedia, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+                { model: model.AlumniReference, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+                { model: model.FimActivity, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+                { model: model.OrganizationExperience, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} }
         ]}).then(result => {
             return res.status(200).json({
                 "status": true,
@@ -270,108 +273,143 @@ exports.getProfile = async (req, res, next) => {
 
 exports.saveIdentity = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
-    
-    let firstName = req.body.firstName;
-    let lastName = req.body.lastName;
-    let fullName = firstName.concat(" ", lastName);
 
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
-        const data = {
-            userId: userId,
-            fullName: fullName,
-            firstName: firstName,
-            lastName: lastName,
-            phone: req.body.phone,
-            emergencyPhone: req.body.emergencyPhone,
-            ktpNumber: req.body.ktpNumber,
-            photoUrl: req.body.photoUrl,
-            religion: req.body.religion,
-            bornPlace: req.body.bornPlace,
-            bornDate: req.body.bornDate,
-            address: req.body.address,
-            cityAddress: req.body.cityAddress,
-            provinceAddress: req.body.provinceAddress,
-            gender: req.body.gender,
-            bloodGroup: req.body.bloodGroup,
-            hobby: req.body.hobby,
-            institution: req.body.institution,
-            occupation: req.body.occupation
-        }
+        try {
+            validateIdentityRequestBody(req.body)
 
-        const findIdentity = await model.Identity.findOne({ 
-            where: { userId: userId }, 
-            attributes: {
-                exclude: [
-                    'userId', 'email', 'headline', 'batchFim', 'hobby', 'otherReligion', 'reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
-                    'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
-                ]
+            let userIdentity = JSON.parse(response);
+            let userId = userIdentity.userId;
+
+            findIdentity = await model.Identity.findOne({ where: { userId: userId } })
+
+            if (findIdentity == null) {
+                await model.Identity.create(parseIdentityRequest(userId, req.body))
+                .then(result => {
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "Data Inserted",
+                        "data": parseIdentityResponse(result)
+                    })
+                }).catch(err => {
+                    return res.status(400).json({
+                        "status": false,
+                        "message": "Something Error " + err,
+                        "data": null
+                    })
+                })
+            } else {
+                findIdentity.update(parseIdentityRequest(userId, req.body))
+                .then(result => {
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "Data Updated",
+                        "data": parseIdentityResponse(result)
+                    })
+                }).catch(err => {
+                    return res.status(400).json({
+                        "status": false,
+                        "message": "Something Error " + err,
+                        "data": null
+                    })
+                })
             }
-        })
-
-        if (!findIdentity) {
-            await model.Identity.create(data)
-            .then(dataresult => {
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Inserted",
-                    "data": dataresult
-                })
-            }).catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        } else {
-            findIdentity.update(data)
-            .then(dataresult => {
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Updated",
-                    "data": dataresult
-                })
-            }).catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
+        } catch(err) {
+            return res.status(400).json({
+                "status": false,
+                "message": err.message,
+                "data": null
             })
         }
     })
+}
+
+function validateIdentityRequestBody(reqBody) {    
+    if (!reqBody.firstName || reqBody.firstName.trim() == "") throw new Error('firstName is required!');
+    if (!reqBody.phone || reqBody.phone.trim() == "") throw new Error('phone is required!');
+    if (!reqBody.emergencyPhone || reqBody.emergencyPhone.trim() == "") throw new Error('emergencyPhone is required!');
+    if (!reqBody.photoUrl || reqBody.photoUrl.trim() == "") throw new Error('photoUrl is required!');
+    if (!reqBody.ktpNumber || reqBody.ktpNumber.trim() == "") throw new Error('ktpNumber is required!');
+    if (!reqBody.religion || reqBody.religion.trim() == "") throw new Error('religion is required!');
+    if (!reqBody.bornPlace || reqBody.bornPlace.trim() == "") throw new Error('bornPlace is required!');
+    if (!reqBody.bornDate || reqBody.bornDate.trim() == "") throw new Error('bornDate is required!');
+    if (!reqBody.address || reqBody.address.trim() == "") throw new Error('address is required!');
+    if (!reqBody.cityAddress || reqBody.cityAddress.trim() == "") throw new Error('cityAddress is required!');
+    if (!reqBody.provinceAddress || reqBody.provinceAddress.trim() == "") throw new Error('provinceAddress is required!');
+    if (!reqBody.gender || reqBody.gender.trim() == "") throw new Error('gender is required!');
+    if (!reqBody.bloodGroup || reqBody.bloodGroup.trim() == "") throw new Error('bloodGroup is required!');
+    if (!reqBody.hobby || reqBody.hobby.trim() == "") throw new Error('hobby is required!');
+    if (!reqBody.institution || reqBody.institution.trim() == "") throw new Error('institution is required!');
+    if (!reqBody.occupation || reqBody.occupation.trim() == "") throw new Error('occupation is required!');
+}
+
+function parseIdentityRequest(userId, reqBody) {
+    firstName = reqBody.firstName;
+    lastName = reqBody.lastName;
+    fullName = firstName.concat(" ", lastName);
+
+    return {
+        userId: userId,
+        fullName: fullName.trim(),
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        phone: reqBody.phone.trim(),
+        emergencyPhone: reqBody.emergencyPhone.trim(),
+        ktpNumber: reqBody.ktpNumber.trim(),
+        photoUrl: reqBody.photoUrl.trim(),
+        religion: reqBody.religion.trim(),
+        bornPlace: reqBody.bornPlace.trim(),
+        bornDate: reqBody.bornDate.trim(),
+        address: reqBody.address.trim(),
+        cityAddress: reqBody.cityAddress.trim(),
+        provinceAddress: reqBody.provinceAddress.trim(),
+        gender: reqBody.gender.trim(),
+        bloodGroup: reqBody.bloodGroup.trim(),
+        hobby: reqBody.hobby.trim(),
+        institution: reqBody.institution.trim(),
+        occupation: reqBody.occupation.trim()
+    }
+}
+
+function parseIdentityResponse(data) {
+    return {
+        id: data.id,
+        fullName: data.fullName,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+        emergencyPhone: data.emergencyPhone,
+        ktpNumber: data.ktpNumber,
+        photoUrl: data.photoUrl,
+        religion: data.religion,
+        bornPlace: data.bornPlace,
+        bornDate: data.bornDate,
+        address: data.address,
+        cityAddress: data.cityAddress,
+        provinceAddress: data.provinceAddress,
+        gender: data.gender,
+        bloodGroup: data.bloodGroup,
+        hobby: data.hobby,
+        institution: data.institution,
+        occupation: data.occupation
+    }
 }
 
 exports.saveSkill = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
+        let userIdentity = JSON.parse(response);
+        let userId = userIdentity.userId;
 
-        const data = {
-            userId: userId,
-            isAbleVideoEditing: req.body.isAbleVideoEditing,
-            videoEditingPortofolioUrl: req.body.videoEditingPortofolioUrl,
-            firstCertificateUrl: req.body.firstCertificateUrl,
-            secondCertificateUrl: req.body.secondCertificateUrl,
-            thirdCertificateUrl: req.body.thirdCertificateUrl,
-        }
-
-        const findSkill = await model.Skill.findOne({ 
-            where: { userId: userId }, 
-            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
-        })
-
-        if (!findSkill) {
-            await model.Skill.create(data)
-            .then(dataresult => {
+        findSkill = await model.Skill.findOne({ where: { userId: userId } })
+        if (findSkill == null) {
+            await model.Skill.create(parseSkillRequest(userId, req.body))
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Inserted",
-                    "data": dataresult
+                    "data": parseSkillResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -381,12 +419,12 @@ exports.saveSkill = async (req, res, next) => {
                 })
             })
         } else {
-            findSkill.update(data)
-            .then(dataresult => {
+            findSkill.update(parseSkillRequest(userId, req.body))
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
-                    "data": dataresult
+                    "data": parseSkillResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -397,36 +435,48 @@ exports.saveSkill = async (req, res, next) => {
             })
         }
     })
+}
+
+function parseSkillRequest(userId, reqBody) {
+    if (reqBody.isAbleVideoEditing) isAbleVideoEditing = reqBody.isAbleVideoEditing
+    else isAbleVideoEditing = false
+
+    return {
+        userId: userId,
+        isAbleVideoEditing: isAbleVideoEditing,
+        videoEditingPortofolioUrl: reqBody.videoEditingPortofolioUrl ? reqBody.videoEditingPortofolioUrl.trim() : null,
+        firstCertificateUrl: reqBody.firstCertificateUrl ? reqBody.firstCertificateUrl.trim() : null,
+        secondCertificateUrl: reqBody.secondCertificateUrl ? reqBody.secondCertificateUrl.trim() : null,
+        thirdCertificateUrl: reqBody.thirdCertificateUrl ? reqBody.thirdCertificateUrl.trim() : null
+    }
+}
+
+function parseSkillResponse(data) {
+    return {
+        id: data.id,
+        isAbleVideoEditing: data.isAbleVideoEditing,
+        videoEditingPortofolioUrl: data.videoEditingPortofolioUrl,
+        firstCertificateUrl: data.firstCertificateUrl,
+        secondCertificateUrl: data.secondCertificateUrl,
+        thirdCertificateUrl: data.thirdCertificateUrl
+    }
 }
 
 exports.saveSocialMedia = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
+        let userIdentity = JSON.parse(response);
+        let userId = userIdentity.userId;
 
-        const data = {
-            userId: userId,
-            instagramUrl: req.body.instagramUrl,
-            twitterUrl: req.body.twitterUrl,
-            facebookUrl: req.body.facebookUrl,
-            websiteUrl: req.body.websiteUrl,
-            otherSiteUrl: req.body.otherSiteUrl,
-        }
-
-        const findSocialMedia = await model.SocialMedia.findOne({ 
-            where: { userId: userId }, 
-            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
-        })
-
-        if (!findSocialMedia) {
-            await model.SocialMedia.create(data)
-            .then(dataresult => {
+        findSocialMedia = await model.SocialMedia.findOne({ where: { userId: userId } })
+        if (findSocialMedia == null) {
+            await model.SocialMedia.create(parseSocialMediaRequest(userId, req.body))
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Inserted",
-                    "data": dataresult
+                    "data": parseSocialMediaResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -436,12 +486,12 @@ exports.saveSocialMedia = async (req, res, next) => {
                 })
             })
         } else {
-            findSocialMedia.update(data)
-            .then(dataresult => {
+            findSocialMedia.update(parseSocialMediaRequest(userId, req.body))
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
-                    "data": dataresult
+                    "data": parseSocialMediaResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -452,36 +502,45 @@ exports.saveSocialMedia = async (req, res, next) => {
             })
         }
     })
+}
+
+function parseSocialMediaRequest(userId, reqBody) {
+    return {
+        userId: userId,
+        instagramUrl: reqBody.instagramUrl ? reqBody.instagramUrl.trim() : null,
+        twitterUrl: reqBody.twitterUrl ? reqBody.twitterUrl.trim() : null,
+        facebookUrl: reqBody.facebookUrl ? reqBody.facebookUrl.trim() : null,
+        websiteUrl: reqBody.websiteUrl ? reqBody.websiteUrl.trim() : null,
+        otherSiteUrl: reqBody.websiteUrl ? reqBody.otherSiteUrl.trim() : null
+    }
+}
+
+function parseSocialMediaResponse(data) {
+    return {
+        id: data.id,
+        instagramUrl: data.instagramUrl,
+        twitterUrl: data.twitterUrl,
+        facebookUrl: data.facebookUrl,
+        websiteUrl: data.websiteUrl,
+        otherSiteUrl: data.otherSiteUrl
+    }
 }
 
 exports.saveAlumniReference = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
+        let userIdentity = JSON.parse(response);
+        let userId = userIdentity.userId;
 
-        const data = {
-            userId: userId,
-            fullName: req.body.fullName,
-            batch: req.body.batch,
-            phoneNumber: req.body.phoneNumber,
-            relationship: req.body.relationship,
-            acquaintedSince: req.body.acquaintedSince,
-        }
-
-        const findAlumniReference = await model.AlumniReference.findOne({ 
-            where: { userId: userId }, 
-            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
-        })
-
-        if (!findAlumniReference) {
-            await model.AlumniReference.create(data)
-            .then(dataresult => {
+        findAlumniReference = await model.AlumniReference.findOne({ where: { userId: userId } })
+        if (findAlumniReference == null) {
+            await model.AlumniReference.create(parseAlumniReferenceRequest(userId, req.body))
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Inserted",
-                    "data": dataresult
+                    "data": parseAlumniReferenceResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -491,12 +550,12 @@ exports.saveAlumniReference = async (req, res, next) => {
                 })
             })
         } else {
-            findAlumniReference.update(data)
-            .then(dataresult => {
+            findAlumniReference.update(parseAlumniReferenceRequest(userId, req.body))
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
-                    "data": dataresult
+                    "data": parseAlumniReferenceResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -507,36 +566,45 @@ exports.saveAlumniReference = async (req, res, next) => {
             })
         }
     })
+}
+
+function parseAlumniReferenceRequest(userId, reqBody) {
+    return {
+        userId: userId,
+        fullName: reqBody.fullName ? reqBody.fullName.trim() : null,
+        batch: reqBody.batch? reqBody.batch.trim() : null,
+        phoneNumber: reqBody.phoneNumber ? reqBody.phoneNumber.trim() : null,
+        relationship: reqBody.relationship ? reqBody.relationship.trim() : null,
+        acquaintedSince: reqBody.acquaintedSince ? reqBody.acquaintedSince.trim() : null
+    }
+}
+
+function parseAlumniReferenceResponse(data) {
+    return {
+        id: data.id,
+        fullName: data.fullName,
+        batch: data.batch,
+        phoneNumber: data.phoneNumber,
+        relationship: data.relationship,
+        acquaintedSince: data.acquaintedSince
+    }
 }
 
 exports.saveFimActivity = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
+        let userIdentity = JSON.parse(response);
+        let userId = userIdentity.userId;
 
-        const data = {
-            userId: userId,
-            responsibility: req.body.responsibility,
-            role: req.body.role,
-            duration: req.body.duration,
-            eventScale: req.body.eventScale,
-            result: req.body.result,
-        }
-
-        const findFimActivity = await model.FimActivity.findOne({ 
-            where: { userId: userId }, 
-            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
-        })
-
-        if (!findFimActivity) {
-            await model.FimActivity.create(data)
-            .then(dataresult => {
+        const findFimActivity = await model.FimActivity.findOne({ where: { userId: userId } })
+        if (findFimActivity == null) {
+            await model.FimActivity.create(parseFimActivityRequest(userId, req.body))
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Inserted",
-                    "data": dataresult
+                    "data": parseFimActivityResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -546,12 +614,12 @@ exports.saveFimActivity = async (req, res, next) => {
                 })
             })
         } else {
-            findFimActivity.update(data)
-            .then(dataresult => {
+            findFimActivity.update(parseFimActivityRequest(userId, req.body))
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
-                    "data": dataresult
+                    "data": parseFimActivityResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -564,122 +632,126 @@ exports.saveFimActivity = async (req, res, next) => {
     })
 }
 
-exports.createOrganizationExperience = async (req, res, next) => {
+function parseFimActivityRequest(userId, reqBody) {
+    return {
+        userId: userId,
+        responsibility: reqBody.responsibility ? reqBody.responsibility.trim() : null,
+        role: reqBody.role ? reqBody.role.trim() : null,
+        duration: reqBody.duration ? reqBody.duration.trim() : null,
+        eventScale: reqBody.eventScale ? reqBody.eventScale.trim() : null,
+        result: reqBody.result ? reqBody.result.trim() : null
+    }
+}
+
+function parseFimActivityResponse(data) {
+    return {
+        id: data.id,
+        responsibility: data.responsibility,
+        role: data.role,
+        duration: data.duration,
+        eventScale: data.eventScale,
+        result: data.result
+    }
+}
+
+exports.saveOrganizationExperience = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
+        try {
+            let userIdentity = JSON.parse(response);
+            let userId = userIdentity.userId;
 
-        const organizationExperiences = await model.OrganizationExperience.findAndCountAll({ 
-            where: { userId: userId }, 
-        })
-            
-        if (organizationExperiences.count > 0) {
-            model.OrganizationExperience.destroy({ where: { userId: userId } })
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
+            validateOrganizationExperienceRequestBody(req.body)
+
+            model.OrganizationExperience.findAll({ where: { userId: userId } })
+            .then(result => {
+                deleteExistingOrganizationExperience(userId, result)
+                    
+                model.OrganizationExperience.bulkCreate(parseOrganizationExperienceRequest(userId, req.body))
+                .then(result => {
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "Data Inserted",
+                        "data": parseOrganizationExperienceResponse(result)
+                    })
+                }).catch(err => {
+                    return res.status(400).json({
+                        "status": false,
+                        "message": "Something Error " + err,
+                        "data": null
+                    })
                 })
             })
-        }
-
-        if (req.body.length == 0 || req.body.length > 3) {
+        } catch (err) {
             return res.status(400).json({
                 "status": false,
-                "message": "Data can't be less than 1 or more than 3 items",
+                "message": err.message,
                 "data": null
             })
         }
+    })
+}
 
-        let i = 0;
-        reqBody = req.body;
-        organizationArr= [];
-        organizationObj = {};
-        for (;reqBody[i];) {
-            organizationObj = {
-                userId: userId,
-                referencePerson: reqBody[i].referencePerson,
-                role: reqBody[i].role,
-                duration: reqBody[i].duration,
-                eventScale: reqBody[i].eventScale,
-                result: reqBody[i].result,
-            }
+function validateOrganizationExperienceRequestBody(reqBody) {    
+    if (reqBody.length == 0 || reqBody.length > 3) throw new Error("Data can't be less than one or more than three!");
+}
 
-            organizationArr.push(organizationObj);
-            i++;
-        }
-            
-        model.OrganizationExperience.bulkCreate(organizationArr)
-        .then(response => {
-            return res.status(200).json({
-                "status": true,
-                "message": "Data Inserted",
-                "data": response
-            })
-        }).catch(err => {
+function deleteExistingOrganizationExperience(userId, data) {
+    if (data.length > 0) {
+        model.OrganizationExperience.destroy({ where: { userId: userId } })
+        .catch(err => {
             return res.status(400).json({
                 "status": false,
                 "message": "Something Error " + err,
                 "data": null
             })
         })
-    })
+    }
 }
 
-exports.updateOrganizationExperience = async (req, res, next) => {
-    let token = req.get('Authorization').split(' ')[1];
+function parseOrganizationExperienceRequest(userId, reqBody) {
+    let i = 0;
+    organizationArr = [];
+    organizationObj = {};
 
-    redisClient.get('login_portal:' + token, async function (err, response) {  
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;      
-        const data = {
-            referencePerson: req.body.referencePerson,
-            role: req.body.role,
-            duration: req.body.duration,
-            eventScale: req.body.eventScale,
-            result: req.body.result,
+    for (;reqBody[i];) {
+        organizationObj = {
+            userId: userId,
+            referencePerson: reqBody[i].referencePerson ? reqBody[i].referencePerson.trim() : null,
+            role: reqBody[i].role ? reqBody[i].role.trim() : null,
+            duration: reqBody[i].duration ? reqBody[i].duration.trim() : null,
+            eventScale: reqBody[i].eventScale ? reqBody[i].eventScale.trim() : null,
+            result: reqBody[i].result ? reqBody[i].result.trim() : null,
         }
+    
+        organizationArr.push(organizationObj);
+        i++;
+    }
 
-        const findOrganizationExperience = await model.OrganizationExperience.findOne({ 
-            where: { id: req.params.organizationExperienceId, userId: userId }, 
-            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
-        })
+    return organizationArr;
+}
 
-        if (!findOrganizationExperience) {
-            return res.status(400).json({
-                "status": false,
-                "message": "Data not found",
-                "data": null
-            })
-        } else {
-            findOrganizationExperience.update(data)
-            .then(dataresult => {
-                response = {
-                    id: dataresult.dataValues.id,
-                    referencePerson: dataresult.dataValues.referencePerson,
-                    role: dataresult.dataValues.role,
-                    duration: dataresult.dataValues.duration,
-                    eventScale: dataresult.dataValues.eventScale,
-                    result: dataresult.dataValues.result,
-                }
+function parseOrganizationExperienceResponse(data) {
+    let i = 0;
+    organizationArr = [];
+    organizationObj = {};
 
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Updated",
-                    "data": response
-                })
-            }).catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
+    for (;data[i];) {
+        organizationObj = {
+            id: data[i].id,
+            referencePerson: data[i].referencePerson,
+            role: data[i].role,
+            duration: data[i].duration,
+            eventScale: data[i].eventScale,
+            result: data[i].result,
         }
-    })
+    
+        organizationArr.push(organizationObj);
+        i++;
+    }
+
+    return organizationArr;
 }
 
 exports.saveTunnel = (req, res, nex) => {

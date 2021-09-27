@@ -13,8 +13,7 @@ router.post('/profile/skill', isAuth, userController.saveSkill);
 router.post('/profile/social-media', isAuth, userController.saveSocialMedia);
 router.post('/profile/alumni-reference', isAuth, userController.saveAlumniReference);
 router.post('/profile/fim-activity', isAuth, userController.saveFimActivity);
-router.post('/profile/organization-experience', isAuth, userController.createOrganizationExperience);
-router.put('/profile/organization-experience/:organizationExperienceId', isAuth, userController.updateOrganizationExperience);
+router.post('/profile/organization-experience', isAuth, userController.saveOrganizationExperience);
 
 router.post('/savektp', isAuth, userController.saveKtp);
 router.post('/save-tunnel', isAuth, userController.saveTunnel);
