@@ -44,19 +44,17 @@ app.use('/', homeRoute)
 app.use('/data', dataRoute);
 app.use('/tunnel', tunnelRoute);
 app.use('/question', questionRoute);
-app.use('/answer',answerRoute);
-app.use('/summary',summaryRoute);
+app.use('', answerRoute);
+app.use('/summary', summaryRoute);
 app.use('/recruiter', recruiterRoute);
-app.use('/regional',regionalRoute);
+app.use('/regional', regionalRoute);
 app.use('/participant', participantRoute);
-app.use('', documentRoute);
-app.use('', formCompletenessRoute);
+app.use('/document', documentRoute);
+app.use('/form-completeness', formCompletenessRoute);
 
-// const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 
 app.use(helmet());
 app.use(compression());
-// app.use(morgan('combined', {stream:accessLogStream}));
 
 app.listen( process.env.PORT||8080);
 

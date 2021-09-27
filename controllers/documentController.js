@@ -31,14 +31,14 @@ exports.saveDocument = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
+        let userIdentity = JSON.parse(response);
+        let userId = userIdentity.userId;
 
         const data = {
             userId: userId,
-            identityFileUrl: req.body.identityFileUrl,
-            recommendationLetterUrl: req.body.recommendationLetterUrl,
-            commitmentLetterUrl: req.body.commitmentLetterUrl
+            identityFileUrl: req.body.identityFileUrl ? req.body.identityFileUrl.trim() : null,
+            recommendationLetterUrl: req.body.recommendationLetterUrl ? req.body.recommendationLetterUrl.trim() : null,
+            commitmentLetterUrl: req.body.commitmentLetterUrl ? req.body.commitmentLetterUrl.trim() : null
         }
 
         const findPersonalDocument = await model.PersonalDocument.findOne({ 
@@ -46,13 +46,16 @@ exports.saveDocument = async (req, res, next) => {
             attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
         })
 
-        if (!findPersonalDocument) {
+        if (findPersonalDocument == null) {
             await model.PersonalDocument.create(data)
-            .then(dataresult => {
+            .then(result => {
+                
+                setFourthFormCompletenessToTrue(userId)
+            
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Inserted",
-                    "data": dataresult
+                    "data": result
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -63,11 +66,11 @@ exports.saveDocument = async (req, res, next) => {
             })
         } else {
             findPersonalDocument.update(data)
-            .then(dataresult => {
+            .then(result => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
-                    "data": dataresult
+                    "data": result
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -77,5 +80,43 @@ exports.saveDocument = async (req, res, next) => {
                 })
             })
         }
+    })
+}
+
+function setFourthFormCompletenessToTrue(userId) {
+    model.FormCompleteness.findOne({ where: { userId: userId }})
+    .then(formCompleteness => {
+
+        data = {
+            userId: userId,
+            fimBatch: "23", /* TODO: Make it dynamic */
+            isFourthStepCompleted: true
+        }
+
+        if (formCompleteness == null) {
+            model.FormCompleteness.create(data)
+            .catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            formCompleteness.update(data)
+            .catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
+    }).catch(err => {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
     })
 }

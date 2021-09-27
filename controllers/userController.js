@@ -35,57 +35,15 @@ exports.checkSession = (req, res, next) => {
     })
 }
 
-exports.signUp = (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error('Validation Failed Bro');
-        error.statusCode = 442;
-        error.data = errors.array();
-        return res.json(error);
-    }
-
-    let email = req.body.email;
-    let name = req.body.name;
-    let password = req.body.password;
-
-    // Password encryption
-    bcrypt.hash(password, 12)
-    .then(hashPass => {
-        model.User.create({
-            email: email,
-            password: hashPass,  
-            name: name
-        });
-    }).then(result => {
-        res.status(201).json({
-            message: "User Created",
-            userId: result
-        })
-    }).catch(err => {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-    
-        next(err);
-    });
-}
-
-
-exports.SocialLogin = (req, res, next) => {
-    let email = req.body.email;
-    let socialId = req.body.socialId;
-    let name = req.body.firstName + ' ' + req.body.lastName
-    let loginSource = req.body.loginSource;
-    let profilPicture = req.body.profilPicture;
-
+exports.socialLogin = (req, res, next) => {
     model.User.findOrCreate({
-        where: { email: email },
+        where: { email: req.body.email },
         defaults: {
-            profilPicture: profilPicture,
-            socialId: socialId,
-            loginSource: loginSource
+            profilPicture: req.body.profilPicture,
+            socialId: req.body.socialId,
+            loginSource: req.body.loginSource
         }
-    }).then(async ([user, created]) => {
+    }).then(async ([user]) => {
         const userData = await user.get();
         let status = userData.status !== null ? userData.status : 0;
         const data_identity = {
@@ -94,7 +52,7 @@ exports.SocialLogin = (req, res, next) => {
             step: status
         }
 
-        const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); // 
+        const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); 
         redisClient.setex('login_portal:' + token, 60000, JSON.stringify(data_identity))
 
         return res.status(200).json({
@@ -108,125 +66,6 @@ exports.SocialLogin = (req, res, next) => {
             code: 401,
             message: err
         });
-    })
-}
-
-exports.saveKtp = async (req, res, next) => {
-    let token = req.get('Authorization').split(' ')[1];
-
-    redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
-        const emailId = userIdentity.email;
-        const noKtp = req.body.noKtp;
-        const urlKtp = req.body.urlKtp;
-
-        // cari nomor ktp
-        const findIdentity = await model.Identity
-            .findOne({ where: { [Op.or]: [{ktpNumber: noKtp}
-                // ,{email:emailId} // ini kemarin bikin kasus ktp anda digunakan oleh null
-            ] } })
-            .then(result => { return result })
-            .catch(err => { console.log(err) })
-
-        const findUser = await model.User
-            .findOne({ where: { email: emailId } })
-            .then(result => { return result })
-            .catch(err => console.log(err))
-
-        // check KTP di tabel identity jika null bikin, jika ada update
-        if (findIdentity === null) {
-            await model.Identity.create({
-                email: emailId,
-                userId: userId,
-                ktpUrl: urlKtp,
-                ktpNumber: noKtp
-            }).then(async result => {
-                // check status dan update redis
-                const findStatus = await model.Identity
-                    .findOne({ where: { ktpNumber: noKtp } })
-                    .then(result => { return result })
-                    .catch(err => { console.log(err) })
-
-                let stepupdate = 0;
-                if (findStatus !== null && findStatus.ktpUrl == null) {
-                    stepupdate = 1
-                    if (findUser.status <= 2) {
-                        findUser.update({ status: 1 }).catch(err => console.log(err));
-                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 1 }))
-                    }
-                } else {
-                    stepupdate = 2
-                    // menghindari setelah 2 
-                    if (findUser.status <= 2) {
-                        findUser.update({ status: 2 }).catch(err => console.log(err));
-                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
-                    }
-                }
-
-
-
-                return res.status(200).json({
-                    "status": true,
-                    "message": "KTP dan foto KTP berhasil diperbarui"
-                })
-            }).catch(err => console.log(err));
-
-
-
-
-        }
-        // update
-        else {
-            // pastikan user id masih nul jika tidak null kasih tau kalau itu sudah dipakai
-            if (findIdentity.userId == null || findIdentity.email == emailId) {
-                await findIdentity.update({
-                    email: emailId,
-                    userId: userId,
-                    ktpUrl: urlKtp,
-                    ktpNumber: noKtp
-                }).catch(err => console.log(err));
-
-                // check status dan update redis
-                const findStatus = await model.Identity
-                    .findOne({ where: { ktpNumber: noKtp } })
-                    .then(result => { return result })
-                    .catch(err => { console.log(err) })
-
-                let stepupdate = 0;
-                if (findStatus !== null && findStatus.ktpUrl == null) {
-                    stepupdate = 1
-                    if (findUser.status <= 2) {
-                        findUser.update({ status: 1 }).catch(err => console.log(err));
-                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 1 }))
-                    }
-                } else {
-                    stepupdate = 2
-                    // menghindari setelah 2 
-                    if (findUser.status <= 2) {
-                        findUser.update({ status: 2 }).catch(err => console.log(err));
-                        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 2 }))
-                    }
-                }
-
-
-
-                return res.status(200).json({
-                    "status": true,
-                    "message": "KTP dan foto KTP berhasil diperbarui"
-                })
-            } else {
-                return res.status(200).json({
-                    "status": false,
-                    "message": "Nomor KTP sudah digunakan oleh " + findIdentity.name + " - " + findIdentity.email
-                })
-            }
-        }
-
-
-
-
-
     })
 }
 
@@ -245,15 +84,15 @@ exports.getProfile = async (req, res, next) => {
                     model: model.Identity,
                     attributes: {
                         exclude: [
-                            'id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
+                            'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
                             'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
                         ]
                     }
                 },
-                { model: model.Skill, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-                { model: model.SocialMedia, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-                { model: model.AlumniReference, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
-                { model: model.FimActivity, attributes: {exclude: ['id', 'userId', 'createdAt', 'updatedAt']} },
+                { model: model.Skill, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
+                { model: model.SocialMedia, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
+                { model: model.AlumniReference, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
+                { model: model.FimActivity, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
                 { model: model.OrganizationExperience, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} }
         ]}).then(result => {
             return res.status(200).json({
@@ -286,6 +125,9 @@ exports.saveIdentity = async (req, res, next) => {
             if (findIdentity == null) {
                 await model.Identity.create(parseIdentityRequest(userId, req.body))
                 .then(result => {
+
+                    setFirstFormCompletenessToTrue(userId)
+
                     return res.status(200).json({
                         "status": true,
                         "message": "Data Inserted",
@@ -752,6 +594,44 @@ function parseOrganizationExperienceResponse(data) {
     }
 
     return organizationArr;
+}
+
+function setFirstFormCompletenessToTrue(userId) {
+    model.FormCompleteness.findOne({ where: { userId: userId }})
+    .then(formCompleteness => {
+
+        data = {
+            userId: userId,
+            fimBatch: "23", /* TODO: Make it dynamic */
+            isFirstStepCompleted: true
+        }
+
+        if (formCompleteness == null) {
+            model.FormCompleteness.create(data)
+            .catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            formCompleteness.update(data)
+            .catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
+    }).catch(err => {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
+    })
 }
 
 exports.saveTunnel = (req, res, nex) => {

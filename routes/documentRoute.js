@@ -4,7 +4,7 @@ const { body } = require('express-validator/check')
 const documentController = require('../controllers/documentController');
 const isAuth = require('../middleware/is-auth-middleware');
 
-router.get('/document', isAuth, documentController.getDocument);
-router.post('/document', isAuth, documentController.saveDocument);
+router.get('/', isAuth, documentController.getDocument);
+router.post('/', isAuth, documentController.saveDocument);
 
 module.exports = router;

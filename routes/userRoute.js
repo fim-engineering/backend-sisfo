@@ -4,7 +4,8 @@ const { body } = require('express-validator/check')
 const userController = require('../controllers/userController');
 const isAuth = require('../middleware/is-auth-middleware');
 
-router.post('/login', userController.SocialLogin);
+
+router.post('/login', userController.socialLogin);
 router.post('/checksession', userController.checkSession);
 
 router.get('/profile', isAuth, userController.getProfile);
@@ -15,7 +16,6 @@ router.post('/profile/alumni-reference', isAuth, userController.saveAlumniRefere
 router.post('/profile/fim-activity', isAuth, userController.saveFimActivity);
 router.post('/profile/organization-experience', isAuth, userController.saveOrganizationExperience);
 
-router.post('/savektp', isAuth, userController.saveKtp);
 router.post('/save-tunnel', isAuth, userController.saveTunnel);
 
 module.exports = router;
