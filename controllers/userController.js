@@ -586,7 +586,7 @@ exports.createOrganizationExperience = async (req, res, next) => {
             })
         }
 
-        if (req.body.count == 0 || req.body.count > 3) {
+        if (req.body.length == 0 || req.body.length > 3) {
             return res.status(400).json({
                 "status": false,
                 "message": "Data can't be less than 1 or more than 3 items",
