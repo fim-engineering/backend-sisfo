@@ -67,6 +67,9 @@ exports.saveDocument = async (req, res, next) => {
         } else {
             findPersonalDocument.update(data)
             .then(result => {
+
+                setFourthFormCompletenessToTrue(userId)
+
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",

@@ -143,6 +143,9 @@ exports.saveIdentity = async (req, res, next) => {
             } else {
                 findIdentity.update(parseIdentityRequest(userId, req.body))
                 .then(result => {
+
+                    setFirstFormCompletenessToTrue(userId)
+
                     return res.status(200).json({
                         "status": true,
                         "message": "Data Updated",
