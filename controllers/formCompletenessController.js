@@ -48,7 +48,7 @@ exports.getFormCompleteness = async (req, res, next) => {
     })
 }
 
-exports.saveFormCompleteness = async (req, res, next) => {
+exports.submitFormCompleteness = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, async function (err, response) {
@@ -62,18 +62,14 @@ exports.saveFormCompleteness = async (req, res, next) => {
         submittedAt = null;
         if (findFormCompleteness) {
             submittedAt = findFormCompleteness.submittedAt;
-            if (submittedAt == null && req.body.isAllCompleted == true) submittedAt = new Date();
+            if (submittedAt == null) submittedAt = new Date();
         } else {
-            if (req.body.isAllCompleted == true) submittedAt = new Date();
+            submittedAt = new Date();
         }
 
         const data = {
             userId: userId,
             fimBatch: "23", /* TODO: Make it dynamic */
-            isFirstStepCompleted: req.body.isFirstStepCompleted,
-            isSecondStepCompleted: req.body.isSecondStepCompleted,
-            isThirdStepCompleted: req.body.isThirdStepCompleted,
-            isFourthStepCompleted: req.body.isFourthStepCompleted,
             submittedAt: submittedAt
         }
 

@@ -5,6 +5,6 @@ const formCompletenessController = require('../controllers/formCompletenessContr
 const isAuth = require('../middleware/is-auth-middleware');
 
 router.get('/form-completeness', isAuth, formCompletenessController.getFormCompleteness);
-router.post('/form-completeness', isAuth, formCompletenessController.saveFormCompleteness);
+router.post('/form-completeness/submit', isAuth, formCompletenessController.submitFormCompleteness);
 
 module.exports = router;
