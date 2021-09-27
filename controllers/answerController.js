@@ -85,21 +85,6 @@ exports.saveAnswer = async (req, res, next) => {
     });
 }
 
-function isAllQuestionsHaveAnswer(tunnelId) {
-    model.Tunnel.findOne({
-        where: { id: tunnelId },
-        include: [{
-            model: model.Question,
-            order: [['id']]
-        }]
-    })
-    .then(tunnel => {
-        if (tunnel) {
-            console.log(tunnel)
-        }
-    })
-}
-
 function setFormCompletenessByQuestionId(userId, questionId) {
 
     model.Question.findOne({ where: { id: questionId } })
