@@ -2,14 +2,10 @@ const model = require('../models/index');
 const redisClient = require('../util/redis');
 
 
-exports.lists = async (req, res, next) => {
-    const data = {
-        tunnelId: req.query.tunnelId
-    }
-
+exports.getAll = async (req, res, next) => {
     const findTunnel = await model.Tunnel.findOne({
         where: { 
-            id: data.tunnelId,
+            id: req.query.tunnelId,
             batchFim: req.query.batchFim
          },
         include: [{

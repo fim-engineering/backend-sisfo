@@ -34,11 +34,13 @@ exports.saveDocument = async (req, res, next) => {
         let userIdentity = JSON.parse(response);
         let userId = userIdentity.userId;
 
+        validateDocumentRequestBody(req.body)
+
         const data = {
             userId: userId,
-            identityFileUrl: req.body.identityFileUrl ? req.body.identityFileUrl.trim() : null,
-            recommendationLetterUrl: req.body.recommendationLetterUrl ? req.body.recommendationLetterUrl.trim() : null,
-            commitmentLetterUrl: req.body.commitmentLetterUrl ? req.body.commitmentLetterUrl.trim() : null
+            identityFileUrl: req.body.identityFileUrl.trim(),
+            recommendationLetterUrl: req.body.recommendationLetterUrl.trim(),
+            commitmentLetterUrl: req.body.commitmentLetterUrl.trim()
         }
 
         const findPersonalDocument = await model.PersonalDocument.findOne({ 
@@ -84,6 +86,12 @@ exports.saveDocument = async (req, res, next) => {
             })
         }
     })
+}
+
+function validateDocumentRequestBody(reqBody) {    
+    if (!reqBody.identityFileUrl || reqBody.identityFileUrl.trim() == "") throw new Error('identityFileUrl is required!');
+    if (!reqBody.recommendationLetterUrl || reqBody.recommendationLetterUrl.trim() == "") throw new Error('recommendationLetterUrl is required!');
+    if (!reqBody.commitmentLetterUrl || reqBody.commitmentLetterUrl.trim() == "") throw new Error('commitmentLetterUrl is required!');
 }
 
 function setFourthFormCompletenessToTrue(userId) {

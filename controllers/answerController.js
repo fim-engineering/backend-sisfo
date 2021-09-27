@@ -46,7 +46,7 @@ exports.saveAnswer = async (req, res, next) => {
 
         data.answer.forEach((item) => {
             model.Answer.findOne({ where: { QuestionId: item.QuestionId, createdBy: userId } })
-            .then(async result => {
+            .then(result => {
                 payload = {
                     answer: JSON.stringify(item.answer),
                     QuestionId: item.QuestionId,
@@ -56,6 +56,8 @@ exports.saveAnswer = async (req, res, next) => {
 
                 if (result == null) answer = model.Answer.create(payload)
                 else result.update(payload)
+
+                setFormCompletenessByQuestionId(userId, item.QuestionId)
 
             }).catch(err => {
                 return res.status(400).json({
@@ -83,73 +85,59 @@ exports.saveAnswer = async (req, res, next) => {
     });
 }
 
-function setSecondFormCompletenessToTrue(userId) {
-    model.FormCompleteness.findOne({ where: { userId: userId }})
-    .then(formCompleteness => {
-
-        data = {
-            userId: userId,
-            fimBatch: "23", /* TODO: Make it dynamic */
-            isSecondStepCompleted: true
+function isAllQuestionsHaveAnswer(tunnelId) {
+    model.Tunnel.findOne({
+        where: { id: tunnelId },
+        include: [{
+            model: model.Question,
+            order: [['id']]
+        }]
+    })
+    .then(tunnel => {
+        if (tunnel) {
+            console.log(tunnel)
         }
-
-        if (formCompleteness == null) {
-            model.FormCompleteness.create(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        } else {
-            formCompleteness.update(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        }
-    }).catch(err => {
-        return res.status(400).json({
-            "status": false,
-            "message": "Something Error " + err,
-            "data": null
-        })
     })
 }
 
+function setFormCompletenessByQuestionId(userId, questionId) {
+
+    model.Question.findOne({ where: { id: questionId } })
+    .then(question => {
+        if (question) {
+            if (question.category == 'essay') setSecondFormCompletenessToTrue(userId)
+            if (question.category == 'volunteering_plan') setThirdFormCompletenessToTrue(userId)
+        }
+    })
+}
+
+function setSecondFormCompletenessToTrue(userId) {
+    data = {
+        userId: userId,
+        fimBatch: "23", /* TODO: Make it dynamic */
+        isSecondStepCompleted: true
+    }
+
+    return saveFormCompleteness(data)
+}
+
 function setThirdFormCompletenessToTrue(userId) {
-    model.FormCompleteness.findOne({ where: { userId: userId }})
+    data = {
+        userId: userId,
+        fimBatch: "23", /* TODO: Make it dynamic */
+        isThirdStepCompleted: true
+    }
+
+    return saveFormCompleteness(data)
+}
+
+function saveFormCompleteness(data) {
+    model.FormCompleteness.findOne({ where: { userId: data.userId }})
     .then(formCompleteness => {
 
-        data = {
-            userId: userId,
-            fimBatch: "23", /* TODO: Make it dynamic */
-            isThirdStepCompleted: true
-        }
+        if (formCompleteness == null) model.FormCompleteness.create(data)
+        else formCompleteness.update(data)
 
-        if (formCompleteness == null) {
-            model.FormCompleteness.create(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        } else {
-            formCompleteness.update(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        }
     }).catch(err => {
         return res.status(400).json({
             "status": false,
