@@ -570,47 +570,60 @@ exports.createOrganizationExperience = async (req, res, next) => {
     redisClient.get('login_portal:' + token, async function (err, response) {
         const userIdentity = JSON.parse(response);
         const userId = userIdentity.userId;
-        const data = {
-            userId: userId,
-            referencePerson: req.body.referencePerson,
-            role: req.body.role,
-            duration: req.body.duration,
-            eventScale: req.body.eventScale,
-            result: req.body.result,
-        }
 
-        model.OrganizationExperience.findAndCountAll({
-            where: { userId: userId }
-        }).then(result => {
-            if (result.count >= 3) {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Data can't be more than 3 items",
-                    "data": null
-                })
-            }
+        const organizationExperiences = await model.OrganizationExperience.findAndCountAll({ 
+            where: { userId: userId }, 
+        })
             
-            model.OrganizationExperience.create(data)
-            .then(dataresult => {
-                response = {
-                    id: dataresult.dataValues.id,
-                    referencePerson: dataresult.dataValues.referencePerson,
-                    role: dataresult.dataValues.role,
-                    duration: dataresult.dataValues.duration,
-                    eventScale: dataresult.dataValues.eventScale,
-                    result: dataresult.dataValues.result,
-                }
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Inserted",
-                    "data": response
-                })
-            }).catch(err => {
+        if (organizationExperiences.count > 0) {
+            model.OrganizationExperience.destroy({ where: { userId: userId } })
+            .catch(err => {
                 return res.status(400).json({
                     "status": false,
                     "message": "Something Error " + err,
                     "data": null
                 })
+            })
+        }
+
+        if (req.body.count == 0 || req.body.count > 3) {
+            return res.status(400).json({
+                "status": false,
+                "message": "Data can't be less than 1 or more than 3 items",
+                "data": null
+            })
+        }
+
+        let i = 0;
+        reqBody = req.body;
+        organizationArr= [];
+        organizationObj = {};
+        for (;reqBody[i];) {
+            organizationObj = {
+                userId: userId,
+                referencePerson: reqBody[i].referencePerson,
+                role: reqBody[i].role,
+                duration: reqBody[i].duration,
+                eventScale: reqBody[i].eventScale,
+                result: reqBody[i].result,
+            }
+
+            organizationArr.push(organizationObj);
+            i++;
+        }
+            
+        model.OrganizationExperience.bulkCreate(organizationArr)
+        .then(response => {
+            return res.status(200).json({
+                "status": true,
+                "message": "Data Inserted",
+                "data": response
+            })
+        }).catch(err => {
+            return res.status(400).json({
+                "status": false,
+                "message": "Something Error " + err,
+                "data": null
             })
         })
     })
