@@ -31,43 +31,32 @@ exports.getAnswer = async (req, res, next) => {
     });
 }
 
-
-
 exports.saveAnswer = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
     
     redisClient.get('login_portal:' + token, async function (err, response) {
         let userIdentity = JSON.parse(response);
         let userId = userIdentity.userId;
-
-        const data = {
+        
+        data = {
             answer: JSON.parse(req.body.answers),
             tunnelId: req.body.tunnelId,
             createdBy: userId
         }
 
         data.answer.forEach((item) => {
-            model.Answer.findOne({
-                where: {
+            model.Answer.findOne({ where: { QuestionId: item.QuestionId, createdBy: userId } })
+            .then(async result => {
+                payload = {
+                    answer: JSON.stringify(item.answer),
                     QuestionId: item.QuestionId,
+                    TunnelId: data.tunnelId,
                     createdBy: userId
                 }
-            }).then(async result => {
-                if (result == null) {
-                    model.Answer.create({
-                        answer: JSON.stringify(item.answer),
-                        QuestionId: item.QuestionId,
-                        TunnelId: data.tunnelId,
-                        createdBy: userId
-                    })
-                } else {
-                    result.update({
-                        answer: JSON.stringify(item.answer),
-                        QuestionId: item.QuestionId,
-                        TunnelId: data.TunnelId,
-                        createdBy: userId
-                    })
-                }
+
+                if (result == null) answer = model.Answer.create(payload)
+                else result.update(payload)
+
             }).catch(err => {
                 return res.status(400).json({
                     "status": false,
@@ -77,12 +66,8 @@ exports.saveAnswer = async (req, res, next) => {
             })
         })
 
-        model.Answer.findAll({
-            where: { 
-                createdBy: userId,
-                TunnelId: data.tunnelId
-            }
-        }).then(result => {
+        model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
+        .then(result => {
             return res.status(200).json({
                 "status": true,
                 "message": "Data Inserted",
@@ -96,4 +81,80 @@ exports.saveAnswer = async (req, res, next) => {
             })
         })
     });
+}
+
+function setSecondFormCompletenessToTrue(userId) {
+    model.FormCompleteness.findOne({ where: { userId: userId }})
+    .then(formCompleteness => {
+
+        data = {
+            userId: userId,
+            fimBatch: "23", /* TODO: Make it dynamic */
+            isSecondStepCompleted: true
+        }
+
+        if (formCompleteness == null) {
+            model.FormCompleteness.create(data)
+            .catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            formCompleteness.update(data)
+            .catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
+    }).catch(err => {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
+    })
+}
+
+function setThirdFormCompletenessToTrue(userId) {
+    model.FormCompleteness.findOne({ where: { userId: userId }})
+    .then(formCompleteness => {
+
+        data = {
+            userId: userId,
+            fimBatch: "23", /* TODO: Make it dynamic */
+            isThirdStepCompleted: true
+        }
+
+        if (formCompleteness == null) {
+            model.FormCompleteness.create(data)
+            .catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            formCompleteness.update(data)
+            .catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        }
+    }).catch(err => {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
+    })
 }
