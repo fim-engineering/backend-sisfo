@@ -44,7 +44,7 @@ exports.saveAnswer = async (req, res, next) => {
             createdBy: userId
         }
 
-        data.answer.forEach((item) => {
+        data.answer.forEach((item, index) => {
             model.Answer.findOne({ where: { QuestionId: item.QuestionId, createdBy: userId } })
             .then(result => {
                 payload = {
@@ -57,7 +57,9 @@ exports.saveAnswer = async (req, res, next) => {
                 if (result == null) answer = model.Answer.create(payload)
                 else result.update(payload)
 
-                setFormCompletenessByQuestionId(userId, item.QuestionId)
+                if (index == 0) {
+                    setFormCompletenessByQuestionId(userId, item.QuestionId)
+                }
 
             }).catch(err => {
                 return res.status(400).json({
