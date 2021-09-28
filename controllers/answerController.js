@@ -71,11 +71,11 @@ exports.saveAnswer = async (req, res, next) => {
         })
 
         await model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
-        .then(result => {
+        .then(answerData => {
             return res.status(200).json({
                 "status": true,
                 "message": "Data Inserted",
-                "data": result
+                "data": answerData
             })
         }).catch(err => {
             return res.status(400).json({
