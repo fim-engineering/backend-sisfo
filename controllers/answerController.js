@@ -70,7 +70,7 @@ exports.saveAnswer = async (req, res, next) => {
             })
         })
 
-        model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
+        await model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
         .then(result => {
             return res.status(200).json({
                 "status": true,
