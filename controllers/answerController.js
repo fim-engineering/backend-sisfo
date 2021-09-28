@@ -68,23 +68,23 @@ exports.saveAnswer = async (req, res, next) => {
                     "data": null
                 })
             })
-        }).then(result => {
-            model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
-            .then(answerData => {
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Inserted",
-                    "data": answerData
-                })
-            }).catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
+        })
+
+        model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
+        .then(answerData => {
+            return res.status(200).json({
+                "status": true,
+                "message": "Data Inserted",
+                "data": answerData
+            })
+        }).catch(err => {
+            return res.status(400).json({
+                "status": false,
+                "message": "Something Error " + err,
+                "data": null
             })
         })
-    })
+    });
 }
 
 function setFormCompletenessByQuestionId(userId, questionId) {
