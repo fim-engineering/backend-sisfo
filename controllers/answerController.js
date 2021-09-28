@@ -34,7 +34,7 @@ exports.getAnswer = async (req, res, next) => {
 exports.saveAnswer = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
     
-    redisClient.get('login_portal:' + token, async function (err, response) {
+    redisClient.get('login_portal:' + token, function (err, response) {
         let userIdentity = JSON.parse(response);
         let userId = userIdentity.userId;
         
@@ -70,7 +70,7 @@ exports.saveAnswer = async (req, res, next) => {
             })
         })
 
-        await model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
+        model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
         .then(answerData => {
             return res.status(200).json({
                 "status": true,
