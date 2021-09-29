@@ -57,7 +57,6 @@ exports.saveAnswer = async (req, res, next) => {
                 if (result == null) answer = model.Answer.create(payload)
                 else result.update(payload)
 
-                console.log(data.answer)
                 if (index == 0 || index == data.answer.length - 1) {
                     setFormCompletenessByQuestionId(userId, item.QuestionId)
                 }
