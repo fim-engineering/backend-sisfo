@@ -356,7 +356,8 @@ function parseSocialMediaRequest(userId, reqBody) {
         twitterUrl: reqBody.twitterUrl ? reqBody.twitterUrl.trim() : null,
         facebookUrl: reqBody.facebookUrl ? reqBody.facebookUrl.trim() : null,
         websiteUrl: reqBody.websiteUrl ? reqBody.websiteUrl.trim() : null,
-        otherSiteUrl: reqBody.websiteUrl ? reqBody.otherSiteUrl.trim() : null
+        otherSiteUrl: reqBody.otherSiteUrl ? reqBody.otherSiteUrl.trim() : null,
+        reason: reqBody.reason ? reqBody.reason.trim() : null
     }
 }
 
@@ -367,7 +368,8 @@ function parseSocialMediaResponse(data) {
         twitterUrl: data.twitterUrl,
         facebookUrl: data.facebookUrl,
         websiteUrl: data.websiteUrl,
-        otherSiteUrl: data.otherSiteUrl
+        otherSiteUrl: data.otherSiteUrl,
+        reason: data.reason
     }
 }
 

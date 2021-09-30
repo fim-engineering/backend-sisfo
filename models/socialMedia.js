@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     facebookUrl: DataTypes.STRING,
     websiteUrl: DataTypes.STRING,
     otherSiteUrl: DataTypes.STRING,
+    reason: DataTypes.TEXT
   }, {
     name: {
       singular: 'SocialMedia',
