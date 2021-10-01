@@ -2,223 +2,134 @@ const model = require('../models/index');
 const redisClient = require('../util/redis');
 
 
-exports.lists = async (req, res, next) => {
-
+exports.getAnswer = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
 
     redisClient.get('login_portal:' + token, function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
+        let userIdentity = JSON.parse(response);
+        let userId = userIdentity.userId;
 
-        const data = {
-            TunnelId: req.body.TunnelId,
-            ktpNumber: req.body.ktpNumber
+        data = {
+            TunnelId: req.query.tunnelId,
+            createdBy: userId
         }
 
-        model.Answer.findAll({ where: data }).then(result => {
-            res.status(200).json({
+        model.Answer.findAll({ where: data })
+        .then(result => {
+            return res.status(200).json({
                 status: true,
-                message: "data fetched",
+                message: "Data Fetched",
                 data: result
             });
         }).catch(err => {
-            console.log(err)
+            return res.status(400).json({
+                "status": false,
+                "message": "Something Error " + err,
+                "data": null
+            })
         });
     });
 }
 
-
-
 exports.saveAnswer = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
-    redisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
-
-        // jawaban datang dalam bentu Array
-        const data = {
-            Answer: req.body.answers, // Array
-            // [
-            //     {
-            //         QuestionId:1,
-            //         answer: JSON with serialize header
-            //     }
-            // ]
-
-            ktpNumber: req.body.ktpNumber,
-            TunnelId: req.body.TunnelId,
+    
+    redisClient.get('login_portal:' + token, function (err, response) {
+        let userIdentity = JSON.parse(response);
+        let userId = userIdentity.userId;
+        
+        data = {
+            answer: JSON.parse(req.body.answers),
+            tunnelId: req.body.tunnelId,
             createdBy: userId
         }
 
-        if (err) {
-            return res.status(400).json({
-                status: false,
-                message: "Error",
-                data: err
-            });
-        }
-
-        // generate looping answer with map function
-        data.Answer.map((value, index) => {
-            // cari dulu apakah yang sebelumnya sudah pernah dijawab atau belum
-            // berdasarkan nomor ktp dan id pertanyaan
-            model.Answer.findOne({
-                where: {
-                    QuestionId: value.QuestionId,
-                    ktpNumber: data.ktpNumber
+        data.answer.forEach((item, index) => {
+            model.Answer.findOne({ where: { QuestionId: item.QuestionId, createdBy: userId } })
+            .then(result => {
+                payload = {
+                    answer: JSON.stringify(item.answer),
+                    QuestionId: item.QuestionId,
+                    TunnelId: data.tunnelId,
+                    createdBy: userId
                 }
-            }).then(async result => {
 
-                // jika belum ada idPertanyaan dengan nomor ktp tersebut
-                if (result == null) {
-                    model.Answer.create({
-                        answer: JSON.stringify(value.answer), // bentuk object
-                        QuestionId: value.QuestionId,
-                        ktpNumber: data.ktpNumber,
-                        TunnelId: data.TunnelId
-                    })
+                if (result == null) answer = model.Answer.create(payload)
+                else result.update(payload)
 
-                    // // create di summary model mendeteksi dia ikut jalur apa 
-                    // // berdasarkan pertanyaan yang dia jawab
-                    // await model.Summary.findOne({
-                    //     where: {
-                    //         TunnelId: data.TunnelId,
-                    //         ktpNumber: data.ktpNumber
-                    //     }
-                    // }).then(async result => {
-                    //     if (result == null) {
-                    //        await model.Summary.create({
-                    //             TunnelId: data.TunnelId,
-                    //             ktpNumber: data.ktpNumber,
-                    //             isFinal: 0
-                    //         })
-                    //     }
-                    // })
-
-                } else {
-                    result.update({
-                        answer: JSON.stringify(value.answer),
-                        QuestionId: value.QuestionId,
-                        ktpNumber: data.ktpNumber,
-                        TunnelId: data.TunnelId
-                    })
+                if (index == 0 || index == data.answer.length - 1) {
+                    setFormCompletenessByQuestionId(userId, item.QuestionId)
                 }
 
             }).catch(err => {
                 return res.status(400).json({
-                    status: false,
-                    message: "Error",
-                    data: err
-                });
-            })
-        })
-        
-        const fimBatch = await model.Fimbatch.findAll({
-            limit:1,
-            order:[['id', 'DESC']]
-        }).then(result=>{
-            return result[0]
-        })
-
-        model.Summary.findOrCreate({
-            where: {
-                TunnelId: data.TunnelId,
-                ktpNumber: data.ktpNumber,
-                batchFim: fimBatch.name
-            },
-            defaults: {
-                isFinal: 0
-            }
-        })
-
-
-
-        // UPDATE STEP JIKA SUDAH MENGISI DATA DIRI
-        model.User.findOne({ where: { email: userIdentity.email } }).then(result => {
-            result.update({
-                status: 4
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
             })
         })
 
-        redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 4 }))
-
-        res.status(200).json({
-            status: true,
-            message: "Answer Saved",
-            data: userIdentity
-        });
+        model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
+        .then(answerData => {
+            return res.status(200).json({
+                "status": true,
+                "message": "Data Inserted",
+                "data": answerData
+            })
+        }).catch(err => {
+            return res.status(400).json({
+                "status": false,
+                "message": "Something Error " + err,
+                "data": null
+            })
+        })
     });
 }
 
-// exports.read = async (req, res, next) => {
-//     const idAnswer = req.body.idAnswer;
-//     model.Answer.findByPk(idAnswer).then(result => {
-//         res.status(200).json({
-//             status: true,
-//             message: "Data Fetched",
-//             data: result
-//         });
-//     })
-// }
+function setFormCompletenessByQuestionId(userId, questionId) {
 
+    model.Question.findOne({ where: { id: questionId } })
+    .then(question => {
+        if (question) {
+            if (question.category == 'essay') setSecondFormCompletenessToTrue(userId)
+            if (question.category == 'volunteering_plan') setThirdFormCompletenessToTrue(userId)
+        }
+    })
+}
 
-// exports.update = async (req, res, next) => {
-//     let token = req.get('Authorization').split(' ')[1];
+function setSecondFormCompletenessToTrue(userId) {
+    data = {
+        userId: userId,
+        fimBatch: "23", /* TODO: Make it dynamic */
+        isSecondStepCompleted: true
+    }
 
-//     redisClient.get('login_portal:' + token, function (err, response) {
-//         const userIdentity = JSON.parse(response);
-//         const userId = userIdentity.userId;
+    return saveFormCompleteness(data)
+}
 
-//         if (err) {
-//             return res.status(400).json({
-//                 status: false,
-//                 message: "Error",
-//                 data: err
-//             });
-//         }
+function setThirdFormCompletenessToTrue(userId) {
+    data = {
+        userId: userId,
+        fimBatch: "23", /* TODO: Make it dynamic */
+        isThirdStepCompleted: true
+    }
 
-//         const data = {
-//             idAnswer: req.body.idAnswer,
-//             Answer: req.body.Answer,
-//             TunnelId: req.body.TunnelId,
-//             batchFim: req.body.batchFim,
-//             createdBy: userId
-//         }
+    return saveFormCompleteness(data)
+}
 
-//         model.Answer.update(data, { where: { id: data.idAnswer } }
-//         ).then((status, result) => {
-//             res.status(200).json({
-//                 status: true,
-//                 message: "Data Updated",
-//                 data: status
-//             });
+function saveFormCompleteness(data) {
+    model.FormCompleteness.findOne({ where: { userId: data.userId }})
+    .then(formCompleteness => {
 
-//         }).catch(err => {
-//             res.status(400).json({
-//                 status: false,
-//                 message: "Error",
-//                 data: err
-//             });
-//         })
-//     });
-// }
+        if (formCompleteness == null) model.FormCompleteness.create(data)
+        else formCompleteness.update(data)
 
-// exports.delete = async (req, res, next) => {
-//     model.Answer.destroy({ where: { id: req.body.idAnswer } }).then(result => {
-//         res.status(200).json({
-//             status: true,
-//             message: "Data Deleted",
-//             data: null
-//         });
-//     }).catch(err => {
-//         console.log(err)
-//         res.status(400).json({
-//             status: false,
-//             message: "Error Occured",
-//             data: err
-//         });
-//     })
-// }
-
-
-
+    }).catch(err => {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
+    })
+}

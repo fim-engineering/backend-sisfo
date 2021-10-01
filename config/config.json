@@ -17,6 +17,22 @@
     "timezone": "+07:00",
     "logging": false
   },
+  "staging": {
+    "use_env_variable": "DATABASE_URL",
+    "username": "itfzgwgkiciela",
+    "password": "445cb7f7b225a830a3ba5bf916bb2dd41768e2ffc85e37968d21292abb2bc6b0",
+    "database": "dudo6bq0jn2rk",
+    "host": "ec2-35-174-35-242.compute-1.amazonaws.com",
+    "port": "5432",
+    "dialect": "postgres",
+    "timezone": "+07:00",
+    "logging": false,
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
+  },
   "production": {
     "use_env_variable": "DATABASE_URL",
     "username": "eqrnbhasfirpkx",
