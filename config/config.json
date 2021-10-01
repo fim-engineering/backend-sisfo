@@ -35,10 +35,10 @@
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "username": "eqrnbhasfirpkx",
-    "password": "24523ae2d20b19df82242999193d4940ef418b1cc435d9f91db2978bb208ca04",
-    "database": "d2dvles4teusdg",
-    "host": "ec2-34-238-26-109.compute-1.amazonaws.com",
+    "username": "qijepnlwbgdusk",
+    "password": "6c928387e4b9b40f9cd32158983aa860ae3b6f2a6e46e0d553126e1f96df9254",
+    "database": "d4nbg1eidbetb",
+    "host": "ec2-54-156-24-159.compute-1.amazonaws.com",
     "dialect": "postgres",
     "timezone": "+07:00",
     "logging": false
