@@ -82,7 +82,7 @@ module.exports = {
         isMany: 0,
         header: JSON.stringify({
           "Tuliskan bentuk kontribusi yang telah kamu lakukan untuk daerah / domisilimu saat ini dan mengapa kamu melakukan hal tersebut? (tuliskan peran, tanggung jawab, dan skala lingkupnya serta dapat sebelum dan selama pandemi, dan sertakan bukti jika ada yang dapat berupa link berita / foto / dll)": { type: "textarea", placeholder: "tulis jawaban kamu di sini" },
-          "Bukti Dokumentasi": [{ type: "upload", placeholder: "Tambahkan link dokumentasi kontribusi (jika ada)" }, { type: "upload", placeholder: "Tambah Dokumentasi" }, { type: "upload", placeholder: "Tambah Dokumentasi" }]
+          "Bukti Dokumentasi": { type: "text", placeholder: "Tambahkan link dokumentasi kontribusi (jika ada)" }
         }),
         createdAt: new Date(),
         updatedAt: new Date()
