@@ -8,15 +8,6 @@
     "dialect": "postgres",
     "timezone": "+07:00"
   },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "fim_portal_backend",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
-    "timezone": "+07:00",
-    "logging": false
-  },
   "staging": {
     "use_env_variable": "DATABASE_URL",
     "username": "itfzgwgkiciela",
