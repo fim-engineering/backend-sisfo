@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const { Client } = require('pg');
 var cors = require('cors')
+
 // Route Require
 const userRoute = require('./routes/userRoute');
 const homeRoute = require('./routes/homeRoute');
@@ -18,7 +19,8 @@ const summaryRoute = require('./routes/summaryRoute');
 const recruiterRoute = require('./routes/recruiterRoute');
 const regionalRoute = require('./routes/regionalRoute');
 const participantRoute = require('./routes/participantRoute');
-
+const documentRoute = require('./routes/documentRoute');
+const formCompletenessRoute = require('./routes/formCompletenessRoute');
 
 // init express js
 const app = express();
@@ -42,18 +44,17 @@ app.use('/', homeRoute)
 app.use('/data', dataRoute);
 app.use('/tunnel', tunnelRoute);
 app.use('/question', questionRoute);
-app.use('/answer',answerRoute);
-app.use('/summary',summaryRoute);
+app.use('', answerRoute);
+app.use('/summary', summaryRoute);
 app.use('/recruiter', recruiterRoute);
-app.use('/regional',regionalRoute);
+app.use('/regional', regionalRoute);
 app.use('/participant', participantRoute);
+app.use('/document', documentRoute);
+app.use('/form-completeness', formCompletenessRoute);
 
-
-// const accessLogStream = fs.createWriteStregzsam(path.join(__dirname, 'access.log'),{ flags: 'a'})
 
 app.use(helmet());
 app.use(compression());
-// app.use(morgan('combined', {stream:accessLogStream}));
 
 app.listen( process.env.PORT||8080);
 

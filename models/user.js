@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     email: DataTypes.STRING,
@@ -11,12 +12,19 @@ module.exports = (sequelize, DataTypes) => {
     TunnelId: DataTypes.INTEGER,
     RegionalId: DataTypes.INTEGER
   }, {});
+  
   User.associate = function (models) {
-    // associations can be defined here
     models.User.hasOne(models.Identity, { foreignKey: 'userId' })
+    models.User.hasOne(models.Skill, { foreignKey: 'userId' })
+    models.User.hasOne(models.SocialMedia, { foreignKey: 'userId' })
+    models.User.hasOne(models.AlumniReference, { foreignKey: 'userId' })
+    models.User.hasOne(models.FimActivity, { foreignKey: 'userId' })
+    models.User.hasOne(models.PersonalDocument, { foreignKey: 'userId' })
+    models.User.hasOne(models.FormCompleteness, { foreignKey: 'userId' })
+    models.User.hasMany(models.OrganizationExperience, { foreignKey: 'userId' })
     models.User.belongsTo(models.Regional, { foreignKey: 'RegionalId' })
     models.User.belongsToMany(models.Summary, { through: models.ParticipantRecruiter, foreignKey: 'recruiterId' })
-
   };
+
   return User;
 };
