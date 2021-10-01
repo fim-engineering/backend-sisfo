@@ -8,15 +8,6 @@
     "dialect": "postgres",
     "timezone": "+07:00"
   },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "fim_portal_backend",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
-    "timezone": "+07:00",
-    "logging": false
-  },
   "staging": {
     "use_env_variable": "DATABASE_URL",
     "username": "itfzgwgkiciela",
@@ -35,10 +26,10 @@
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "username": "eqrnbhasfirpkx",
-    "password": "24523ae2d20b19df82242999193d4940ef418b1cc435d9f91db2978bb208ca04",
-    "database": "d2dvles4teusdg",
-    "host": "ec2-34-238-26-109.compute-1.amazonaws.com",
+    "username": "ssuusrixuhtwfh",
+    "password": "3c467a4a7e8b32046be0cf63bcfd2822faba37c18fc13cc5746f7be90e30f129",
+    "database": "d9fa2s647so35a",
+    "host": "ec2-54-83-192-245.compute-1.amazonaws.com",
     "dialect": "postgres",
     "timezone": "+07:00",
     "logging": false
