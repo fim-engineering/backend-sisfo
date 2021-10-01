@@ -32,6 +32,11 @@
     "host": "ec2-54-156-24-159.compute-1.amazonaws.com",
     "dialect": "postgres",
     "timezone": "+07:00",
-    "logging": false
+    "logging": false,
+    "dialectOptions": {
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
   }
 }
