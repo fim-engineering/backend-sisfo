@@ -82,8 +82,7 @@ module.exports = {
         isMany: 0,
         header: JSON.stringify({
           "Tuliskan bentuk kontribusi yang telah kamu lakukan untuk daerah / domisilimu saat ini dan mengapa kamu melakukan hal tersebut? (tuliskan peran, tanggung jawab, dan skala lingkupnya serta dapat sebelum dan selama pandemi, dan sertakan bukti jika ada yang dapat berupa link berita / foto / dll)": { type: "textarea", placeholder: "tulis jawaban kamu di sini" },
-          "Bukti Dokumentasi": [{ type: "upload", placeholder: "Tambah Sertifikat" }, { type: "upload", placeholder: "Tambah Sertifikat" }, { type: "upload", placeholder: "Tambah Sertifikat" } ],
-          "Dokumen surat komitmen": { type: "text", placeholder: "tambahkan link dokumentasi kontribusi (jika ada)" }
+          "Bukti Dokumentasi": [{ type: "upload", placeholder: "Tambahkan link dokumentasi kontribusi (jika ada)" }, { type: "upload", placeholder: "Tambah Dokumentasi" }, { type: "upload", placeholder: "Tambah Dokumentasi" }]
         }),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -101,7 +100,7 @@ module.exports = {
         header: JSON.stringify({
           "1. Tuliskan alasan mendaftar FIM 23": { type: "textarea", placeholder: "tulis jawaban kamu di sini" },
           "2. Tuliskan & jelaskan satu keahlian/keterampilan diri yang telah diimplementasikan dan dapat kamu berdayakan untuk berkontribusi di FIM (Regional & Pusat)": { type: "textarea", placeholder: "tulis jawaban kamu di sini" },
-          "Jelaskan kondisi Daerah / Regional kamu saat ini dan rencana program yang akan dilakukan setelah menyelesaikan Pelatihan FIM 23 untuk pengembangan daerah domisili kamu saat ini / regional (jawaban memuat informasi mengenai: kondisi daerah terkini, rencana program, pihak-pihak, indikator keberhasilan, dan langkah langkah serta timeline)": { type: "textarea", placeholder: "tulis jawaban kamu di sini" },
+          "3. Jelaskan kondisi Daerah / Regional kamu saat ini dan rencana program yang akan dilakukan setelah menyelesaikan Pelatihan FIM 23 untuk pengembangan daerah domisili kamu saat ini / regional (jawaban memuat informasi mengenai: kondisi daerah terkini, rencana program, pihak-pihak, indikator keberhasilan, dan langkah langkah serta timeline)": { type: "textarea", placeholder: "tulis jawaban kamu di sini" },
         }),
         createdAt: new Date(),
         updatedAt: new Date()
