@@ -1,6 +1,10 @@
 const model = require('../models/index');
 const redisClient = require('../util/redis');
 
+exports.FIRST_STEP = 1
+exports.SECOND_STEP = 2
+exports.THIRD_STEP = 3
+exports.FOURTH_STEP = 4
 
 exports.getFormCompleteness = async (req, res, next) => {
     let token = req.get('Authorization').split(' ')[1];
@@ -131,4 +135,35 @@ function parseResponse(formCompleteness) {
         progress: countProgress(formCompleteness),
         submittedAt: formCompleteness.submittedAt,
     }
+}
+
+exports.setSelectedFormCompletenessToTrue = function(userId, step) {
+
+    model.FormCompleteness.findOne({ where: { userId: userId }})
+    .then(formCompleteness => {
+
+        data = {
+            userId: userId,
+            fimBatch: "23", /* TODO: Make it dynamic */
+        }
+
+        if (step == this.FIRST_STEP) data['isFirstStepCompleted'] = true
+        if (step == this.SECOND_STEP) data['isSecondStepCompleted'] = true
+        if (step == this.THIRD_STEP) data['isThirdStepCompleted'] = true
+        if (step == this.FOURTH_STEP) data['isFourthStepCompleted'] = true
+
+        if (formCompleteness == null) {
+            model.FormCompleteness.create(data)
+            .catch(err => {
+                throw new Error("Something Error " + err)
+            })
+        } else {
+            formCompleteness.update(data)
+            .catch(err => {
+                throw new Error("Something Error " + err)
+            })
+        }
+    }).catch(err => {
+        throw new Error("Something Error " + err)
+    })
 }

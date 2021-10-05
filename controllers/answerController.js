@@ -1,5 +1,6 @@
 const model = require('../models/index');
 const redisClient = require('../util/redis');
+const formCompletenessController = require('../controllers/formCompletenessController');
 
 
 exports.getAnswer = async (req, res, next) => {
@@ -92,44 +93,8 @@ function setFormCompletenessByQuestionId(userId, questionId) {
     model.Question.findOne({ where: { id: questionId } })
     .then(question => {
         if (question) {
-            if (question.category == 'essay') setSecondFormCompletenessToTrue(userId)
-            if (question.category == 'volunteering_plan') setThirdFormCompletenessToTrue(userId)
+            if (question.category == 'essay') formCompletenessController.setSelectedFormCompletenessToTrue(userId, formCompletenessController.SECOND_STEP)
+            if (question.category == 'volunteering_plan') formCompletenessController.setSelectedFormCompletenessToTrue(userId, formCompletenessController.THIRD_STEP)
         }
-    })
-}
-
-function setSecondFormCompletenessToTrue(userId) {
-    data = {
-        userId: userId,
-        fimBatch: "23", /* TODO: Make it dynamic */
-        isSecondStepCompleted: true
-    }
-
-    return saveFormCompleteness(data)
-}
-
-function setThirdFormCompletenessToTrue(userId) {
-    data = {
-        userId: userId,
-        fimBatch: "23", /* TODO: Make it dynamic */
-        isThirdStepCompleted: true
-    }
-
-    return saveFormCompleteness(data)
-}
-
-function saveFormCompleteness(data) {
-    model.FormCompleteness.findOne({ where: { userId: data.userId }})
-    .then(formCompleteness => {
-
-        if (formCompleteness == null) model.FormCompleteness.create(data)
-        else formCompleteness.update(data)
-
-    }).catch(err => {
-        return res.status(400).json({
-            "status": false,
-            "message": "Something Error " + err,
-            "data": null
-        })
     })
 }

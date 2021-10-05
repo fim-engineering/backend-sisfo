@@ -8,6 +8,4 @@ router.post('/read', regionalController.read);
 router.post('/update', regionalController.update);
 router.post('/delete', regionalController.delete);
 
-
-
 module.exports = router;

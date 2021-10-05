@@ -8,6 +8,4 @@ router.post('/read', tunnelController.read);
 router.post('/update', tunnelController.update);
 router.post('/delete', tunnelController.delete);
 
-
-
 module.exports = router;

@@ -1,5 +1,6 @@
 const model = require('../models/index');
 const redisClient = require('../util/redis');
+const formCompletenessController = require('../controllers/formCompletenessController');
 
 
 exports.getDocument = async (req, res, next) => {
@@ -52,7 +53,7 @@ exports.saveDocument = async (req, res, next) => {
             await model.PersonalDocument.create(data)
             .then(result => {
                 
-                setFourthFormCompletenessToTrue(userId)
+                formCompletenessController.setSelectedFormCompletenessToTrue(userId, formCompletenessController.FOURTH_STEP)
             
                 return res.status(200).json({
                     "status": true,
@@ -70,7 +71,7 @@ exports.saveDocument = async (req, res, next) => {
             findPersonalDocument.update(data)
             .then(result => {
 
-                setFourthFormCompletenessToTrue(userId)
+                formCompletenessController.setSelectedFormCompletenessToTrue(userId, formCompletenessController.FOURTH_STEP)
 
                 return res.status(200).json({
                     "status": true,
@@ -92,42 +93,4 @@ function validateDocumentRequestBody(reqBody) {
     if (!reqBody.identityFileUrl || reqBody.identityFileUrl.trim() == "") throw new Error('identityFileUrl is required!');
     if (!reqBody.recommendationLetterUrl || reqBody.recommendationLetterUrl.trim() == "") throw new Error('recommendationLetterUrl is required!');
     if (!reqBody.commitmentLetterUrl || reqBody.commitmentLetterUrl.trim() == "") throw new Error('commitmentLetterUrl is required!');
-}
-
-function setFourthFormCompletenessToTrue(userId) {
-    model.FormCompleteness.findOne({ where: { userId: userId }})
-    .then(formCompleteness => {
-
-        data = {
-            userId: userId,
-            fimBatch: "23", /* TODO: Make it dynamic */
-            isFourthStepCompleted: true
-        }
-
-        if (formCompleteness == null) {
-            model.FormCompleteness.create(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        } else {
-            formCompleteness.update(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        }
-    }).catch(err => {
-        return res.status(400).json({
-            "status": false,
-            "message": "Something Error " + err,
-            "data": null
-        })
-    })
 }

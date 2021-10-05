@@ -5,6 +5,7 @@ const recruiterController = require('../controllers/recruiterController');
 
 // add admin
 router.post('/:type(recruit|admin)/add',recruiterController.addAdmin);
+
 // list capes submit
 router.get('/participant/submited', recruiterController.listSubmitted);
 router.get('/lists', recruiterController.listRecruiter);
@@ -22,4 +23,5 @@ router.post('/participant/undo-assign', recruiterController.undoAssign);
 
 router.post('/new-assign', recruiterController.newAssignRecruiter);
 router.post('/remove-assign', recruiterController.removeAssignRecruiter);
+
 module.exports = router;
