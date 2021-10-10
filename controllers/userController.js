@@ -73,38 +73,61 @@ exports.getProfile = async (req, res, next) => {
         const user = JSON.parse(response);
         const userId = user.userId;
         
-        model.User.findOne({ 
-            where: { id: userId },
-            attributes: {exclude: ['password', 'status', 'createdAt', 'updatedAt']}, 
-            include: [
-                { 
-                    model: model.Identity,
-                    attributes: {
-                        exclude: [
-                            'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
-                            'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
-                        ]
-                    }
-                },
-                { model: model.Skill, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
-                { model: model.SocialMedia, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
-                { model: model.AlumniReference, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
-                { model: model.FimActivity, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
-                { model: model.OrganizationExperience, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} }
-        ]}).then(result => {
-            return res.status(200).json({
-                "status": true,
-                "message": "Data Fetched",
-                "data": result
+        try {
+            model.User.findOne({ where: { id: userId } })
+            .then(user => {
+                model.Identity.findOne({ where: { userId: userId } })
+                .then(identity => { 
+                    model.Skill.findOne({ where: { userId: userId } })
+                    .then(skill => { 
+                        model.SocialMedia.findOne({ where: { userId: userId } })
+                        .then(socialMedia => { 
+                            model.AlumniReference.findOne({ where: { userId: userId } })
+                            .then(alumniReference => { 
+                                model.FimActivity.findOne({ where: { userId: userId } })
+                                .then(fimActivity => { 
+                                    model.OrganizationExperience.findAll({ where: { userId: userId } })
+                                    .then(organizationExperiences => { 
+                                        return res.status(200).json({
+                                            status: true,
+                                            message: "Data Fetched",
+                                            data: parseUserResponse(user, identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences)
+                                        })
+                                    })
+                                    .catch(err => { throw new Error(err) })
+                                })
+                                .catch(err => { throw new Error(err) })
+                            })
+                            .catch(err => { throw new Error(err) })
+                        })
+                        .catch(err => { throw new Error(err) })
+                    })
+                    .catch(err => { throw new Error(err) })
+                })
+                .catch(err => { throw new Error(err) })
             })
-        }).catch(err => {
+            .catch(err => { throw new Error(err) })
+        } catch (error) {
             return res.status(400).json({
                 "status": false,
-                "message": "Something Error " + err,
+                "message": "Something Error " + error,
                 "data": null
-            })
-        })
+            })    
+        }
     })
+}
+
+function parseUserResponse(user, identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences) {
+    return {
+        "id": user.id,
+        "email": user.email,
+        "Identity": parseIdentityResponse(identity),
+        "Skill": parseSkillResponse(skill),
+        "SocialMedia": parseSocialMediaResponse(socialMedia),
+        "AlumniReference": parseAlumniReferenceResponse(alumniReference),
+        "FimActivity": parseFimActivityResponse(fimActivity),
+        "OrganizationExperiences": parseOrganizationExperiencesResponse(organizationExperiences),
+    }
 }
 
 exports.saveIdentity = async (req, res, next) => {
@@ -214,8 +237,10 @@ function parseIdentityRequest(userId, reqBody) {
 }
 
 function parseIdentityResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         fullName: data.fullName,
         firstName: data.firstName,
         lastName: data.lastName,
@@ -294,8 +319,10 @@ function parseSkillRequest(userId, reqBody) {
 }
 
 function parseSkillResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         isAbleVideoEditing: data.isAbleVideoEditing,
         videoEditingPortofolioUrl: data.videoEditingPortofolioUrl,
         firstCertificateUrl: data.firstCertificateUrl,
@@ -359,8 +386,10 @@ function parseSocialMediaRequest(userId, reqBody) {
 }
 
 function parseSocialMediaResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         instagramUrl: data.instagramUrl,
         twitterUrl: data.twitterUrl,
         facebookUrl: data.facebookUrl,
@@ -424,8 +453,10 @@ function parseAlumniReferenceRequest(userId, reqBody) {
 }
 
 function parseAlumniReferenceResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         fullName: data.fullName,
         batch: data.batch,
         phoneNumber: data.phoneNumber,
@@ -488,8 +519,10 @@ function parseFimActivityRequest(userId, reqBody) {
 }
 
 function parseFimActivityResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         responsibility: data.responsibility,
         role: data.role,
         duration: data.duration,
@@ -512,12 +545,12 @@ exports.saveOrganizationExperience = async (req, res, next) => {
             .then(result => {
                 deleteExistingOrganizationExperience(userId, result)
                     
-                model.OrganizationExperience.bulkCreate(parseOrganizationExperienceRequest(userId, req.body))
+                model.OrganizationExperience.bulkCreate(parseOrganizationExperiencesRequest(userId, req.body))
                 .then(result => {
                     return res.status(200).json({
                         "status": true,
                         "message": "Data Inserted",
-                        "data": parseOrganizationExperienceResponse(result)
+                        "data": parseOrganizationExperiencesResponse(result)
                     })
                 }).catch(err => {
                     return res.status(400).json({
@@ -554,7 +587,7 @@ function deleteExistingOrganizationExperience(userId, data) {
     }
 }
 
-function parseOrganizationExperienceRequest(userId, reqBody) {
+function parseOrganizationExperiencesRequest(userId, reqBody) {
     organizationArr = [];
     organizationObj = {};
 
@@ -574,7 +607,7 @@ function parseOrganizationExperienceRequest(userId, reqBody) {
     return organizationArr;
 }
 
-function parseOrganizationExperienceResponse(data) {
+function parseOrganizationExperiencesResponse(data) {
     organizationArr = [];
     organizationObj = {};
 
