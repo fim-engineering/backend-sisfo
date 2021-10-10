@@ -16,7 +16,7 @@ exports.getDocument = async (req, res, next) => {
             return res.status(200).json({
                 "status": true,
                 "message": "Data Fetched",
-                "data": result
+                "data": parsePersonalDocumentResponse(result)
             })
         }).catch(err => {
             return res.status(400).json({
@@ -58,7 +58,7 @@ exports.saveDocument = async (req, res, next) => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Inserted",
-                    "data": result
+                    "data": parsePersonalDocumentResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -76,7 +76,7 @@ exports.saveDocument = async (req, res, next) => {
                 return res.status(200).json({
                     "status": true,
                     "message": "Data Updated",
-                    "data": result
+                    "data": parsePersonalDocumentResponse(result)
                 })
             }).catch(err => {
                 return res.status(400).json({
@@ -93,4 +93,15 @@ function validateDocumentRequestBody(reqBody) {
     if (!reqBody.identityFileUrl || reqBody.identityFileUrl.trim() == "") throw new Error('identityFileUrl is required!');
     if (!reqBody.recommendationLetterUrl || reqBody.recommendationLetterUrl.trim() == "") throw new Error('recommendationLetterUrl is required!');
     if (!reqBody.commitmentLetterUrl || reqBody.commitmentLetterUrl.trim() == "") throw new Error('commitmentLetterUrl is required!');
+}
+
+function parsePersonalDocumentResponse(data) {
+
+    if (data == null) return null
+
+    return {
+        identityFileUrl: data.identityFileUrl,
+        recommendationLetterUrl: data.recommendationLetterUrl,
+        commitmentLetterUrl: data.commitmentLetterUrl
+    }
 }

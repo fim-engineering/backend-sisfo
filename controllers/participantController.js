@@ -100,18 +100,22 @@ exports.getDetailByUserId = async (req, res, next) => {
                             .then(fimActivity => { 
                                 model.OrganizationExperience.findAll({ where: { userId: participantId } })
                                 .then(organizationExperiences => { 
-                                    model.Question.findAll({ where: { batchFim: batch } })
-                                    .then(questions => { 
-                                        model.Answer.findAll({ 
-                                            where: { createdBy: participantId, QuestionId: getQuestionIds(questions) },
-                                            order: ['QuestionId']
-                                        })
-                                        .then(answers => { 
-                                            return res.status(200).json({
-                                                status: true,
-                                                message: "Data Fetched",
-                                                data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, answers)
+                                    model.PersonalDocument.findOne({ where: { userId: participantId } })
+                                    .then(personalDocument => { 
+                                        model.Question.findAll({ where: { batchFim: batch } })
+                                        .then(questions => { 
+                                            model.Answer.findAll({ 
+                                                where: { createdBy: participantId, QuestionId: getQuestionIds(questions) },
+                                                order: ['QuestionId']
                                             })
+                                            .then(answers => { 
+                                                return res.status(200).json({
+                                                    status: true,
+                                                    message: "Data Fetched",
+                                                    data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers)
+                                                })
+                                            })
+                                            .catch(err => { throw new Error(err) })
                                         })
                                         .catch(err => { throw new Error(err) })
                                     })
@@ -138,7 +142,7 @@ exports.getDetailByUserId = async (req, res, next) => {
     })
 }
 
-function parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, answers) {
+function parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers) {
     return {
         "Identity": parseIdentityResponse(identity),
         "Skill": parseSkillResponse(skill),
@@ -146,6 +150,7 @@ function parseParticipantResponse(identity, skill, socialMedia, alumniReference,
         "AlumniReference": parseAlumniReferenceResponse(alumniReference),
         "FimActivity": parseFimActivityResponse(fimActivity),
         "OrganizationExperiences": parseOrganizationExperiencesResponse(organizationExperiences),
+        "PersonalDocument": parsePersonalDocumentResponse(personalDocument),
         "Answers": parseAnswersResponse(answers)
     }
 }
@@ -226,6 +231,17 @@ function parseFimActivityResponse(data) {
         duration: data.duration,
         eventScale: data.eventScale,
         result: data.result
+    }
+}
+
+function parsePersonalDocumentResponse(data) {
+
+    if (data == null) return null
+
+    return {
+        identityFileUrl: data.identityFileUrl,
+        recommendationLetterUrl: data.recommendationLetterUrl,
+        commitmentLetterUrl: data.commitmentLetterUrl
     }
 }
 
