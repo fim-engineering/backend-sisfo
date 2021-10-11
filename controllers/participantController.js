@@ -2,7 +2,7 @@ const model = require('../models/index');
 const redisClient = require('../util/redis');
 
 
-exports.count = async (req, res, next) => {
+exports.getSummaries = async (req, res, next) => {
 
     let token = req.get('Authorization').split(' ')[1];
 
@@ -21,7 +21,7 @@ exports.count = async (req, res, next) => {
             return res.status(200).json({
                 status: true,
                 message: "Data Fetched",
-                data: result
+                data: parseSummaryResponse(result)
             });
         }).catch(err => {
             return res.status(400).json({
@@ -31,6 +31,14 @@ exports.count = async (req, res, next) => {
             })
         });
     })
+}
+
+function parseSummaryResponse(result) {
+    return {
+        "submitted_number": result,
+        "processed_number": 0,
+        "passed_number": 0
+    }
 }
 
 exports.getAll = async (req, res, next) => {
