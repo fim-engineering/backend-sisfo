@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     scoreAktivitas: DataTypes.INTEGER,
     scoreProject: DataTypes.INTEGER,
     scoreOther: DataTypes.INTEGER,
-    notes: DataTypes.TEXT
+    notes: DataTypes.TEXT,
+    userId: DataTypes.INTEGER,
   }, {});
   Summary.associate = function (models) {
     models.Summary.belongsTo(models.Tunnel)

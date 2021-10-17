@@ -211,104 +211,44 @@ exports.listRecruiter = async (req, res, next) => {
     })
 }
 
-exports.newAssignRecruiter = async (req, res, next) => {
-    const theRecruiter = await model.User.findOne({
-        where: {
-            email: req.body.emailRecruiter,
-        },
-        include: [
-            {
-                model: model.Identity
-            }
-        ],
-        attributes: ['id']
-    }).then(result => {
-        return result
-    }).catch(err => {
-        console.log(err)
-    })
-
-    try {
-        model.ParticipantRecruiter.findOrCreate({
-            where: {
-                ktpNumber: req.body.ktpParticipant,
-                recruiterId: theRecruiter.id,
-                emailRecruiter: req.body.emailRecruiter,
-                nameRecruiter: theRecruiter.Identity.name
-            }
-        })
-
-        res.status(200).json({
-            status: true,
-            message: "Recruiter Assigned",
-        });
-    } catch (error) {
-        res.status(200).json({
-            status: false,
-            message: error,
-        });
-    }
-
-}
-
 exports.assignRecruiter = async (req, res, next) => {
-    const ktpRecruiter = req.body.ktpRecruiter;
-    const listPeserta = req.body.ktpPeserta; // array
-    // const ArrayPeserta: [];
-    // listPeserta.map((value,index)=>{
-    //     value.
-    // })
+    try {
+        participantId = req.body.participantId
+        batch = req.body.batch ?? ''
+        if (batch.trim() == '') throw new Error('batch is required!');
 
-    // findRecruiter
-    const theRecruiter = await model.Identity.findOne({
-        where: {
-            email: req.body.emailRecruiter,
-        },
-        attributes: ['id', 'name', 'userId']
-    }).then(result => {
-        return result
-    }).catch(err => {
-        console.log(err)
-    })
-
-    if (theRecruiter !== null) {
-        // update Summary
-        const listSummary = await model.Summary.findOne({
-            where: {
-                ktpNumber: req.body.ktpNumberPeserta,
-                TunnelId: req.body.TunnelId
-            },
-            // attributes: ['ktpNumber']
-        }).then(result => {
-            return result;
-        }).catch(err => console.log(err))
-
-        if (listSummary !== null) {
-            // await listSummary.map((value, index) => {
-            listSummary.update({
-                recruiterId: theRecruiter.userId
-            })
-            // })
-
-            return res.status(200).json({
-                status: true,
-                message: "Participant Assigned to " + theRecruiter.name
-            });
-
-        } else {
-            return res.status(200).json({
-                status: false,
-                message: "Participant List Null"
-            });
-        }
-
-    } else {
-        return res.status(200).json({
-            status: false,
-            message: "Recruiter User Not Found"
-        });
+        recruiter = await model.User.findOne({ where: { email: req.body.recruiterEmail } })
+        if (recruiter) {
+            participant = await model.User.findOne({ where: { id: participantId } })
+            if (participant) {
+                model.Summary.findOne({ where: { recruiterId: recruiter.id, userId: participant.id, batchFim: batch } })
+                .then(summary => {
+                    if (summary == null) {
+                        model.Summary.create({ recruiterId: recruiter.id, userId: participant.id, batchFim: batch })
+                        .then(result => {
+                            return res.status(200).json({
+                                status: true,
+                                message: "Recruiter assigned",
+                                data: null
+                            })
+                        })
+                    } else {
+                        return res.status(200).json({
+                            status: true,
+                            message: "Recruiter already assigned to this participant",
+                            data: null
+                        })
+                    }
+                })
+            } else throw new Error("Participant not found")
+        } else throw new Error("Recruiter not found")
+    } catch (error) {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something " + error,
+            "data": null
+        })    
     }
-
 }
 
 exports.listByRecruiter = async (req, res, next) => {
@@ -397,44 +337,6 @@ exports.listByRecruiter = async (req, res, next) => {
     }).catch(err => {
         console.log(err)
     });
-
-    // const listKTPSubmitted = [];
-
-    // if (allSubmit !== null) {
-    //     await allSubmit.map((value, index) => {
-    //         listKTPSubmitted.push(value.ktpNumber);
-    //     })
-    // } else {
-    //     return res.status(200).json({
-    //         status: false,
-    //         userId:theIdUser,
-    //         message: "No One Submitted",
-    //         data: null
-    //     });
-    // }
-
-    // const listIdentity = await model.Identity.findAll({
-    //     where: {
-    //         ktpNumber: { [Op.in]: listKTPSubmitted }
-    //     },
-    //     attributes: ['userId', 'name', 'ktpNumber'],
-    //     include: [{
-    //         model: model.Summary,
-    //         where: { isFinal: 1 },
-    //         include: [{
-    //             model: model.Tunnel,
-    //             attributes: ['name', 'id']
-    //         }]
-    //     }]
-    // }).then(result => {
-    //     return result
-    // }).catch(err => {
-    //     return res.status(400).json({
-    //         status: false,
-    //         message: "Whoops Something Error",
-    //         error: err
-    //     });
-    // })
 
     return res.status(200).json({
         status: true,
@@ -707,28 +609,4 @@ exports.undoAssign = async (req, res, next) => {
             message: "Recruiter User Not Found"
         });
     }
-}
-
-exports.removeAssignRecruiter = async (req, res, next) => {
-    const ktpNumber = req.body.ktpParticipant;
-    const recruiterId = req.body.recruiterId;
-
-    model.ParticipantRecruiter.destroy({
-        where: {
-            ktpNumber: ktpNumber,
-            recruiterId: recruiterId
-        }
-    }).then(result => {
-        res.status(200).json({
-            status: true,
-            message: "Data Deleted",
-            data: result
-        });
-    }).catch(err => {
-        res.status(400).json({
-            status: false,
-            message: "Error Occured",
-            data: err
-        });
-    })
 }
