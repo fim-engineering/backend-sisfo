@@ -8,5 +8,6 @@ const isAuth = require('../middleware/isAuthMiddleware');
 router.get('/summaries', isAuth, isRecruiterMiddleware, participantController.getSummaries);
 router.get('/', isAuth, isRecruiterMiddleware, participantController.getAll);
 router.get('/:userId', isAuth, isRecruiterMiddleware, participantController.getDetailByUserId);
+router.post('/assessment', isAuth, isRecruiterMiddleware, participantController.saveAnswerAssessment);
 
 module.exports = router;

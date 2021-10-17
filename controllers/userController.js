@@ -124,6 +124,7 @@ function parseUserResponse(user, identity, skill, socialMedia, alumniReference, 
     return {
         "id": user.id,
         "email": user.email,
+        "role": user.role,
         "Identity": parseIdentityResponse(identity),
         "Skill": parseSkillResponse(skill),
         "SocialMedia": parseSocialMediaResponse(socialMedia),

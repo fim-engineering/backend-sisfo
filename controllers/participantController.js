@@ -342,11 +342,53 @@ function parseAnswersResponse(data) {
             id: item.id,
             TunnelId: item.TunnelId,
             QuestionId: item.QuestionId,
-            answer: item.answer
+            answer: item.answer,
+            score: item.score
         }
     
         answerArr.push(answerObj);
     })
 
+    return answerArr;
+}
+
+exports.saveAnswerAssessment = async (req, res, next) => { 
+
+    req.body.forEach((item) => {
+        model.Answer.findOne({ where: { id: item.answerId } })
+        .then(answer => {
+            if (answer) {
+                answer.update({ score: item.score })
+            }
+        })
+    })
+    
+    model.Answer.findAll({ 
+        where: { id: getAnswerIds(req.body) },
+        order: ['QuestionId']
+    })
+    .then(result => {
+        return res.status(200).json({
+            "status": true,
+            "message": "Data Inserted",
+            "data": parseAnswersResponse(result)
+        })
+    }).catch(err => {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
+    })
+    
+}
+
+function getAnswerIds(data) {
+    answerArr = [];
+
+    data.forEach((item) => {
+        answerArr.push(item.answerId);
+    })
+    
     return answerArr;
 }
