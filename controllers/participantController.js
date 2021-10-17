@@ -1,129 +1,178 @@
 const model = require('../models/index');
 const redisClient = require('../util/redis');
+const userController = require('../controllers/userController');
+const Op = require('sequelize').Op;
 
+const PROCESSED_STATUS = 'processed'
+const ARCHIVED_STATUS = 'archived'
 
 exports.getSummaries = async (req, res, next) => {
-
-    let token = req.get('Authorization').split(' ')[1];
-
-    redisClient.get('login_portal:' + token, function (err, response) {
-        let userIdentity = JSON.parse(response);
-        let userId = userIdentity.userId;
-
-        const query = {
-            where: {
-              fimBatch: typeof req.query.batch !== 'undefined' ? req.query.batch : ""
-            }
+    const formCompletenessQuery = {
+        where: {
+          fimBatch: typeof req.query.batch !== 'undefined' ? req.query.batch : "",
+          submittedAt: {[Op.ne]: null}
         }
+    }
 
-        model.FormCompleteness.count(query)
-        .then(result => {
-            return res.status(200).json({
-                status: true,
-                message: "Data Fetched",
-                data: parseSummaryResponse(result)
-            });
-        }).catch(err => {
-            return res.status(400).json({
-                "status": false,
-                "message": "Something Error " + err,
-                "data": null
+    const summaryProcessedQuery = {
+        where: {
+          batchFim: typeof req.query.batch !== 'undefined' ? req.query.batch : "",
+          isFinal: 1
+        }
+    }
+
+    try {
+        model.FormCompleteness.count(formCompletenessQuery)
+        .then(formCompletenessCounter => {
+            model.Summary.count(summaryProcessedQuery)
+            .then(summaryProcessedCounter => {
+                return res.status(200).json({
+                    status: true,
+                    message: "Data Fetched",
+                    data: parseSummaryResponse(formCompletenessCounter, summaryProcessedCounter)
+                })
             })
-        });
-    })
+            .catch(err => { throw new Error(err) })
+        })
+        .catch(err => { throw new Error(err) })
+    } catch(err) {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
+    }
 }
 
-function parseSummaryResponse(result) {
+function parseSummaryResponse(formCompletenessCounter, summaryProcessedCounter) {
     return {
-        "submitted_number": result,
-        "processed_number": 0,
-        "passed_number": 0
+        "submitted_number": formCompletenessCounter,
+        "processed_number": summaryProcessedCounter,
+        "archived_number": 0
     }
 }
 
 exports.getAll = async (req, res, next) => {
-
     let token = req.get('Authorization').split(' ')[1];
-
+    
     redisClient.get('login_portal:' + token, function (err, response) {
-        let userIdentity = JSON.parse(response);
-        let userId = userIdentity.userId;
+        let user = JSON.parse(response);
+        let role = user.role;
+        let userId = user.userId;
 
-        const query = {
-            where: {
-              fimBatch: typeof req.query.batch !== 'undefined' ? req.query.batch : ""
-            },
-            offset: typeof req.query.offset !== 'undefined' ? +req.query.offset : 0,
-            limit: typeof req.query.limit !== 'undefined' ? +req.query.limit : 10,
-            attributes: {exclude: ['id', 'createdAt', 'updatedAt']}, 
-            include: [
-                { 
-                    model: model.Identity,
-                    attributes: {
-                        exclude: [
-                            'id', 'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
-                            'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
-                        ]
-                    }
-                }
-        ]};
+        fimBatch = req.query.batch ? req.query.batch : ''
+        limit = req.query.limit ? req.query.limit : 10
+        offset = req.query.offset ? req.query.offset : 0
+        fullName = req.query.fullName ? req.query.fullName : ''
+        occupation = req.query.occupation ? req.query.occupation : ''
+        cityAddress = req.query.cityAddress ? req.query.cityAddress : ''
+        participantStatus = req.query.status ? req.query.status : ''
 
-        model.FormCompleteness.findAll(query)
-        .then(result => {
-            return res.status(200).json({
-                status: true,
-                message: "Data Fetched",
-                data: result
+
+        if (fullName != '') fullName = `AND LOWER("Identities"."fullName") LIKE LOWER('${fullName}%')`
+        if (occupation != '') occupation = `AND LOWER("Identities"."occupation") LIKE LOWER('${occupation}%')`
+        if (cityAddress != '') cityAddress = `AND "Identities"."cityAddress" = '${cityAddress}'`
+
+        if (participantStatus == PROCESSED_STATUS) participantStatus = `AND "Summaries"."isFinal" = 1`
+        else participantStatus = ``
+
+
+        if (role == userController.ADMIN_ROLE) {
+            getAllAssignedByRecruiterId(userId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus)
+            .then(result => {
+                return res.status(200).json({
+                    status: true,
+                    message: "Data Fetched",
+                    data: result[0]
+                });
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
             });
-        }).catch(err => {
-            return res.status(400).json({
-                "status": false,
-                "message": "Something Error " + err,
-                "data": null
-            })
-        });
+        } else if (role == userController.RECRUITER_ROLE) {
+            getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus)
+            .then(result => {
+                return res.status(200).json({
+                    status: true,
+                    message: "Data Fetched",
+                    data: result[0]
+                });
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            });
+        }
+    })
+}
+
+function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
+
+    const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress"
+    FROM "Summaries" 
+    LEFT JOIN "FormCompleteness" ON "Summaries"."userId" = "FormCompleteness"."userId" 
+    LEFT JOIN "Identities" ON "Summaries"."userId" = "Identities"."userId" 
+    WHERE "Summaries"."batchFim" = ? AND "Summaries"."recruiterId" = ? AND "FormCompleteness"."submittedAt" IS NOT null ${participantStatus} ${fullName} ${occupation} ${cityAddress}
+    LIMIT ?
+    OFFSET ?`
+
+    return model.sequelize.query(sql, {
+        replacements: [fimBatch, recruiterId, limit, offset]
+    })
+}
+
+function getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
+
+    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress"
+    FROM "FormCompleteness" 
+    LEFT JOIN "Identities" ON "FormCompleteness"."userId" = "Identities"."userId"
+    LEFT JOIN "Summaries" ON "FormCompleteness"."userId" = "Summaries"."userId" 
+    WHERE "FormCompleteness"."fimBatch" = ? AND "FormCompleteness"."submittedAt" IS NOT null ${participantStatus} ${fullName} ${occupation} ${cityAddress}
+    LIMIT ?
+    OFFSET ?`
+
+    return model.sequelize.query(sql, {
+        replacements: [fimBatch, limit, offset]
     })
 }
 
 exports.getDetailByUserId = async (req, res, next) => {
 
-    let token = req.get('Authorization').split(' ')[1];
-
-    redisClient.get('login_portal:' + token, function (err, response) {
-        let userIdentity = JSON.parse(response)
-        let userId = userIdentity.userId
-        let participantId = req.params.userId
-        let batch = typeof req.query.batch !== 'undefined' ? req.query.batch : ""
-
-        try {
-            model.Identity.findOne({ where: { userId: participantId } })
-            .then(identity => { 
-                model.Skill.findOne({ where: { userId: participantId } })
-                .then(skill => { 
-                    model.SocialMedia.findOne({ where: { userId: participantId } })
-                    .then(socialMedia => { 
-                        model.AlumniReference.findOne({ where: { userId: participantId } })
-                        .then(alumniReference => { 
-                            model.FimActivity.findOne({ where: { userId: participantId } })
-                            .then(fimActivity => { 
-                                model.OrganizationExperience.findAll({ where: { userId: participantId } })
-                                .then(organizationExperiences => { 
-                                    model.PersonalDocument.findOne({ where: { userId: participantId } })
-                                    .then(personalDocument => { 
-                                        model.Question.findAll({ where: { batchFim: batch } })
-                                        .then(questions => { 
-                                            model.Answer.findAll({ 
-                                                where: { createdBy: participantId, QuestionId: getQuestionIds(questions) },
-                                                order: ['QuestionId']
+    let participantId = req.params.userId
+    let batch = typeof req.query.batch !== 'undefined' ? req.query.batch : ""
+    
+    try {
+        model.Identity.findOne({ where: { userId: participantId } })
+        .then(identity => { 
+            model.Skill.findOne({ where: { userId: participantId } })
+            .then(skill => { 
+                model.SocialMedia.findOne({ where: { userId: participantId } })
+                .then(socialMedia => { 
+                    model.AlumniReference.findOne({ where: { userId: participantId } })
+                    .then(alumniReference => { 
+                        model.FimActivity.findOne({ where: { userId: participantId } })
+                        .then(fimActivity => { 
+                            model.OrganizationExperience.findAll({ where: { userId: participantId } })
+                            .then(organizationExperiences => { 
+                                model.PersonalDocument.findOne({ where: { userId: participantId } })
+                                .then(personalDocument => { 
+                                    model.Question.findAll({ where: { batchFim: batch } })
+                                    .then(questions => { 
+                                        model.Answer.findAll({ 
+                                            where: { createdBy: participantId, QuestionId: getQuestionIds(questions) },
+                                            order: ['QuestionId']
+                                        })
+                                        .then(answers => { 
+                                            return res.status(200).json({
+                                                status: true,
+                                                message: "Data Fetched",
+                                                data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers)
                                             })
-                                            .then(answers => { 
-                                                return res.status(200).json({
-                                                    status: true,
-                                                    message: "Data Fetched",
-                                                    data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers)
-                                                })
-                                            })
-                                            .catch(err => { throw new Error(err) })
                                         })
                                         .catch(err => { throw new Error(err) })
                                     })
@@ -140,14 +189,15 @@ exports.getDetailByUserId = async (req, res, next) => {
                 .catch(err => { throw new Error(err) })
             })
             .catch(err => { throw new Error(err) })
-        } catch (error) {
-            return res.status(400).json({
-                "status": false,
-                "message": "Something Error " + error,
-                "data": null
-            })    
-        }
-    })
+        })
+        .catch(err => { throw new Error(err) })
+    } catch (error) {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + error,
+            "data": null
+        })    
+    }
 }
 
 function parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers) {

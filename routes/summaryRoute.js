@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const summaryController = require('../controllers/summaryController');
-const isAuth = require('../middleware/is-auth-middleware');
+const isAuth = require('../middleware/isAuthMiddleware');
 
 
 router.get('/lists',summaryController.lists);

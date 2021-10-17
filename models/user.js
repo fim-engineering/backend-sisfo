@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     loginSource: DataTypes.STRING,
     profilPicture: DataTypes.STRING,
     TunnelId: DataTypes.INTEGER,
-    RegionalId: DataTypes.INTEGER
+    RegionalId: DataTypes.INTEGER,
+    role: DataTypes.INTEGER
   }, {});
   
   User.associate = function (models) {

@@ -1,6 +1,4 @@
 const model = require('../models/index');
-const redisClient = require('../util/redis');
-
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op
 

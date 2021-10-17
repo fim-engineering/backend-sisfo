@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const redisClient = require('../util/redis');
 const formCompletenessController = require('../controllers/formCompletenessController');
 
+exports.BASIC_ROLE = 1
+exports.RECRUITER_ROLE = 2
+exports.ADMIN_ROLE = 3
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
@@ -46,7 +49,7 @@ exports.socialLogin = (req, res, next) => {
         const data_identity = {
             email: userData.email,
             userId: userData.id,
-            step: status
+            role: userData.role
         }
 
         const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); 

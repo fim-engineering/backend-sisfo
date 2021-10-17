@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const questionController = require('../controllers/questionController');
+const isRecruiterMiddleware = require('../middleware/isRecruiterMiddleware');
+const isAuth = require('../middleware/isAuthMiddleware');
 
-router.get('/',questionController.getAll);
-router.post('/create', questionController.create);
-router.post('/read', questionController.read);
-router.post('/update', questionController.update);
-router.post('/delete', questionController.delete);
+
+router.get('/', isAuth, questionController.getAll);
+router.post('/create', isAuth, isRecruiterMiddleware, questionController.create);
+router.post('/read', isAuth, questionController.read);
+router.post('/update', isAuth, isRecruiterMiddleware, questionController.update);
+router.post('/delete', isAuth, isRecruiterMiddleware, questionController.delete);
 
 module.exports = router;
