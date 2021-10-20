@@ -38,29 +38,47 @@ exports.saveAnswer = async (req, res, next) => {
         let userIdentity = JSON.parse(response);
         let userId = userIdentity.userId;
         
-        data = {
-            answer: JSON.parse(req.body.answers),
-            tunnelId: req.body.tunnelId,
-            createdBy: userId
-        }
+        try {
 
-        data.answer.forEach((item, index) => {
-            model.Answer.findOne({ where: { QuestionId: item.QuestionId, createdBy: userId } })
-            .then(result => {
-                payload = {
-                    answer: JSON.stringify(item.answer),
-                    QuestionId: item.QuestionId,
-                    TunnelId: data.tunnelId,
-                    createdBy: userId
-                }
+            data = {
+                answer: JSON.parse(req.body.answers),
+                tunnelId: req.body.tunnelId,
+                createdBy: userId
+            }
 
-                if (result == null) answer = model.Answer.create(payload)
-                else result.update(payload)
+            data.answer.forEach((item, index) => {
+                model.Answer.findOne({ where: { QuestionId: item.QuestionId, createdBy: userId } })
+                .then(result => {
+                    payload = {
+                        answer: JSON.stringify(item.answer),
+                        QuestionId: item.QuestionId,
+                        TunnelId: data.tunnelId,
+                        createdBy: userId
+                    }
 
-                if (index == 0 || index == data.answer.length - 1) {
-                    setFormCompletenessByQuestionId(userId, item.QuestionId)
-                }
+                    if (result == null) answer = model.Answer.create(payload)
+                    else result.update(payload)
 
+                    if (index == 0 || index == data.answer.length - 1) {
+                        setFormCompletenessByQuestionId(userId, item.QuestionId)
+                    }
+
+                }).catch(err => {
+                    return res.status(400).json({
+                        "status": false,
+                        "message": "Something Error " + err,
+                        "data": null
+                    })
+                })
+            })
+
+            model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
+            .then(answerData => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Data Inserted",
+                    "data": answerData
+                })
             }).catch(err => {
                 return res.status(400).json({
                     "status": false,
@@ -68,23 +86,14 @@ exports.saveAnswer = async (req, res, next) => {
                     "data": null
                 })
             })
-        })
-
-        model.Answer.findAll({ where: { createdBy: userId, TunnelId: data.tunnelId } })
-        .then(answerData => {
-            return res.status(200).json({
-                "status": true,
-                "message": "Data Inserted",
-                "data": answerData
-            })
-        }).catch(err => {
+        } catch (error) {
             return res.status(400).json({
                 "status": false,
-                "message": "Something Error " + err,
+                "message": "Something " + error,
                 "data": null
             })
-        })
-    });
+        }
+    })
 }
 
 function setFormCompletenessByQuestionId(userId, questionId) {
