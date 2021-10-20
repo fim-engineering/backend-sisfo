@@ -34,55 +34,63 @@ exports.saveDocument = async (req, res, next) => {
         let userIdentity = JSON.parse(response);
         let userId = userIdentity.userId;
 
-        validateDocumentRequestBody(req.body)
-
-        const data = {
-            userId: userId,
-            identityFileUrl: req.body.identityFileUrl.trim(),
-            recommendationLetterUrl: req.body.recommendationLetterUrl.trim(),
-            commitmentLetterUrl: req.body.commitmentLetterUrl.trim()
-        }
-
-        const findPersonalDocument = await model.PersonalDocument.findOne({ 
-            where: { userId: userId }, 
-            attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
-        })
-
-        if (findPersonalDocument == null) {
-            await model.PersonalDocument.create(data)
-            .then(result => {
-                
-                setFourthFormCompletenessToTrue(userId)
+        try {
+            validateDocumentRequestBody(req.body)
             
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Inserted",
-                    "data": result
-                })
-            }).catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
+            const data = {
+                userId: userId,
+                identityFileUrl: req.body.identityFileUrl.trim(),
+                recommendationLetterUrl: req.body.recommendationLetterUrl.trim(),
+                commitmentLetterUrl: req.body.commitmentLetterUrl.trim()
+            }
+        
+            const findPersonalDocument = await model.PersonalDocument.findOne({ 
+                where: { userId: userId }, 
+                attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] }
             })
-        } else {
-            findPersonalDocument.update(data)
-            .then(result => {
-
-                setFourthFormCompletenessToTrue(userId)
-
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Data Updated",
-                    "data": result
+        
+            if (findPersonalDocument == null) {
+                await model.PersonalDocument.create(data)
+                .then(result => {
+                    
+                    setFourthFormCompletenessToTrue(userId)
+                
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "Data Inserted",
+                        "data": result
+                    })
+                }).catch(err => {
+                    return res.status(400).json({
+                        "status": false,
+                        "message": "Something Error " + err,
+                        "data": null
+                    })
                 })
-            }).catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
+            } else {
+                findPersonalDocument.update(data)
+                .then(result => {
+                
+                    setFourthFormCompletenessToTrue(userId)
+                
+                    return res.status(200).json({
+                        "status": true,
+                        "message": "Data Updated",
+                        "data": result
+                    })
+                }).catch(err => {
+                    return res.status(400).json({
+                        "status": false,
+                        "message": "Something Error " + err,
+                        "data": null
+                    })
                 })
+            }
+        } catch (error) {
+            return res.status(400).json({
+                "status": false,
+                "message": "Something " + error,
+                "data": null
             })
         }
     })
