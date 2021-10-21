@@ -392,3 +392,55 @@ function getAnswerIds(data) {
     
     return answerArr;
 }
+
+exports.submitAssessment = async (req, res, next) => {
+    try {
+        participantId = req.body.participantId
+        batch = req.body.batch ?? ''
+        if (batch.trim() == '') throw new Error('batch is required!');
+
+        participant = await model.User.findOne({ where: { id: participantId } })
+        if (participant) {
+            summary = await model.Summary.findOne({ where: { userId: participantId, batchFim: batch } })
+            if (summary) {
+                questions = await model.Question.findAll({ where: { batchFim: batch } })
+                if (questions.length !== 0) {
+                    answers = await model.Answer.findAll({ where: { createdBy: participantId, QuestionId: getQuestionIds(questions) } })
+                    if (answers.length !== 0) {
+                        model.Summary.update({ isFinal: 1, scoreFinal: getScore(answers) }, { where: { userId: participantId, batchFim: batch } })
+                        .then(result => {
+                            return res.status(200).json({
+                                status: true,
+                                message: "Assessment Submitted",
+                                data: null
+                            })
+                        })
+                        .catch(err => { 
+                            return res.status(400).json({
+                                "status": false,
+                                "message": "Something " + err,
+                                "data": null
+                            }) 
+                        })
+                    } else throw new Error("Answers are not found")
+                } else throw new Error("Questions are not found")
+            } else throw new Error("Assessment of this participant is not found")
+        } else throw new Error("Participant not found")
+    } catch (err) {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something " + err,
+            "data": null
+        })    
+    }
+}
+
+function getScore(data) {
+    score = 0
+
+    data.forEach((item) => {
+        score += item.score
+    })
+
+    return score;
+}

@@ -9,5 +9,6 @@ router.get('/summaries', isAuth, isRecruiterMiddleware, participantController.ge
 router.get('/', isAuth, isRecruiterMiddleware, participantController.getAll);
 router.get('/:userId', isAuth, isRecruiterMiddleware, participantController.getDetailByUserId);
 router.post('/assessment', isAuth, isRecruiterMiddleware, participantController.saveAnswerAssessment);
+router.post('/assessment/submit', isAuth, isRecruiterMiddleware, participantController.submitAssessment);
 
 module.exports = router;
