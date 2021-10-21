@@ -77,7 +77,7 @@ exports.getAll = async (req, res, next) => {
         else participantStatus = ``
 
 
-        if (role == userController.ADMIN_ROLE) {
+        if (role == userController.RECRUITER_ROLE) {
             getAllAssignedByRecruiterId(userId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus)
             .then(result => {
                 return res.status(200).json({
@@ -92,7 +92,7 @@ exports.getAll = async (req, res, next) => {
                     "data": null
                 })
             });
-        } else if (role == userController.RECRUITER_ROLE) {
+        } else if (role == userController.ADMIN_ROLE) {
             getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus)
             .then(result => {
                 return res.status(200).json({
