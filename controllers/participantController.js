@@ -1,175 +1,446 @@
 const model = require('../models/index');
-const { validationResult } = require('express-validator/check');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const RedisClient = require('../util/redis');
+const redisClient = require('../util/redis');
+const userController = require('../controllers/userController');
+const Op = require('sequelize').Op;
 
-exports.update_status_accept = async (req, res, next) => {
+const PROCESSED_STATUS = 'processed'
+const ARCHIVED_STATUS = 'archived'
 
-    const value = req.body.value;
-    const ktpNumber = req.body.ktpNumber;
-    const statusNumber = [0, 1, 999999];
-
-    await model.Identity.findOne({
-        where: { 'ktpNumber': ktpNumber }
-    }).then(async result => {
-
-        if (value == 0 || value == 1 || value == 2 || value == 999999) {
-            await result.update({
-                status_accept: value
-            })
-        } else {
-            await result.update({
-                status_accept: 100, // diterima
-                batchFim: value
-            })
+exports.getSummaries = async (req, res, next) => {
+    const formCompletenessQuery = {
+        where: {
+          fimBatch: typeof req.query.batch !== 'undefined' ? req.query.batch : "",
+          submittedAt: {[Op.ne]: null}
         }
+    }
 
+    const summaryProcessedQuery = {
+        where: {
+          batchFim: typeof req.query.batch !== 'undefined' ? req.query.batch : "",
+          isFinal: 1
+        }
+    }
 
-        return res.status(200).json({
-            status: true,
-            message: "Status Updated",
-            data: result
-        });
-    }).catch(err => {
-        console.log(err)
+    try {
+        model.FormCompleteness.count(formCompletenessQuery)
+        .then(formCompletenessCounter => {
+            model.Summary.count(summaryProcessedQuery)
+            .then(summaryProcessedCounter => {
+                return res.status(200).json({
+                    status: true,
+                    message: "Data Fetched",
+                    data: parseSummaryResponse(formCompletenessCounter, summaryProcessedCounter)
+                })
+            })
+            .catch(err => { throw new Error(err) })
+        })
+        .catch(err => { throw new Error(err) })
+    } catch(err) {
         return res.status(400).json({
-            status: false,
-            message: "Whoops Something Error",
-            error: err
-        });
-    })
-
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
+    }
 }
 
-exports.confirmation_update = async (req, res, next) => {
-    const kehadiran = req.body.kehadiran;
-    const token = req.get('Authorization').split(' ')[1];
-
-    if (kehadiran == null) {
-        return res.status(200).json({
-            status: false,
-            message: "User Not Authorized",
-        });
+function parseSummaryResponse(formCompletenessCounter, summaryProcessedCounter) {
+    return {
+        "submitted_number": formCompletenessCounter,
+        "processed_number": summaryProcessedCounter,
+        "archived_number": 0
     }
+}
 
-    RedisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
+exports.getAll = async (req, res, next) => {
+    let token = req.get('Authorization').split(' ')[1];
+    
+    redisClient.get('login_portal:' + token, function (err, response) {
+        let user = JSON.parse(response);
+        let role = user.role;
+        let userId = user.userId;
 
-        if (userIdentity.userId == req.body.idUser) {
+        fimBatch = req.query.batch ? req.query.batch : ''
+        limit = req.query.limit ? req.query.limit : 10
+        offset = req.query.offset ? req.query.offset : 0
+        fullName = req.query.fullName ? req.query.fullName : ''
+        occupation = req.query.occupation ? req.query.occupation : ''
+        cityAddress = req.query.cityAddress ? req.query.cityAddress : ''
+        participantStatus = req.query.status ? req.query.status : ''
 
-            const fimBatch = await model.Fimbatch.findAll({
-                limit: 1,
-                order: [['id', 'DESC']]
-            }).then(result => {
-                return result[0]
-            })
 
-            await model.Identity.findOne({
-                where: { 'userId': userIdentity.userId }
-            }).then(async result => {
-                const updated = await result.update({
-                    batchFim: req.body.kehadiran == 1 ? fimBatch.name : fimBatch.name + 'x',
-                    attendenceConfirmationDate: new Date()
-                })
+        if (fullName != '') fullName = `AND LOWER("Identities"."fullName") LIKE LOWER('${fullName}%')`
+        if (occupation != '') occupation = `AND LOWER("Identities"."occupation") LIKE LOWER('${occupation}%')`
+        if (cityAddress != '') cityAddress = `AND "Identities"."cityAddress" = '${cityAddress}'`
 
+        if (participantStatus == PROCESSED_STATUS) participantStatus = `AND "Summaries"."isFinal" = 1`
+        else participantStatus = ``
+
+
+        if (role == userController.ADMIN_ROLE) {
+            getAllAssignedByRecruiterId(userId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus)
+            .then(result => {
                 return res.status(200).json({
                     status: true,
-                    message: "Status Updated",
-                    data: updated
+                    message: "Data Fetched",
+                    data: result[0]
                 });
             }).catch(err => {
-                console.log(err)
-            })
-        } else {
-            return res.status(200).json({
-                status: false,
-                message: "User Not Authorized",
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
             });
-        }
-
-
-    })
-
-    // await.model.Identity.findOne
-}
-
-exports.mbti_update = async (req, res, next) => {
-    const token = req.get('Authorization').split(' ')[1];
-
-    if (req.body.mbti == null) {
-        return res.status(200).json({
-            status: false,
-            message: "Please fill answer",
-        });
-    }
-
-    RedisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-
-        if (userIdentity.userId == req.body.idUser) {
-            await model.Identity.findOne({
-                where: { 'userId': userIdentity.userId }
-            }).then(async result => {
-                const updated = await result.update({
-                    mbti: req.body.mbti
-                })
-
+        } else if (role == userController.RECRUITER_ROLE) {
+            getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus)
+            .then(result => {
                 return res.status(200).json({
                     status: true,
-                    message: "MBTI Updated",
-                    data: updated
+                    message: "Data Fetched",
+                    data: result[0]
                 });
             }).catch(err => {
-                console.log(err)
-            })
-        } else {
-            return res.status(200).json({
-                status: false,
-                message: "User Not Authorized",
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
             });
         }
     })
 }
 
-exports.payment_confirmation = async (req, res, next) => {
-    const token = req.get('Authorization').split(' ')[1];
+function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
-    if (req.body.paymentDate == null || req.body.bankTransfer == null || req.body.urlTransferPhoto == null ) {
-        return res.status(200).json({
-            status: false,
-            message: "Please fill answer",
-        });
-    }
+    const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress"
+    FROM "Summaries" 
+    LEFT JOIN "FormCompleteness" ON "Summaries"."userId" = "FormCompleteness"."userId" 
+    LEFT JOIN "Identities" ON "Summaries"."userId" = "Identities"."userId" 
+    WHERE "Summaries"."batchFim" = ? AND "Summaries"."recruiterId" = ? AND "FormCompleteness"."submittedAt" IS NOT null ${participantStatus} ${fullName} ${occupation} ${cityAddress}
+    LIMIT ?
+    OFFSET ?`
 
-    RedisClient.get('login_portal:' + token, async function (err, response) {
-        const userIdentity = JSON.parse(response);
-
-        if (userIdentity.userId == req.body.idUser) {
-            await model.Identity.findOne({
-                where: { 'userId': userIdentity.userId }
-            }).then(async result => {
-                const updated = await result.update({
-                    paymentDate: req.body.paymentDate,
-                    bankTransfer: req.body.bankTransfer,
-                    urlTransferPhoto: req.body.urlTransferPhoto,
-                })
-
-                return res.status(200).json({
-                    status: true,
-                    message: "Payment Updated",
-                    data: updated
-                });
-            }).catch(err => {
-                console.log(err)
-            })
-        } else {
-            return res.status(200).json({
-                status: false,
-                message: "User Not Authorized",
-            });
-        }
+    return model.sequelize.query(sql, {
+        replacements: [fimBatch, recruiterId, limit, offset]
     })
 }
 
+function getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
+    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress"
+    FROM "FormCompleteness" 
+    LEFT JOIN "Identities" ON "FormCompleteness"."userId" = "Identities"."userId"
+    LEFT JOIN "Summaries" ON "FormCompleteness"."userId" = "Summaries"."userId" 
+    WHERE "FormCompleteness"."fimBatch" = ? AND "FormCompleteness"."submittedAt" IS NOT null ${participantStatus} ${fullName} ${occupation} ${cityAddress}
+    LIMIT ?
+    OFFSET ?`
+
+    return model.sequelize.query(sql, {
+        replacements: [fimBatch, limit, offset]
+    })
+}
+
+exports.getDetailByUserId = async (req, res, next) => {
+
+    let participantId = req.params.userId
+    let batch = typeof req.query.batch !== 'undefined' ? req.query.batch : ""
+    
+    try {
+        model.Identity.findOne({ where: { userId: participantId } })
+        .then(identity => { 
+            model.Skill.findOne({ where: { userId: participantId } })
+            .then(skill => { 
+                model.SocialMedia.findOne({ where: { userId: participantId } })
+                .then(socialMedia => { 
+                    model.AlumniReference.findOne({ where: { userId: participantId } })
+                    .then(alumniReference => { 
+                        model.FimActivity.findOne({ where: { userId: participantId } })
+                        .then(fimActivity => { 
+                            model.OrganizationExperience.findAll({ where: { userId: participantId } })
+                            .then(organizationExperiences => { 
+                                model.PersonalDocument.findOne({ where: { userId: participantId } })
+                                .then(personalDocument => { 
+                                    model.Question.findAll({ where: { batchFim: batch } })
+                                    .then(questions => { 
+                                        model.Answer.findAll({ 
+                                            where: { createdBy: participantId, QuestionId: getQuestionIds(questions) },
+                                            order: ['QuestionId']
+                                        })
+                                        .then(answers => { 
+                                            return res.status(200).json({
+                                                status: true,
+                                                message: "Data Fetched",
+                                                data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers)
+                                            })
+                                        })
+                                        .catch(err => { throw new Error(err) })
+                                    })
+                                    .catch(err => { throw new Error(err) })
+                                })
+                                .catch(err => { throw new Error(err) })
+                            })
+                            .catch(err => { throw new Error(err) })
+                        })
+                        .catch(err => { throw new Error(err) })
+                    })
+                    .catch(err => { throw new Error(err) })
+                })
+                .catch(err => { throw new Error(err) })
+            })
+            .catch(err => { throw new Error(err) })
+        })
+        .catch(err => { throw new Error(err) })
+    } catch (error) {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + error,
+            "data": null
+        })    
+    }
+}
+
+function parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers) {
+    return {
+        "Identity": parseIdentityResponse(identity),
+        "Skill": parseSkillResponse(skill),
+        "SocialMedia": parseSocialMediaResponse(socialMedia),
+        "AlumniReference": parseAlumniReferenceResponse(alumniReference),
+        "FimActivity": parseFimActivityResponse(fimActivity),
+        "OrganizationExperiences": parseOrganizationExperiencesResponse(organizationExperiences),
+        "PersonalDocument": parsePersonalDocumentResponse(personalDocument),
+        "Answers": parseAnswersResponse(answers)
+    }
+}
+
+function parseIdentityResponse(data) {
+
+    if (data == null) return null
+
+    return {
+        fullName: data.fullName,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+        emergencyPhone: data.emergencyPhone,
+        ktpNumber: data.ktpNumber,
+        photoUrl: data.photoUrl,
+        religion: data.religion,
+        bornPlace: data.bornPlace,
+        bornDate: data.bornDate,
+        address: data.address,
+        cityAddress: data.cityAddress,
+        provinceAddress: data.provinceAddress,
+        gender: data.gender,
+        bloodGroup: data.bloodGroup,
+        hobby: data.hobby,
+        institution: data.institution,
+        occupation: data.occupation
+    }
+}
+
+function parseSkillResponse(data) {
+    
+    if (data == null) return null
+
+    return {
+        isAbleVideoEditing: data.isAbleVideoEditing,
+        videoEditingPortofolioUrl: data.videoEditingPortofolioUrl,
+        firstCertificateUrl: data.firstCertificateUrl,
+        secondCertificateUrl: data.secondCertificateUrl,
+        thirdCertificateUrl: data.thirdCertificateUrl
+    }
+}
+
+function parseSocialMediaResponse(data) {
+
+    if (data == null) return null
+
+    return {
+        instagramUrl: data.instagramUrl,
+        twitterUrl: data.twitterUrl,
+        facebookUrl: data.facebookUrl,
+        websiteUrl: data.websiteUrl,
+        otherSiteUrl: data.otherSiteUrl,
+        reason: data.reason
+    }
+}
+
+function parseAlumniReferenceResponse(data) {
+
+    if (data == null) return null
+
+    return {
+        fullName: data.fullName,
+        batch: data.batch,
+        phoneNumber: data.phoneNumber,
+        relationship: data.relationship,
+        acquaintedSince: data.acquaintedSince
+    }
+}
+
+function parseFimActivityResponse(data) {
+
+    if (data == null) return null
+
+    return {
+        responsibility: data.responsibility,
+        role: data.role,
+        duration: data.duration,
+        eventScale: data.eventScale,
+        result: data.result
+    }
+}
+
+function parsePersonalDocumentResponse(data) {
+
+    if (data == null) return null
+
+    return {
+        identityFileUrl: data.identityFileUrl,
+        recommendationLetterUrl: data.recommendationLetterUrl,
+        commitmentLetterUrl: data.commitmentLetterUrl
+    }
+}
+
+function parseOrganizationExperiencesResponse(data) {
+    organizationArr = [];
+    organizationObj = {};
+
+    data.forEach((item) => {
+        organizationObj = {
+            id: item.id,
+            referencePerson: item.referencePerson,
+            role: item.role,
+            duration: item.duration,
+            eventScale: item.eventScale,
+            result: item.result,
+        }
+    
+        organizationArr.push(organizationObj);
+    })
+
+    return organizationArr;
+}
+
+function getQuestionIds(data) {
+    questionArr = [];
+
+    data.forEach((item) => {
+        questionArr.push(item.id);
+    })
+    
+    return questionArr;
+}
+
+function parseAnswersResponse(data) {
+    answerArr = [];
+    answerObj = {};
+
+    data.forEach((item) => {
+        answerObj = {
+            id: item.id,
+            TunnelId: item.TunnelId,
+            QuestionId: item.QuestionId,
+            answer: item.answer,
+            score: item.score
+        }
+    
+        answerArr.push(answerObj);
+    })
+
+    return answerArr;
+}
+
+exports.saveAnswerAssessment = async (req, res, next) => { 
+
+    req.body.forEach((item) => {
+        model.Answer.findOne({ where: { id: item.answerId } })
+        .then(answer => {
+            if (answer) {
+                answer.update({ score: item.score })
+            }
+        })
+    })
+    
+    model.Answer.findAll({ 
+        where: { id: getAnswerIds(req.body) },
+        order: ['QuestionId']
+    })
+    .then(result => {
+        return res.status(200).json({
+            "status": true,
+            "message": "Data Inserted",
+            "data": parseAnswersResponse(result)
+        })
+    }).catch(err => {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
+    })
+    
+}
+
+function getAnswerIds(data) {
+    answerArr = [];
+
+    data.forEach((item) => {
+        answerArr.push(item.answerId);
+    })
+    
+    return answerArr;
+}
+
+exports.submitAssessment = async (req, res, next) => {
+    try {
+        participantId = req.body.participantId
+        batch = req.body.batch ?? ''
+        if (batch.trim() == '') throw new Error('batch is required!');
+
+        participant = await model.User.findOne({ where: { id: participantId } })
+        if (participant) {
+            summary = await model.Summary.findOne({ where: { userId: participantId, batchFim: batch } })
+            if (summary) {
+                questions = await model.Question.findAll({ where: { batchFim: batch } })
+                if (questions.length !== 0) {
+                    answers = await model.Answer.findAll({ where: { createdBy: participantId, QuestionId: getQuestionIds(questions) } })
+                    if (answers.length !== 0) {
+                        model.Summary.update({ isFinal: 1, scoreFinal: getScore(answers) }, { where: { userId: participantId, batchFim: batch } })
+                        .then(result => {
+                            return res.status(200).json({
+                                status: true,
+                                message: "Assessment Submitted",
+                                data: null
+                            })
+                        })
+                        .catch(err => { 
+                            return res.status(400).json({
+                                "status": false,
+                                "message": "Something " + err,
+                                "data": null
+                            }) 
+                        })
+                    } else throw new Error("Answers are not found")
+                } else throw new Error("Questions are not found")
+            } else throw new Error("Assessment of this participant is not found")
+        } else throw new Error("Participant not found")
+    } catch (err) {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something " + err,
+            "data": null
+        })    
+    }
+}
+
+function getScore(data) {
+    score = 0
+
+    data.forEach((item) => {
+        score += item.score
+    })
+
+    return score;
+}

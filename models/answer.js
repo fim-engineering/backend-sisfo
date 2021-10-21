@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     ktpNumber: DataTypes.STRING,
     TunnelId: DataTypes.INTEGER,
     createdBy: DataTypes.INTEGER,
-    QuestionId:DataTypes.INTEGER
+    QuestionId:DataTypes.INTEGER,
+    score: DataTypes.INTEGER
   }, {});
 
   Answer.associate = function(models) {

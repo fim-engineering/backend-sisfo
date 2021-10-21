@@ -1,11 +1,11 @@
 const model = require('../models/index');
-const { validationResult } = require('express-validator/check');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const redisClient = require('../util/redis');
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op
+const formCompletenessController = require('../controllers/formCompletenessController');
 
+exports.BASIC_ROLE = 1
+exports.RECRUITER_ROLE = 2
+exports.ADMIN_ROLE = 3
 
 exports.checkSession = (req, res, next) => {
     const token = req.body.token;
@@ -49,7 +49,7 @@ exports.socialLogin = (req, res, next) => {
         const data_identity = {
             email: userData.email,
             userId: userData.id,
-            step: status
+            role: userData.role
         }
 
         const token = jwt.sign(data_identity, process.env.JWT_KEY, { expiresIn: 60000 }); 
@@ -76,38 +76,62 @@ exports.getProfile = async (req, res, next) => {
         const user = JSON.parse(response);
         const userId = user.userId;
         
-        model.User.findOne({ 
-            where: { id: userId },
-            attributes: {exclude: ['password', 'status', 'createdAt', 'updatedAt']}, 
-            include: [
-                { 
-                    model: model.Identity,
-                    attributes: {
-                        exclude: [
-                            'userId', 'email', 'headline', 'batchFim', 'otherReligion','reference_by', 'expertise', 'video_editing', 'mbti', 'role', 'ktpUrl',
-                            'status_accept', 'attendenceConfirmationDate', 'paymentDate', 'bankTransfer', 'urlTransferPhoto', 'createdAt', 'updatedAt'
-                        ]
-                    }
-                },
-                { model: model.Skill, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
-                { model: model.SocialMedia, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
-                { model: model.AlumniReference, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
-                { model: model.FimActivity, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} },
-                { model: model.OrganizationExperience, attributes: {exclude: ['userId', 'createdAt', 'updatedAt']} }
-        ]}).then(result => {
-            return res.status(200).json({
-                "status": true,
-                "message": "Data Fetched",
-                "data": result
+        try {
+            model.User.findOne({ where: { id: userId } })
+            .then(user => {
+                model.Identity.findOne({ where: { userId: userId } })
+                .then(identity => { 
+                    model.Skill.findOne({ where: { userId: userId } })
+                    .then(skill => { 
+                        model.SocialMedia.findOne({ where: { userId: userId } })
+                        .then(socialMedia => { 
+                            model.AlumniReference.findOne({ where: { userId: userId } })
+                            .then(alumniReference => { 
+                                model.FimActivity.findOne({ where: { userId: userId } })
+                                .then(fimActivity => { 
+                                    model.OrganizationExperience.findAll({ where: { userId: userId } })
+                                    .then(organizationExperiences => { 
+                                        return res.status(200).json({
+                                            status: true,
+                                            message: "Data Fetched",
+                                            data: parseUserResponse(user, identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences)
+                                        })
+                                    })
+                                    .catch(err => { throw new Error(err) })
+                                })
+                                .catch(err => { throw new Error(err) })
+                            })
+                            .catch(err => { throw new Error(err) })
+                        })
+                        .catch(err => { throw new Error(err) })
+                    })
+                    .catch(err => { throw new Error(err) })
+                })
+                .catch(err => { throw new Error(err) })
             })
-        }).catch(err => {
+            .catch(err => { throw new Error(err) })
+        } catch (error) {
             return res.status(400).json({
                 "status": false,
-                "message": "Something Error " + err,
+                "message": "Something Error " + error,
                 "data": null
-            })
-        })
+            })    
+        }
     })
+}
+
+function parseUserResponse(user, identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences) {
+    return {
+        "id": user.id,
+        "email": user.email,
+        "role": user.role,
+        "Identity": parseIdentityResponse(identity),
+        "Skill": parseSkillResponse(skill),
+        "SocialMedia": parseSocialMediaResponse(socialMedia),
+        "AlumniReference": parseAlumniReferenceResponse(alumniReference),
+        "FimActivity": parseFimActivityResponse(fimActivity),
+        "OrganizationExperiences": parseOrganizationExperiencesResponse(organizationExperiences),
+    }
 }
 
 exports.saveIdentity = async (req, res, next) => {
@@ -126,7 +150,7 @@ exports.saveIdentity = async (req, res, next) => {
                 await model.Identity.create(parseIdentityRequest(userId, req.body))
                 .then(result => {
 
-                    setFirstFormCompletenessToTrue(userId)
+                    formCompletenessController.setSelectedFormCompletenessToTrue(userId, formCompletenessController.FIRST_STEP)
 
                     return res.status(200).json({
                         "status": true,
@@ -144,7 +168,7 @@ exports.saveIdentity = async (req, res, next) => {
                 findIdentity.update(parseIdentityRequest(userId, req.body))
                 .then(result => {
 
-                    setFirstFormCompletenessToTrue(userId)
+                    formCompletenessController.setSelectedFormCompletenessToTrue(userId, formCompletenessController.FIRST_STEP)
 
                     return res.status(200).json({
                         "status": true,
@@ -217,8 +241,10 @@ function parseIdentityRequest(userId, reqBody) {
 }
 
 function parseIdentityResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         fullName: data.fullName,
         firstName: data.firstName,
         lastName: data.lastName,
@@ -297,8 +323,10 @@ function parseSkillRequest(userId, reqBody) {
 }
 
 function parseSkillResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         isAbleVideoEditing: data.isAbleVideoEditing,
         videoEditingPortofolioUrl: data.videoEditingPortofolioUrl,
         firstCertificateUrl: data.firstCertificateUrl,
@@ -362,8 +390,10 @@ function parseSocialMediaRequest(userId, reqBody) {
 }
 
 function parseSocialMediaResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         instagramUrl: data.instagramUrl,
         twitterUrl: data.twitterUrl,
         facebookUrl: data.facebookUrl,
@@ -427,8 +457,10 @@ function parseAlumniReferenceRequest(userId, reqBody) {
 }
 
 function parseAlumniReferenceResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         fullName: data.fullName,
         batch: data.batch,
         phoneNumber: data.phoneNumber,
@@ -491,8 +523,10 @@ function parseFimActivityRequest(userId, reqBody) {
 }
 
 function parseFimActivityResponse(data) {
+
+    if (data == null) return null
+
     return {
-        id: data.id,
         responsibility: data.responsibility,
         role: data.role,
         duration: data.duration,
@@ -515,12 +549,12 @@ exports.saveOrganizationExperience = async (req, res, next) => {
             .then(result => {
                 deleteExistingOrganizationExperience(userId, result)
                     
-                model.OrganizationExperience.bulkCreate(parseOrganizationExperienceRequest(userId, req.body))
+                model.OrganizationExperience.bulkCreate(parseOrganizationExperiencesRequest(userId, req.body))
                 .then(result => {
                     return res.status(200).json({
                         "status": true,
                         "message": "Data Inserted",
-                        "data": parseOrganizationExperienceResponse(result)
+                        "data": parseOrganizationExperiencesResponse(result)
                     })
                 }).catch(err => {
                     return res.status(400).json({
@@ -557,121 +591,42 @@ function deleteExistingOrganizationExperience(userId, data) {
     }
 }
 
-function parseOrganizationExperienceRequest(userId, reqBody) {
-    let i = 0;
+function parseOrganizationExperiencesRequest(userId, reqBody) {
     organizationArr = [];
     organizationObj = {};
 
-    for (;reqBody[i];) {
+    reqBody.forEach((item) => {
         organizationObj = {
             userId: userId,
-            referencePerson: reqBody[i].referencePerson ? reqBody[i].referencePerson.trim() : null,
-            role: reqBody[i].role ? reqBody[i].role.trim() : null,
-            duration: reqBody[i].duration ? reqBody[i].duration.trim() : null,
-            eventScale: reqBody[i].eventScale ? reqBody[i].eventScale.trim() : null,
-            result: reqBody[i].result ? reqBody[i].result.trim() : null,
+            referencePerson: item.referencePerson ? item.referencePerson.trim() : null,
+            role: item.role ? item.role.trim() : null,
+            duration: item.duration ? item.duration.trim() : null,
+            eventScale: item.eventScale ? item.eventScale.trim() : null,
+            result: item.result ? item.result.trim() : null,
         }
     
         organizationArr.push(organizationObj);
-        i++;
-    }
-
-    return organizationArr;
-}
-
-function parseOrganizationExperienceResponse(data) {
-    let i = 0;
-    organizationArr = [];
-    organizationObj = {};
-
-    for (;data[i];) {
-        organizationObj = {
-            id: data[i].id,
-            referencePerson: data[i].referencePerson,
-            role: data[i].role,
-            duration: data[i].duration,
-            eventScale: data[i].eventScale,
-            result: data[i].result,
-        }
-    
-        organizationArr.push(organizationObj);
-        i++;
-    }
-
-    return organizationArr;
-}
-
-function setFirstFormCompletenessToTrue(userId) {
-    model.FormCompleteness.findOne({ where: { userId: userId }})
-    .then(formCompleteness => {
-
-        data = {
-            userId: userId,
-            fimBatch: "23", /* TODO: Make it dynamic */
-            isFirstStepCompleted: true
-        }
-
-        if (formCompleteness == null) {
-            model.FormCompleteness.create(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        } else {
-            formCompleteness.update(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        }
-    }).catch(err => {
-        return res.status(400).json({
-            "status": false,
-            "message": "Something Error " + err,
-            "data": null
-        })
     })
+
+    return organizationArr;
 }
 
-exports.saveTunnel = (req, res, nex) => {
-    let token = req.get('Authorization').split(' ')[1];
+function parseOrganizationExperiencesResponse(data) {
+    organizationArr = [];
+    organizationObj = {};
 
-    const data = {
-        TunnelId: req.body.TunnelId,
-        RegionalId: req.body.RegionalId
-    }
+    data.forEach((item) => {
+        organizationObj = {
+            id: item.id,
+            referencePerson: item.referencePerson,
+            role: item.role,
+            duration: item.duration,
+            eventScale: item.eventScale,
+            result: item.result,
+        }
+    
+        organizationArr.push(organizationObj);
+    })
 
-    redisClient.get('login_portal:' + token, function (err, response) {
-        const userIdentity = JSON.parse(response);
-        const userId = userIdentity.userId;
-
-        model.User.findOne({ where: { id: userId } })
-        .then(result => {
-            result.update({
-                TunnelId: data.TunnelId,
-                RegionalId:data.RegionalId,
-                status: 3
-            }).then(dataresult => {
-                redisClient.set('login_portal:' + token, JSON.stringify({ ...userIdentity, step: 3 }))
-
-                return res.status(200).json({
-                    "status": true,
-                    "message": "Tunnel Updated",
-                    "data": dataresult
-                })
-            })
-        }).catch(err => {
-            return res.status(400).json({
-                "status": false,
-                "message": "Something Error " + err,
-                "data": null
-            })
-        });
-    });
+    return organizationArr;
 }

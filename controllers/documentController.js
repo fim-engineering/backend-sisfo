@@ -1,5 +1,6 @@
 const model = require('../models/index');
 const redisClient = require('../util/redis');
+const formCompletenessController = require('../controllers/formCompletenessController');
 
 
 exports.getDocument = async (req, res, next) => {
@@ -15,7 +16,7 @@ exports.getDocument = async (req, res, next) => {
             return res.status(200).json({
                 "status": true,
                 "message": "Data Fetched",
-                "data": result
+                "data": parsePersonalDocumentResponse(result)
             })
         }).catch(err => {
             return res.status(400).json({
@@ -102,40 +103,13 @@ function validateDocumentRequestBody(reqBody) {
     if (!reqBody.commitmentLetterUrl || reqBody.commitmentLetterUrl.trim() == "") throw new Error('commitmentLetterUrl is required!');
 }
 
-function setFourthFormCompletenessToTrue(userId) {
-    model.FormCompleteness.findOne({ where: { userId: userId }})
-    .then(formCompleteness => {
+function parsePersonalDocumentResponse(data) {
 
-        data = {
-            userId: userId,
-            fimBatch: "23", /* TODO: Make it dynamic */
-            isFourthStepCompleted: true
-        }
+    if (data == null) return null
 
-        if (formCompleteness == null) {
-            model.FormCompleteness.create(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        } else {
-            formCompleteness.update(data)
-            .catch(err => {
-                return res.status(400).json({
-                    "status": false,
-                    "message": "Something Error " + err,
-                    "data": null
-                })
-            })
-        }
-    }).catch(err => {
-        return res.status(400).json({
-            "status": false,
-            "message": "Something Error " + err,
-            "data": null
-        })
-    })
+    return {
+        identityFileUrl: data.identityFileUrl,
+        recommendationLetterUrl: data.recommendationLetterUrl,
+        commitmentLetterUrl: data.commitmentLetterUrl
+    }
 }
