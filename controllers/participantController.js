@@ -113,7 +113,7 @@ exports.getAll = async (req, res, next) => {
 
 function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
-    const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl"
+    const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl", "Summaries"."scoreFinal"
     FROM "Summaries" 
     LEFT JOIN "FormCompleteness" ON "Summaries"."userId" = "FormCompleteness"."userId" 
     LEFT JOIN "Identities" ON "Summaries"."userId" = "Identities"."userId" 
@@ -128,7 +128,7 @@ function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullN
 
 function getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
-    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl"
+    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl", "Summaries"."scoreFinal"
     FROM "FormCompleteness" 
     LEFT JOIN "Identities" ON "FormCompleteness"."userId" = "Identities"."userId"
     LEFT JOIN "Summaries" ON "FormCompleteness"."userId" = "Summaries"."userId" 
@@ -161,18 +161,22 @@ exports.getDetailByUserId = async (req, res, next) => {
                             .then(organizationExperiences => { 
                                 model.PersonalDocument.findOne({ where: { userId: participantId } })
                                 .then(personalDocument => { 
-                                    model.Question.findAll({ where: { batchFim: batch } })
-                                    .then(questions => { 
-                                        model.Answer.findAll({ 
-                                            where: { createdBy: participantId, QuestionId: getQuestionIds(questions) },
-                                            order: ['QuestionId']
-                                        })
-                                        .then(answers => { 
-                                            return res.status(200).json({
-                                                status: true,
-                                                message: "Data Fetched",
-                                                data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers)
+                                    model.Summary.findOne({ where: { userId: participantId, batchFim: batch } })
+                                    .then(summary => { 
+                                        model.Question.findAll({ where: { batchFim: batch } })
+                                        .then(questions => { 
+                                            model.Answer.findAll({ 
+                                                where: { createdBy: participantId, QuestionId: getQuestionIds(questions) },
+                                                order: ['QuestionId']
                                             })
+                                            .then(answers => { 
+                                                return res.status(200).json({
+                                                    status: true,
+                                                    message: "Data Fetched",
+                                                    data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, summary, answers)
+                                                })
+                                            })
+                                            .catch(err => { throw new Error(err) })
                                         })
                                         .catch(err => { throw new Error(err) })
                                     })
@@ -200,7 +204,7 @@ exports.getDetailByUserId = async (req, res, next) => {
     }
 }
 
-function parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, answers) {
+function parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, summary, answers) {
     return {
         "Identity": parseIdentityResponse(identity),
         "Skill": parseSkillResponse(skill),
@@ -209,7 +213,8 @@ function parseParticipantResponse(identity, skill, socialMedia, alumniReference,
         "FimActivity": parseFimActivityResponse(fimActivity),
         "OrganizationExperiences": parseOrganizationExperiencesResponse(organizationExperiences),
         "PersonalDocument": parsePersonalDocumentResponse(personalDocument),
-        "Answers": parseAnswersResponse(answers)
+        "Answers": parseAnswersResponse(answers),
+        "Summaries": parseSummaryResponse(summary)
     }
 }
 
@@ -352,6 +357,18 @@ function parseAnswersResponse(data) {
     return answerArr;
 }
 
+function parseSummaryResponse(data) {
+    
+    if (data == null) return null
+
+    return {
+        isFinal: data.isFinal,
+        identityScore: data.scoreDataDiri,
+        socialMediaScore: data.scoreOther,
+        finalScore: data.scoreFinal
+    }
+}
+
 exports.saveAssessment = async (req, res, next) => { 
 
     try {
@@ -444,7 +461,7 @@ exports.submitAssessment = async (req, res, next) => {
                 if (questions.length !== 0) {
                     answers = await model.Answer.findAll({ where: { createdBy: participantId, QuestionId: getQuestionIds(questions) } })
                     if (answers.length !== 0) {
-                        model.Summary.update({ isFinal: 1, scoreFinal: getScore(answers) }, { where: { userId: participantId, batchFim: batch } })
+                        model.Summary.update({ isFinal: 1, scoreFinal: getScore(answers, summary) }, { where: { userId: participantId, batchFim: batch } })
                         .then(result => {
                             return res.status(200).json({
                                 status: true,
@@ -472,12 +489,15 @@ exports.submitAssessment = async (req, res, next) => {
     }
 }
 
-function getScore(data) {
+function getScore(answers, summary) {
     score = 0
 
-    data.forEach((item) => {
+    answers.forEach((item) => {
         score += item.score
     })
+
+    score += summary.scoreDataDiri
+    score += summary.scoreOther
 
     return score;
 }
