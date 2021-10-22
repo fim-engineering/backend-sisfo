@@ -206,19 +206,18 @@ exports.getDetailByUserId = async (req, res, next) => {
 
 function parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, summary, answers) {
     return {
-        "Identity": parseIdentityResponse(identity),
+        "Identity": parseIdentityResponse(identity, summary.scoreDataDiri),
         "Skill": parseSkillResponse(skill),
-        "SocialMedia": parseSocialMediaResponse(socialMedia),
+        "SocialMedia": parseSocialMediaResponse(socialMedia, summary.scoreOther),
         "AlumniReference": parseAlumniReferenceResponse(alumniReference),
         "FimActivity": parseFimActivityResponse(fimActivity),
         "OrganizationExperiences": parseOrganizationExperiencesResponse(organizationExperiences),
         "PersonalDocument": parsePersonalDocumentResponse(personalDocument),
         "Answers": parseAnswersResponse(answers),
-        "Summaries": parseSummaryResponse(summary)
     }
 }
 
-function parseIdentityResponse(data) {
+function parseIdentityResponse(data, score) {
 
     if (data == null) return null
 
@@ -240,7 +239,8 @@ function parseIdentityResponse(data) {
         bloodGroup: data.bloodGroup,
         hobby: data.hobby,
         institution: data.institution,
-        occupation: data.occupation
+        occupation: data.occupation,
+        score: score
     }
 }
 
@@ -257,7 +257,7 @@ function parseSkillResponse(data) {
     }
 }
 
-function parseSocialMediaResponse(data) {
+function parseSocialMediaResponse(data, score) {
 
     if (data == null) return null
 
@@ -267,7 +267,8 @@ function parseSocialMediaResponse(data) {
         facebookUrl: data.facebookUrl,
         websiteUrl: data.websiteUrl,
         otherSiteUrl: data.otherSiteUrl,
-        reason: data.reason
+        reason: data.reason,
+        score: score
     }
 }
 
@@ -355,18 +356,6 @@ function parseAnswersResponse(data) {
     })
 
     return answerArr;
-}
-
-function parseSummaryResponse(data) {
-    
-    if (data == null) return null
-
-    return {
-        isFinal: data.isFinal,
-        identityScore: data.scoreDataDiri,
-        socialMediaScore: data.scoreOther,
-        finalScore: data.scoreFinal
-    }
 }
 
 exports.saveAssessment = async (req, res, next) => { 
