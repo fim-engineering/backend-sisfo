@@ -113,7 +113,8 @@ exports.getAll = async (req, res, next) => {
 
 function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
-    const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl", "Summaries"."scoreFinal"
+    const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl", "Summaries"."scoreFinal",
+    (SELECT "Users"."email" AS "recruiterEmail" FROM "Users" WHERE "Users"."id" = "Summaries"."recruiterId")
     FROM "Summaries" 
     LEFT JOIN "FormCompleteness" ON "Summaries"."userId" = "FormCompleteness"."userId" 
     LEFT JOIN "Identities" ON "Summaries"."userId" = "Identities"."userId" 
@@ -128,7 +129,8 @@ function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullN
 
 function getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
-    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl", "Summaries"."scoreFinal"
+    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl", "Summaries"."scoreFinal",
+    (SELECT "Users"."email" AS "recruiterEmail" FROM "Users" WHERE "Users"."id" = "Summaries"."recruiterId")
     FROM "FormCompleteness" 
     LEFT JOIN "Identities" ON "FormCompleteness"."userId" = "Identities"."userId"
     LEFT JOIN "Summaries" ON "FormCompleteness"."userId" = "Summaries"."userId" 
