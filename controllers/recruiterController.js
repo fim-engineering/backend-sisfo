@@ -452,43 +452,42 @@ exports.updateScore = async (req, res, next) => {
 
 exports.addRecruiter = async (req, res, next) => {
     const email = req.body.email;
-    const findIdentity = await model.Identity.findOne({
-        where: {
-            email: email
-        }
-    }).then(resp => {
-        return resp;
-    }).catch(err => {
-        console.log(err)
-    })
+    const user = await model.User.findOne({ where: { email: email } })
 
-    if (findIdentity == null) {
-        model.Identity.create({
-            email: email,
-            role: 2
-        }).then(resp => {
+    if (user == null) {
+        model.User.create({ email: email, role: 2 })
+        .then(result => {
             return res.status(200).json({
                 status: true,
-                message: "Recruiter " + email + " Added",
+                message: "Recruiter " + email + " added",
+                data: null
+            });
+        }).catch(err => {
+            return res.status(400).json({
+                status: false,
+                message: "Something Error " + err,
+                data: null
             });
         })
     } else {
-        if (findIdentity.role == 2) {
+        if (user.role == 2 || user.role == 3) {
             return res.status(200).json({
                 status: false,
-                message: "Recruiter " + email + " Already Exists",
+                message: "Recruiter " + email + " already exists",
+                data: null
             });
         } else {
-            findIdentity.update({
-                role: 2
-            }).then(result => {
+            user.update({ role: 2 })
+            .then(result => {
                 return res.status(200).json({
                     status: true,
-                    message: "Recruiter " + email + " Updated",
+                    message: "Recruiter " + email + " role updated",
                 });
             }).catch(err => {
                 return res.status(400).json({
-                    status: false
+                    status: false,
+                    message: "Something Error " + err,
+                    data: null
                 });
             })
         }
