@@ -477,7 +477,7 @@ exports.addRecruiter = async (req, res, next) => {
                 data: null
             });
         } else {
-            user.update({ role: 2 })
+            model.User.update({ role: 2 }, { where: { email: email } })
             .then(result => {
                 return res.status(200).json({
                     status: true,

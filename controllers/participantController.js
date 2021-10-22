@@ -352,6 +352,44 @@ function parseAnswersResponse(data) {
     return answerArr;
 }
 
+exports.saveAssessment = async (req, res, next) => { 
+
+    try {
+        if (!req.params.participantId) throw new Error('participantId is required!');
+        if (!req.params.batch) throw new Error('batch is required!');
+        if (!req.body.identityScore) throw new Error('identityScore is required!');
+        if (!req.body.socialMediaScore) throw new Error('socialMediaScore is required!');
+
+        summary = await model.Summary.findOne({ where: { userId: req.params.participantId, batchFim: req.params.batch } })
+        if (summary) {
+            model.Summary.update({ scoreDataDiri: req.body.identityScore, scoreOther: req.body.socialMediaScore},
+                { where: { userId: req.params.participantId, batchFim: req.params.batch }
+            })
+            .then(result => {
+                return res.status(200).json({
+                    "status": true,
+                    "message": "Score updated",
+                    "data": null
+                })
+            }).catch(err => {
+                return res.status(400).json({
+                    "status": false,
+                    "message": "Something Error " + err,
+                    "data": null
+                })
+            })
+        } else {
+            throw new Error('Data not found');
+        }
+    } catch (error) {
+        return res.status(400).json({
+            "status": false,
+            "message": "Something " + error,
+            "data": null
+        }) 
+    }
+}
+
 exports.saveAnswerAssessment = async (req, res, next) => { 
 
     req.body.forEach((item) => {
@@ -380,7 +418,6 @@ exports.saveAnswerAssessment = async (req, res, next) => {
             "data": null
         })
     })
-    
 }
 
 function getAnswerIds(data) {
