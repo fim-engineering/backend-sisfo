@@ -91,7 +91,7 @@ exports.getAll = async (req, res, next) => {
                     "message": "Something Error " + err,
                     "data": null
                 })
-            });
+            })
         } else if (role == userController.ADMIN_ROLE) {
             getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus)
             .then(result => {
@@ -113,7 +113,7 @@ exports.getAll = async (req, res, next) => {
 
 function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
-    const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress"
+    const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl"
     FROM "Summaries" 
     LEFT JOIN "FormCompleteness" ON "Summaries"."userId" = "FormCompleteness"."userId" 
     LEFT JOIN "Identities" ON "Summaries"."userId" = "Identities"."userId" 
@@ -128,7 +128,7 @@ function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullN
 
 function getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
-    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress"
+    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl"
     FROM "FormCompleteness" 
     LEFT JOIN "Identities" ON "FormCompleteness"."userId" = "Identities"."userId"
     LEFT JOIN "Summaries" ON "FormCompleteness"."userId" = "Summaries"."userId" 

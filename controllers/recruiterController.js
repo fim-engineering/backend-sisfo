@@ -194,21 +194,30 @@ exports.listSubmitted = async (req, res, next) => {
 
 
 exports.listRecruiter = async (req, res, next) => {
-    model.Identity.findAll({
-        where: {
-            role: { $in: [2, 3] },
-        },
-        attributes: ['name', 'ktpNumber', 'phone', 'email', 'batchFim']
-
-    }).then(result => {
+    getAllRecruiters()
+    .then(result => {
+        console.log(result)
         return res.status(200).json({
             status: true,
             message: "Data Fetched",
-            data: result
+            data: result[0]
         });
     }).catch(err => {
-        console.log(err)
+        return res.status(400).json({
+            "status": false,
+            "message": "Something Error " + err,
+            "data": null
+        })
     })
+}
+
+function getAllRecruiters() {
+    const sql = `SELECT "Users"."id", "Users"."email", "Users"."role", "Identities"."fullName", "Identities"."batchFim", "Identities"."photoUrl"
+    FROM "Users" 
+    LEFT JOIN "Identities" ON "Users"."id" = "Identities"."userId" 
+    WHERE "Users"."role" IN (2, 3)`
+
+    return model.sequelize.query(sql)
 }
 
 exports.assignRecruiter = async (req, res, next) => {
