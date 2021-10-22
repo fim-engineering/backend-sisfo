@@ -54,7 +54,7 @@ exports.saveDocument = async (req, res, next) => {
                 await model.PersonalDocument.create(data)
                 .then(result => {
                     
-                    setFourthFormCompletenessToTrue(userId)
+                    formCompletenessController.setSelectedFormCompletenessToTrue(userId, formCompletenessController.FOURTH_STEP)
                 
                     return res.status(200).json({
                         "status": true,
@@ -72,7 +72,7 @@ exports.saveDocument = async (req, res, next) => {
                 findPersonalDocument.update(data)
                 .then(result => {
                 
-                    setFourthFormCompletenessToTrue(userId)
+                    formCompletenessController.setSelectedFormCompletenessToTrue(userId, formCompletenessController.FOURTH_STEP)
                 
                     return res.status(200).json({
                         "status": true,
