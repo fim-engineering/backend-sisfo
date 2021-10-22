@@ -472,7 +472,7 @@ exports.addRecruiter = async (req, res, next) => {
     } else {
         if (user.role == 2 || user.role == 3) {
             return res.status(200).json({
-                status: false,
+                status: true,
                 message: "Recruiter " + email + " already exists",
                 data: null
             });
