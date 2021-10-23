@@ -163,7 +163,7 @@ exports.getDetailByUserId = async (req, res, next) => {
                             .then(organizationExperiences => { 
                                 model.PersonalDocument.findOne({ where: { userId: participantId } })
                                 .then(personalDocument => { 
-                                    model.Summary.findOne({ where: { userId: participantId, batchFim: batch } })
+                                    getSummaryByParticipant(participantId, batch)
                                     .then(summary => { 
                                         model.Question.findAll({ where: { batchFim: batch } })
                                         .then(questions => { 
@@ -175,7 +175,7 @@ exports.getDetailByUserId = async (req, res, next) => {
                                                 return res.status(200).json({
                                                     status: true,
                                                     message: "Data Fetched",
-                                                    data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, summary, answers)
+                                                    data: parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, summary[0], answers)
                                                 })
                                             })
                                             .catch(err => { throw new Error(err) })
@@ -206,22 +206,38 @@ exports.getDetailByUserId = async (req, res, next) => {
     }
 }
 
+function getSummaryByParticipant(participantId, batch) {
+    const sql = `SELECT "Summaries"."scoreDataDiri", "Summaries"."scoreOther", 
+    (SELECT "Users"."email" AS "recruiterEmail" FROM "Users" WHERE "Users"."id" = "Summaries"."recruiterId")
+    FROM "Summaries" 
+    LEFT JOIN "Users" ON "Summaries"."userId" = "Users"."id" 
+    WHERE "Summaries"."userId" = ? AND "Summaries"."batchFim" = ?
+    LIMIT 1`
+
+    return model.sequelize.query(sql, {
+        replacements: [participantId, batch]
+    })
+}
+
 function parseParticipantResponse(identity, skill, socialMedia, alumniReference, fimActivity, organizationExperiences, personalDocument, summary, answers) {
     return {
-        "Identity": parseIdentityResponse(identity, summary.scoreDataDiri),
+        "Identity": parseIdentityResponse(identity, summary),
         "Skill": parseSkillResponse(skill),
-        "SocialMedia": parseSocialMediaResponse(socialMedia, summary.scoreOther),
+        "SocialMedia": parseSocialMediaResponse(socialMedia, summary),
         "AlumniReference": parseAlumniReferenceResponse(alumniReference),
         "FimActivity": parseFimActivityResponse(fimActivity),
         "OrganizationExperiences": parseOrganizationExperiencesResponse(organizationExperiences),
         "PersonalDocument": parsePersonalDocumentResponse(personalDocument),
         "Answers": parseAnswersResponse(answers),
+        "Recruiter": parseRecruiterResponse(summary)
     }
 }
 
-function parseIdentityResponse(data, score) {
+function parseIdentityResponse(data, summary) {
 
+    score = 0
     if (data == null) return null
+    if (summary.length > 0) score = summary[0].scoreDataDiri
 
     return {
         fullName: data.fullName,
@@ -259,9 +275,11 @@ function parseSkillResponse(data) {
     }
 }
 
-function parseSocialMediaResponse(data, score) {
+function parseSocialMediaResponse(data, summary) {
 
+    score = 0
     if (data == null) return null
+    if (summary.length > 0) score = summary[0].scoreOther
 
     return {
         instagramUrl: data.instagramUrl,
@@ -308,6 +326,16 @@ function parsePersonalDocumentResponse(data) {
         identityFileUrl: data.identityFileUrl,
         recommendationLetterUrl: data.recommendationLetterUrl,
         commitmentLetterUrl: data.commitmentLetterUrl
+    }
+}
+
+function parseRecruiterResponse(data) {
+    
+    if (data.length == 0) return null
+    if (data[0].recruiterEmail == null) return null
+
+    return {
+        email: data[0].recruiterEmail
     }
 }
 
