@@ -196,7 +196,6 @@ exports.listSubmitted = async (req, res, next) => {
 exports.listRecruiter = async (req, res, next) => {
     getAllRecruiters()
     .then(result => {
-        console.log(result)
         return res.status(200).json({
             status: true,
             message: "Data Fetched",
