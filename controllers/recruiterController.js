@@ -230,7 +230,7 @@ exports.assignRecruiter = async (req, res, next) => {
         if (recruiter) {
             participant = await model.User.findOne({ where: { id: participantId } })
             if (participant) {
-                model.Summary.findOne({ where: { recruiterId: recruiter.id, userId: participant.id, batchFim: batch } })
+                model.Summary.findOne({ where: { userId: participant.id, batchFim: batch } })
                 .then(summary => {
                     if (summary == null) {
                         model.Summary.create({ recruiterId: recruiter.id, userId: participant.id, batchFim: batch })
@@ -242,10 +242,13 @@ exports.assignRecruiter = async (req, res, next) => {
                             })
                         })
                     } else {
-                        return res.status(200).json({
-                            status: true,
-                            message: "Recruiter already assigned to this participant",
-                            data: null
+                        model.Summary.update({ recruiterId: recruiter.id }, { where: { userId: participant.id, batchFim: batch } })
+                        .then(result => {
+                            return res.status(200).json({
+                                status: true,
+                                message: "Recruiter updated",
+                                data: null
+                            })
                         })
                     }
                 })
