@@ -76,7 +76,6 @@ exports.getAll = async (req, res, next) => {
         if (participantStatus == PROCESSED_STATUS) participantStatus = `AND "Summaries"."isFinal" = 1`
         else participantStatus = ``
 
-
         if (role == userController.RECRUITER_ROLE) {
             getAllAssignedByRecruiterId(userId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus)
             .then(result => {
@@ -114,7 +113,7 @@ exports.getAll = async (req, res, next) => {
 function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
     const sql = `SELECT "Summaries"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl",
-    (SELECT "Users"."email" AS "recruiterEmail" FROM "Users" WHERE "Users"."id" = "Summaries"."recruiterId")
+    "Summaries"."scoreFinal", (SELECT "Users"."email" AS "recruiterEmail" FROM "Users" WHERE "Users"."id" = "Summaries"."recruiterId")
     FROM "Summaries" 
     LEFT JOIN "FormCompleteness" ON "Summaries"."userId" = "FormCompleteness"."userId" 
     LEFT JOIN "Identities" ON "Summaries"."userId" = "Identities"."userId" 
@@ -129,8 +128,8 @@ function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullN
 
 function getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityAddress, participantStatus) {
 
-    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl", "Summaries"."scoreFinal",
-    (SELECT "Users"."email" AS "recruiterEmail" FROM "Users" WHERE "Users"."id" = "Summaries"."recruiterId")
+    const sql = `SELECT "FormCompleteness"."userId", "Identities"."fullName", "Identities"."occupation", "Identities"."cityAddress", "Identities"."photoUrl",
+    "Summaries"."scoreFinal", (SELECT "Users"."email" AS "recruiterEmail" FROM "Users" WHERE "Users"."id" = "Summaries"."recruiterId")
     FROM "FormCompleteness" 
     LEFT JOIN "Identities" ON "FormCompleteness"."userId" = "Identities"."userId"
     LEFT JOIN "Summaries" ON "FormCompleteness"."userId" = "Summaries"."userId" 
@@ -207,7 +206,7 @@ exports.getDetailByUserId = async (req, res, next) => {
 }
 
 function getSummaryByParticipant(participantId, batch) {
-    const sql = `SELECT "Summaries"."scoreDataDiri", "Summaries"."scoreOther", 
+    const sql = `SELECT "Summaries"."scoreDataDiri", "Summaries"."scoreOther", "Summaries"."scoreFinal", "Summaries"."notes",
     (SELECT "Users"."email" AS "recruiterEmail" FROM "Users" WHERE "Users"."id" = "Summaries"."recruiterId")
     FROM "Summaries" 
     LEFT JOIN "Users" ON "Summaries"."userId" = "Users"."id" 
@@ -229,7 +228,26 @@ function parseParticipantResponse(identity, skill, socialMedia, alumniReference,
         "OrganizationExperiences": parseOrganizationExperiencesResponse(organizationExperiences),
         "PersonalDocument": parsePersonalDocumentResponse(personalDocument),
         "Answers": parseAnswersResponse(answers),
-        "Recruiter": parseRecruiterResponse(summary)
+        "Recruiter": parseRecruiterResponse(summary),
+        "Summaries": parseAssessmentResponse(summary)
+    }
+}
+
+function parseAssessmentResponse(data) {
+
+    finalScore = null
+    notes = null
+
+    if (data.length > 0) {
+        finalScore = data[0].scoreFinal
+        notes = data[0].notes
+    } else {
+        return null
+    }
+
+    return {
+        finalScore: finalScore,
+        notes: notes
     }
 }
 
@@ -395,16 +413,17 @@ exports.saveAssessment = async (req, res, next) => {
         if (!req.params.batch) throw new Error('batch is required!');
         if (!req.body.identityScore) throw new Error('identityScore is required!');
         if (!req.body.socialMediaScore) throw new Error('socialMediaScore is required!');
+        notes = req.body.notes ?? ''
 
         summary = await model.Summary.findOne({ where: { userId: req.params.participantId, batchFim: req.params.batch } })
         if (summary) {
-            model.Summary.update({ scoreDataDiri: req.body.identityScore, scoreOther: req.body.socialMediaScore},
+            model.Summary.update({ scoreDataDiri: req.body.identityScore, scoreOther: req.body.socialMediaScore, notes: notes},
                 { where: { userId: req.params.participantId, batchFim: req.params.batch }
             })
             .then(result => {
                 return res.status(200).json({
                     "status": true,
-                    "message": "Score updated",
+                    "message": "Data updated",
                     "data": null
                 })
             }).catch(err => {
