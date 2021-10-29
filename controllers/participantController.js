@@ -63,7 +63,7 @@ exports.getAll = async (req, res, next) => {
         fimBatch = req.query.batch ? req.query.batch : ''
         limit = req.query.limit ? req.query.limit : 10
         offset = req.query.offset ? req.query.offset : 0
-        fullName = req.query.fullName ? req.query.fullName : ''
+        fullName = req.query.name ? req.query.name : ''
         occupation = req.query.occupation ? req.query.occupation : ''
         cityAddress = req.query.cityAddress ? req.query.cityAddress : ''
         participantStatus = req.query.status ? req.query.status : ''
@@ -118,6 +118,7 @@ function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullN
     LEFT JOIN "FormCompleteness" ON "Summaries"."userId" = "FormCompleteness"."userId" 
     LEFT JOIN "Identities" ON "Summaries"."userId" = "Identities"."userId" 
     WHERE "Summaries"."batchFim" = ? AND "Summaries"."recruiterId" = ? AND "FormCompleteness"."submittedAt" IS NOT null ${participantStatus} ${fullName} ${occupation} ${cityAddress}
+    ORDER BY "Summaries"."scoreFinal" DESC
     LIMIT ?
     OFFSET ?`
 
@@ -134,6 +135,7 @@ function getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityA
     LEFT JOIN "Identities" ON "FormCompleteness"."userId" = "Identities"."userId"
     LEFT JOIN "Summaries" ON "FormCompleteness"."userId" = "Summaries"."userId" 
     WHERE "FormCompleteness"."fimBatch" = ? AND "FormCompleteness"."submittedAt" IS NOT null ${participantStatus} ${fullName} ${occupation} ${cityAddress}
+    ORDER BY "Summaries"."scoreFinal" DESC
     LIMIT ?
     OFFSET ?`
 
