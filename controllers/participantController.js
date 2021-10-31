@@ -118,7 +118,7 @@ function getAllAssignedByRecruiterId(recruiterId, fimBatch, limit, offset, fullN
     LEFT JOIN "FormCompleteness" ON "Summaries"."userId" = "FormCompleteness"."userId" 
     LEFT JOIN "Identities" ON "Summaries"."userId" = "Identities"."userId" 
     WHERE "Summaries"."batchFim" = ? AND "Summaries"."recruiterId" = ? AND "FormCompleteness"."submittedAt" IS NOT null ${participantStatus} ${fullName} ${occupation} ${cityAddress}
-    ORDER BY "Summaries"."scoreFinal" DESC
+    ORDER BY "Summaries"."scoreFinal" DESC, "Summaries"."userId"
     LIMIT ?
     OFFSET ?`
 
@@ -135,7 +135,7 @@ function getAllParticipants(fimBatch, limit, offset, fullName, occupation, cityA
     LEFT JOIN "Identities" ON "FormCompleteness"."userId" = "Identities"."userId"
     LEFT JOIN "Summaries" ON "FormCompleteness"."userId" = "Summaries"."userId" 
     WHERE "FormCompleteness"."fimBatch" = ? AND "FormCompleteness"."submittedAt" IS NOT null ${participantStatus} ${fullName} ${occupation} ${cityAddress}
-    ORDER BY "Summaries"."scoreFinal" DESC
+    ORDER BY "Summaries"."scoreFinal" DESC, "Summaries"."userId"
     LIMIT ?
     OFFSET ?`
 
