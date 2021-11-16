@@ -21,6 +21,7 @@ const regionalRoute = require('./routes/regionalRoute');
 const participantRoute = require('./routes/participantRoute');
 const documentRoute = require('./routes/documentRoute');
 const formCompletenessRoute = require('./routes/formCompletenessRoute');
+const attendanceRoute = require('./routes/attendanceRoute');
 
 // init express js
 const app = express();
@@ -51,6 +52,7 @@ app.use('/regional', regionalRoute);
 app.use('/participant', participantRoute);
 app.use('/document', documentRoute);
 app.use('/form-completeness', formCompletenessRoute);
+app.use('/attendance', attendanceRoute);
 
 
 app.use(helmet());
